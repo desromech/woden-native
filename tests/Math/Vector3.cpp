@@ -18,6 +18,13 @@ SUITE(Vector3)
         CHECK_EQUAL(3, Woden::Math::Vector3(1, 2, 3).z);
     }
 
+    TEST(Dot)
+    {
+        auto v1 = Woden::Math::Vector3(1, 2, 3);
+        auto v2 = Woden::Math::Vector3(4, 5, 6);
+        CHECK_EQUAL(4+10+18, v1.dot(v2));
+    }
+
     TEST(Addition)
     {
         auto v1 = Woden::Math::Vector3(1, 2, 3);

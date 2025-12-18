@@ -31,6 +31,15 @@ public:
         return x*o.x + y*o.y + z*o.z;
     }
 
+    Vector3 cross(const Vector3 &o) const
+    {
+        return Vector3(
+            y*o.z - z*o.y,
+            z*o.x - x*o.z,
+            x*o.y - y*o.x 
+        );
+    }
+
     Vector3 operator+(const Vector3 &o) const
     {
         return Vector3(x + o.x, y + o.y, z + o.z);

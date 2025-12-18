@@ -2,6 +2,7 @@
 #define WODEN_MATH_VECTOR2_HPP
 
 #include "Scalar.hpp"
+#include <ostream>
 
 namespace Woden
 {
@@ -31,6 +32,11 @@ public:
         return x*o.x + y*o.y;
     }
 
+    Scalar cross(const Vector2 &o) const
+    {
+        return x*o.y - y*o.x;
+    }
+
     Vector2 operator+(const Vector2 &o) const
     {
         return Vector2(x + o.x, y + o.y);
@@ -49,6 +55,12 @@ public:
     Vector2 operator/(const Vector2 &o) const
     {
         return Vector2(x / o.x, y / o.y);
+    }
+
+    friend std::ostream &operator<<(std::ostream &out, const Vector2 &vector)
+    {
+        out << "Vector2(" << vector.x << ", " << vector.y << ")";
+        return out;
     }
 
     Scalar x, y;

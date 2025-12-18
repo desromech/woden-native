@@ -59,6 +59,22 @@ public:
         return Matrix2x2(0, 0, 0, 0);
     }
 
+    static Matrix2x2 ColumnMajorIndices()
+    {
+        return Matrix2x2(
+            0, 2,
+            1, 3
+        );
+    }
+
+    static Matrix2x2 RowMajorIndices()
+    {
+        return Matrix2x2(
+            0, 1,
+            2, 3
+        );
+    }
+
     Scalar determinant() const
     {
         return m11*m22 - m21*m12;
@@ -71,6 +87,26 @@ public:
             m22 / det, -m12 / det,
             -m21 / det, m11 / det
         );
+    }
+
+    Matrix2x2 transpose() const
+    {
+        return Matrix2x2(
+            m11, m21,
+            m12, m22
+        );
+    }
+
+    bool operator==(const Matrix2x2 &o) const
+    {
+        return
+            m11 == o.m11 && m12 == o.m12 &&
+            m21 == o.m21 && m22 == o.m22;
+    }
+
+    bool operator!=(const Matrix2x2 &o) const
+    {
+        return !(*this == o);
     }
 
     Matrix2x2 operator+(const Matrix2x2 &o) const
@@ -109,6 +145,14 @@ public:
         return Vector2(m21, m22);
     }
 
+    friend Matrix2x2 operator*(const Matrix2x2 &a, const Matrix2x2 &b)
+    {
+        return Matrix2x2(
+            a.m11*b.m11 + a.m12*b.m21, a.m11*b.m12 + a.m12*b.m22,
+            a.m21*b.m11 + a.m22*b.m21, a.m21*b.m12 + a.m22*b.m22
+        );
+    }
+
     friend Vector2 operator*(const Matrix2x2 &m, const Vector2 &v)
     {
         return m.firstColumn()*v.x + m.secondColumn()*v.y;
@@ -120,6 +164,15 @@ public:
             m.firstColumn().dot(v),
             m.secondColumn().dot(v)
         );
+    }
+
+    friend std::ostream &operator<<(std::ostream &out, const Matrix2x2 &m)
+    {
+        out << "Matrix2x2(\n"
+            << m.m11 << "," << m.m12 << "\n"
+            << m.m21 << "," << m.m22 << "\n"
+        ")";
+        return out;
     }
 
     Scalar m11, m12;

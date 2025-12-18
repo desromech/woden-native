@@ -15,6 +15,20 @@ SUITE(Vector2)
         CHECK_EQUAL(2, Woden::Math::Vector2(1, 2).y);
     }
 
+    TEST(Cross)
+    {
+        auto v1 = Woden::Math::Vector2(1, 2);
+        auto v2 = Woden::Math::Vector2(3, 7);
+        CHECK_EQUAL(1, v1.cross(v2));
+    }
+
+    TEST(Dot)
+    {
+        auto v1 = Woden::Math::Vector2(1, 2);
+        auto v2 = Woden::Math::Vector2(3, 7);
+        CHECK_EQUAL(17, v1.dot(v2));
+    }
+
     TEST(Addition)
     {
         auto v1 = Woden::Math::Vector2(1, 2);

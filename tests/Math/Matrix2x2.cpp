@@ -42,4 +42,10 @@ SUITE(Matrix2x2)
         CHECK_EQUAL(-2, Woden::Math::Matrix2x2(1, 2, 3, 4).determinant());
     }
 
+    TEST(Transpose)
+    {
+        CHECK_EQUAL(Woden::Math::Matrix2x2::ColumnMajorIndices(), Woden::Math::Matrix2x2::ColumnMajorIndices().transpose().transpose());
+        CHECK_EQUAL(Woden::Math::Matrix2x2::RowMajorIndices(), Woden::Math::Matrix2x2::ColumnMajorIndices().transpose());
+    }
+
 }
