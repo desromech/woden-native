@@ -76,6 +76,11 @@ public:
     Scalar x, y;
 };
 
+inline bool closeTo(const Vector2 &a, const Vector2 &b)
+{
+    return closeTo(a.x, b.x) && closeTo(a.y, b.y);
+}
+
 }    
 }
 

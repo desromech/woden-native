@@ -179,10 +179,10 @@ public:
     Scalar m21, m22;
 };
 
-inline Matrix2x2 closeTo(Matrix2x2 a, Matrix2x2 b)
+inline bool closeTo(const Matrix2x2 &a, const Matrix2x2 &b)
 {
     return
-        closeTo(a.m11, b.m11) && closeTo(a.m12, b.m12),
+        closeTo(a.m11, b.m11) && closeTo(a.m12, b.m12) &&
         closeTo(a.m21, b.m21) && closeTo(a.m22, b.m22);
 }
 

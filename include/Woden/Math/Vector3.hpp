@@ -40,6 +40,16 @@ public:
         );
     }
 
+    bool operator==(const Vector3 &o) const
+    {
+        return x == o.x && y == o.y;
+    }
+
+    bool operator!=(const Vector3 &o) const
+    {
+        return !(*this == o);
+    }
+
     Vector3 operator+(const Vector3 &o) const
     {
         return Vector3(x + o.x, y + o.y, z + o.z);
@@ -58,6 +68,12 @@ public:
     Vector3 operator/(const Vector3 &o) const
     {
         return Vector3(x / o.x, y / o.y, z / o.z);
+    }
+
+    friend std::ostream &operator<<(std::ostream &out, const Vector3 &vector)
+    {
+        out << "Vector3(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
+        return out;
     }
 
     Scalar x, y, z;
