@@ -1,6 +1,8 @@
 #ifndef WODEN_MATH_SCALAR_HPP
 #define WODEN_MATH_SCALAR_HPP
 
+#include <math.h>
+
 namespace Woden
 {
 namespace Math
@@ -21,7 +23,7 @@ T mix(const T&a, const T&b, Scalar alpha)
     return a*(1 - alpha) + b*alpha;
 }
 
-inline Scalar closeTo(Scalar a, Scalar b)
+inline bool closeTo(Scalar a, Scalar b)
 {
     float delta = a - b;
     return -CloseToEpsilon <= delta && delta <= CloseToEpsilon;
@@ -34,6 +36,21 @@ inline Scalar sign(Scalar v)
     else if (v > 0)
         return 1;
     return 0;
+}
+
+inline Scalar sqrt(Scalar angle)
+{
+    return ::sqrt(angle);
+}
+
+inline Scalar cos(Scalar angle)
+{
+    return ::cos(angle);
+}
+
+inline Scalar sin(Scalar angle)
+{
+    return ::sin(angle);
 }
 
 }    

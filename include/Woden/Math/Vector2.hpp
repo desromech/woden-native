@@ -26,6 +26,11 @@ public:
         return Vector2(Woden::Math::abs(x), Woden::Math::abs(y));
     }
 
+    Scalar dot(const Vector2 &o) const
+    {
+        return x*o.x + y*o.y;
+    }
+
     Vector2 operator+(const Vector2 &o) const
     {
         return Vector2(x + o.x, y + o.y);
