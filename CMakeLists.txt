@@ -9,6 +9,9 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
 	set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Choose the type of build, options are: None (CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif ()
 
+## Enable testing
+include(CTest)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Special checks for Emscripten
