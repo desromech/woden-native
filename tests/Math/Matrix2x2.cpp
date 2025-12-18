@@ -48,4 +48,29 @@ SUITE(Matrix2x2)
         CHECK_EQUAL(Woden::Math::Matrix2x2::RowMajorIndices(), Woden::Math::Matrix2x2::ColumnMajorIndices().transpose());
     }   
 
+    TEST(Identity)
+    {
+        CHECK_EQUAL(Woden::Math::Vector2(1, 2), Woden::Math::Matrix2x2::Identity() * Woden::Math::Vector2(1, 2));
+        CHECK_EQUAL(Woden::Math::Vector2(1, 2), Woden::Math::Vector2(1, 2) * Woden::Math::Matrix2x2::Identity());
+    }
+
+    TEST(Inverse)
+    {
+        CHECK_EQUAL(Woden::Math::Matrix2x2::Identity(), Woden::Math::Matrix2x2::Identity().inverse());
+        CHECK_EQUAL(Woden::Math::Matrix2x2(-1.5, 0.5, 1, 0), Woden::Math::Matrix2x2(0, 1, 2, 3).inverse());
+        CHECK_EQUAL(Woden::Math::Matrix2x2::Identity(), Woden::Math::Matrix2x2(-1.5, 0.5, 1, 0)*Woden::Math::Matrix2x2(0, 1, 2, 3));
+        CHECK_EQUAL(Woden::Math::Matrix2x2::Identity(), Woden::Math::Matrix2x2(0, 1, 2, 3)*Woden::Math::Matrix2x2(-1.5, 0.5, 1, 0));
+    }
+
+    TEST(Scale)
+    {
+        CHECK_EQUAL(Woden::Math::Vector2(2, 4), Woden::Math::Matrix2x2(2) * Woden::Math::Vector2(1, 2));
+        CHECK_EQUAL(Woden::Math::Vector2(2, 4), Woden::Math::Vector2(1, 2) * Woden::Math::Matrix2x2(2));
+    }   
+
+    TEST(RowAndColumnMajor)
+    {
+        CHECK_EQUAL(Woden::Math::Matrix2x2(1, 3, 3, 13), Woden::Math::Matrix2x2::RowMajorIndices()*Woden::Math::Matrix2x2::ColumnMajorIndices());
+        CHECK_EQUAL(Woden::Math::Matrix2x2(4, 6, 6, 10), Woden::Math::Matrix2x2::ColumnMajorIndices()*Woden::Math::Matrix2x2::RowMajorIndices());
+    } 
 }

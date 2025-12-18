@@ -37,6 +37,16 @@ public:
         return x*o.y - y*o.x;
     }
 
+    bool operator==(const Vector2 &o) const
+    {
+        return x == o.x && y == o.y;
+    }
+
+    bool operator!=(const Vector2 &o) const
+    {
+        return !(*this == o);
+    }
+
     Vector2 operator+(const Vector2 &o) const
     {
         return Vector2(x + o.x, y + o.y);
