@@ -15,3 +15,10 @@ add_executable(WodenTests ${WodenTests_Sources})
 target_link_libraries(WodenTests WodenEngine UnitTest++)
 
 add_test(NAME WodenTests COMMAND WodenTests)
+
+set(WodenRayCastingImage_Sources
+    RayCastingImage/Main.cpp
+)
+add_executable(WodenRayCastingImage ${WodenRayCastingImage_Sources})
+target_link_libraries(WodenRayCastingImage WodenEngine)
+

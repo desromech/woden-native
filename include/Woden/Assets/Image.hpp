@@ -4,6 +4,7 @@
 #include "PixelFormat.hpp"
 
 #include <stdint.h>
+#include <string>
 #include <memory>
 #include <vector>
 
@@ -23,6 +24,8 @@ public:
     PixelFormat format = PixelFormat::None;
 
     std::vector<uint8_t> pixels;
+
+    bool saveToTGA(const std::string &filename);
 };
 
 }// End of namespace Assets
