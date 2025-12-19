@@ -25,6 +25,19 @@ public:
 
     std::vector<uint8_t> pixels;
 
+    template<typename FT>
+    void renderPixels32(FT &&renderFunction)
+    {
+        auto destinationRow = pixels.data();
+        for(uint32_t y = 0; y < height; ++y)
+        {
+            auto currentRow = reinterpret_cast<uint32_t*> (destinationRow);
+            for(uint32_t x = 0; x < width; ++x)
+                currentRow[x] = renderFunction(x, y, width, height);
+            destinationRow += pitch;
+        }
+    }
+
     bool saveToTGA(const std::string &filename);
 };
 
