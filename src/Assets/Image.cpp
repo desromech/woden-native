@@ -6,7 +6,14 @@ namespace Woden
 namespace Assets
 {
 
-struct __attribute__((packed)) TGAHeader
+#ifdef _WIN32
+#define PACKED
+#pragma pack(push, 1)
+#else
+#define PACKED __attribute__((packed))
+#endif
+
+struct PACKED TGAHeader
 {
     uint8_t idLength;
     uint8_t colorMapType;
@@ -23,6 +30,11 @@ struct __attribute__((packed)) TGAHeader
     uint8_t pixelDepth;
     uint8_t imageDescriptor;
 };
+
+#ifdef _WIN32
+#define PACKED
+#pragma pack(pop)
+#endif
 
 bool Image::saveToTGA(const std::string &filename)
 {

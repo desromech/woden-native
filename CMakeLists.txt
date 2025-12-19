@@ -26,10 +26,10 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/dist")
 set(WodenEngine_DATA_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/dist/data")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
 
-# Turn warnings and use C++ 2011.
+# Turn warnings and use C++ 2017.
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 	# using Visual Studio C++
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /std:c++17")
 else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++17")
 	if(UNIX)
@@ -50,22 +50,10 @@ include(${CMAKE_ROOT}/Modules/CheckLibraryExists.cmake)
 set(EXECUTABLE_OUTPUT_PATH "${WodenEngine_BINARY_DIR}/dist")
 set(LIBRARY_OUTPUT_PATH "${WodenEngine_BINARY_DIR}/dist")
 
-# Use pkg-config.
-find_package(PkgConfig)
-if(PKG_CONFIG_FOUND AND NOT ON_EMSCRIPTEN)
-    # Find SDL2
-    pkg_check_modules(SDL2 REQUIRED sdl2)
-    include_directories(${SDL2_INCLUDE_DIRS})
+if(WIN32)
+    set(SDL2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/thirdparty/SDL2-2.30.8/include")
+    include_directories("${SDL2_INCLUDE_DIR}")
 
-    # SDL template dependencies libraries
-    set(WodenEngine_DEP_LIBS ${SDL2_LIBRARIES} ${WodenEngine_DEP_LIBS})
-elseif(ON_EMSCRIPTEN)
-    # Use SDL2 port instead of SDL1
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -Wno-warn-absolute-paths")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s USE_SDL=2 -Wno-warn-absolute-paths")
-
-    set(SDL2_LIBRARIES)
-    set(WodenEngine_DEP_LIBS ${SDL2_LIBRARIES} ${WodenEngine_DEP_LIBS})
 else()
     # For VisualStudio or mingw in Window
     find_path(SDL2_INCLUDE_DIR
@@ -78,20 +66,13 @@ else()
     )
 
     find_library(SDL2_LIBRARY NAMES SDL2 PATHS ${SDL2_LIBRARY_PATH})
-    if(WIN32)
-	find_library(SDL2_MAIN_LIBRARY NAMES SDL2main PATHS ${SDL2_LIBRARY_PATH})
-    else()
 	set(SDL2_MAIN_LIBRARY "")
-    endif()
     
     set(WodenEngine_DEP_LIBS ${WodenEngine_DEP_LIBS} ${SDL2_MAIN_LIBRARY} ${SDL2_LIBRARY})
-    if(MINGW)
-        set(WodenEngine_DEP_LIBS mingw32 ${WodenEngine_DEP_LIBS})
-	add_definitions(-D__NO_INLINE__)
-    endif()
     
     include_directories("${SDL2_INCLUDE_DIR}")
 endif()
+
 
 # Add the current directory.
 include_directories(
