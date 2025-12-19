@@ -25,6 +25,11 @@ SUITE(Vector3)
         CHECK_EQUAL(4+10+18, v1.dot(v2));
     }
 
+    TEST(Negation)
+    {
+        CHECK_EQUAL(Woden::Math::Vector3(-1, -2, -3), - Woden::Math::Vector3(1, 2, 3));
+    }
+
     TEST(Addition)
     {
         auto v1 = Woden::Math::Vector3(1, 2, 3);

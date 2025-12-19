@@ -8,6 +8,14 @@ SUITE(Ray3D)
         CHECK(Woden::Math::AABox().isEmpty());
     }
 
+    TEST(WithHalfExtent)
+    {
+        auto box = Woden::Math::AABox::WithHalfExtent(Woden::Math::Vector3(1, 2, 3));
+        CHECK_EQUAL(Woden::Math::Vector3(-1, -2, -3), box.minCorner);
+        CHECK_EQUAL(Woden::Math::Vector3(1, 2, 3), box.maxCorner);
+
+    }
+
     TEST(InsertSinglePoint)
     {
         auto box = Woden::Math::AABox();

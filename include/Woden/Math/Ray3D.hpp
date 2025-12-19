@@ -2,6 +2,7 @@
 #define WODEN_MATH_RAY3D_HPP
 
 #include "Vector3.hpp"
+#include <vector>
 
 namespace Woden
 {
@@ -43,7 +44,18 @@ public:
     Scalar tmin, tmax;
 };
 
-}
-}
+struct RayCastingResult
+{
+    Ray3D ray;
+    std::vector<Scalar> intersectionPoints;
+
+    bool isEmpty() const
+    {
+        return intersectionPoints.empty();
+    }
+};
+
+} // End of namespace Math
+} // End of namespace Woden
 
 #endif //WODEN_MATH_RAY3D_HPP

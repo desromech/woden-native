@@ -83,6 +83,16 @@ public:
         return !(*this == o);
     }
 
+    Vector3 operator+() const
+    {
+        return *this;
+    }
+
+    Vector3 operator-() const
+    {
+        return Vector3(-x, -y, -z);
+    }
+
     Vector3 operator+(const Vector3 &o) const
     {
         return Vector3(x + o.x, y + o.y, z + o.z);

@@ -23,6 +23,11 @@ public:
     {
     }
 
+    static AABox WithHalfExtent(const Vector3 &halfExtent)
+    {
+        return AABox(-halfExtent, halfExtent);
+    }
+
     bool isEmpty() const
     {
         return minCorner.x > maxCorner.x;
@@ -33,6 +38,44 @@ public:
         minCorner = min(minCorner, point);
         maxCorner = max(maxCorner, point);
     }
+
+    RayCastingResult intersectionsWithRay(const Ray3D &ray)
+    {
+        // Slab testing algorithm from: A Ray-Box Intersection Algorithm andEfficient Dynamic Voxel Rendering. By Majercik et al
+        auto t0 = (minCorner - ray.origin)*ray.inverseDirection;
+        auto t1 = (maxCorner - ray.origin)*ray.inverseDirection;
+
+        auto tmin = min(t0, t1);
+        auto tmax = max(t0, t1);
+
+        auto maxTMin = max(max(max(tmin.x, tmin.y), tmin.z), ray.tmin);
+        auto minTMax = min(min(min(tmax.x, tmax.y), tmax.z), ray.tmax);
+
+        RayCastingResult result;
+        auto hasIntersection = maxTMin <= minTMax;
+        if(hasIntersection)
+        {
+            result.intersectionPoints.reserve(2);
+            result.intersectionPoints.push_back(min(maxTMin, minTMax));
+            result.intersectionPoints.push_back(max(maxTMin, minTMax));
+        }
+
+        return result;
+
+        /*
+        	
+        | t0 t1 tmin tmax maxTMin minTMax hasIntersection |
+        maxTMin := ((tmin x max: tmin y) max: tmin z) max: ray tmin.
+        minTMax := ((tmax x min: tmax y) min: tmax z) min: ray tmax.
+
+        hasIntersection := maxTMin <= minTMax.
+        hasIntersection ifFalse: [ ^ nil ].
+
+        ^ {maxTMin min: minTMax. maxTMin max: minTMax}
+        */
+
+    }
+
 
     Vector3 minCorner;
     Vector3 maxCorner;
