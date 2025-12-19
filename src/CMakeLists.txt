@@ -1,5 +1,5 @@
 set(WodenEngine_Sources
-    Renderer.cpp
+    Assets/Image.cpp
 )
 
 add_library(WodenEngine ${WodenEngine_Sources})
