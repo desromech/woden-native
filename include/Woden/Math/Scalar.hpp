@@ -11,6 +11,9 @@ namespace Math
 typedef float Scalar;
 
 const Scalar CloseToEpsilon = 1.0e-6;
+const Scalar ScalarPositiveInfinity = INFINITY;
+const Scalar ScalarNegativeInfinity = -INFINITY;
+
 
 inline Scalar abs(Scalar x)
 {
@@ -51,6 +54,16 @@ inline Scalar cos(Scalar angle)
 inline Scalar sin(Scalar angle)
 {
     return ::sin(angle);
+}
+
+inline Scalar min(Scalar a, Scalar b)
+{
+    return a < b ? a : b;
+}
+
+inline Scalar max(Scalar a, Scalar b)
+{
+    return a < b ? b : a;
 }
 
 }    

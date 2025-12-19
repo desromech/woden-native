@@ -31,6 +31,24 @@ public:
         return x*o.x + y*o.y + z*o.z + w*o.w;
     }
 
+    Scalar length2() const
+    {
+        return dot(*this);
+    }
+
+    Scalar length() const
+    {
+        return sqrt(length2());
+    }
+
+    Vector4 normalized() const
+    {
+        auto l = length();
+        if(l <= 0)
+            return Vector4(0);
+        return Vector4(x / l, y / l, z / l, w/l);
+    }
+
     Vector4 operator+(const Vector4 &o) const
     {
         return Vector4(x + o.x, y + o.y, z + o.z, w + o.w);

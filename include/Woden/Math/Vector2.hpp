@@ -37,6 +37,24 @@ public:
         return x*o.y - y*o.x;
     }
 
+    Scalar length2() const
+    {
+        return dot(*this);
+    }
+
+    Scalar length() const
+    {
+        return sqrt(length2());
+    }
+
+    Vector2 normalized() const
+    {
+        auto l = length();
+        if(l <= 0)
+            return Vector2(0);
+        return Vector2(x / l, y / l);
+    }
+    
     bool operator==(const Vector2 &o) const
     {
         return x == o.x && y == o.y;

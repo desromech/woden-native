@@ -21,6 +21,16 @@ public:
     {
     }
 
+    static Vector3 PositiveInfinity()
+    {
+        return Vector3(ScalarPositiveInfinity);
+    }
+
+    static Vector3 NegativeInfinity()
+    {
+        return Vector3(ScalarNegativeInfinity);
+    }
+
     Vector3 abs() const
     {
         return Vector3(Woden::Math::abs(x), Woden::Math::abs(y), Woden::Math::abs(z));
@@ -38,6 +48,29 @@ public:
             z*o.x - x*o.z,
             x*o.y - y*o.x 
         );
+    }
+
+    Scalar length2() const
+    {
+        return dot(*this);
+    }
+
+    Scalar length() const
+    {
+        return sqrt(length2());
+    }
+
+    Vector3 normalized() const
+    {
+        auto l = length();
+        if(l <= 0)
+            return Vector3(0);
+        return Vector3(x / l, y / l, z / l);
+    }
+
+    Vector3 reciprocal() const
+    {
+        return Vector3(1/x, 1/y, 1/z);
     }
 
     bool operator==(const Vector3 &o) const
@@ -78,6 +111,16 @@ public:
 
     Scalar x, y, z;
 };
+
+inline Vector3 min(Vector3 a, Vector3 b)
+{
+    return Vector3(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z));
+}
+
+inline Vector3 max(Vector3 a, Vector3 b)
+{
+    return Vector3(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z));
+}
 
 }    
 }

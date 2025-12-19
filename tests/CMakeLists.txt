@@ -1,7 +1,9 @@
 set(WodenTests_Sources
     Main.cpp
+    Math/AABox.cpp
     Math/Matrix2x2.cpp
     Math/Matrix3x3.cpp
+    Math/Ray3D.cpp
     Math/Scalar.cpp
     Math/Vector2.cpp
     Math/Vector3.cpp
