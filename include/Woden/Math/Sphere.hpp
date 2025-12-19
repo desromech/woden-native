@@ -8,7 +8,7 @@ namespace Woden
 namespace Math
 {
 /**
- * I am an axis aligned bounding box.
+ * I am a sphere
  */
 class Sphere
 {
