@@ -23,10 +23,19 @@ public:
     {
     }
 
-    RayCastingResult intersectionsWithRay(const Ray3D &ray)
+    static Sphere WithRadius(Scalar radius)
+    {
+        return Sphere(Vector3(0), radius);
+    }
+
+    Vector3 computeNormalForPoint(const Vector3 &point) const
+    {
+        return (point - center).normalized();
+    }
+
+    RayCastingResult intersectionsWithRay(const Ray3D &ray) const
     {
         // Ray sphere intersection formula from: https://viclw17.github.io/2018/07/16/raytracing-ray-sphere-intersection/
-        
         auto a = ray.direction.dot(ray.direction);
         auto b = 2*(ray.direction.dot(ray.origin - center));
         auto c = (ray.origin - center).length2() - (radius*radius);

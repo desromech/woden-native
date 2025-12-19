@@ -39,7 +39,37 @@ public:
         maxCorner = max(maxCorner, point);
     }
 
-    RayCastingResult intersectionsWithRay(const Ray3D &ray)
+    Vector3 halfExtent() const
+    {
+        return (maxCorner - minCorner)*Vector3(0.5);
+    }
+
+    Vector3 center() const
+    {
+        return minCorner + halfExtent();
+    }
+
+    Vector3 computeNormalForPoint(const Vector3 &point) const
+    {
+        auto delta = point - center();
+        auto deltaAbsolute = delta.abs() / halfExtent();
+        if(deltaAbsolute.x >= deltaAbsolute.y)
+        {
+            if(deltaAbsolute.x >= deltaAbsolute.z)
+                return Vector3(sign(delta.x), 0, 0);
+            else
+                return Vector3(0, 0, sign(delta.z));
+        }
+        else
+        {
+            if(deltaAbsolute.y >= deltaAbsolute.z)
+                return Vector3(0, sign(delta.y), 0);
+            else
+                return Vector3(0, 0, sign(delta.z));
+        }
+    }
+
+    RayCastingResult intersectionsWithRay(const Ray3D &ray) const
     {
         // Slab testing algorithm from: A Ray-Box Intersection Algorithm andEfficient Dynamic Voxel Rendering. By Majercik et al
         auto t0 = (minCorner - ray.origin)*ray.inverseDirection;
