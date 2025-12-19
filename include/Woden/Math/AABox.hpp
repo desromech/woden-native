@@ -62,19 +62,6 @@ public:
         }
 
         return result;
-
-        /*
-        	
-        | t0 t1 tmin tmax maxTMin minTMax hasIntersection |
-        maxTMin := ((tmin x max: tmin y) max: tmin z) max: ray tmin.
-        minTMax := ((tmax x min: tmax y) min: tmax z) min: ray tmax.
-
-        hasIntersection := maxTMin <= minTMax.
-        hasIntersection ifFalse: [ ^ nil ].
-
-        ^ {maxTMin min: minTMax. maxTMin max: minTMax}
-        */
-
     }
 
 
