@@ -52,6 +52,7 @@ public:
         auto minTMax = min(min(min(tmax.x, tmax.y), tmax.z), ray.tmax);
 
         RayCastingResult result;
+        result.ray = ray;
         auto hasIntersection = maxTMin <= minTMax;
         if(hasIntersection)
         {
