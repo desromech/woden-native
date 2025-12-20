@@ -56,6 +56,7 @@ int Morph::runMainLoop()
 SystemWindowPtr Morph::openInSystemWindow()
 {
     auto systemWindow = std::make_shared<SystemWindow> ();
+    systemWindow->bounds = Rectangle(Vector2(0, 0), bounds.extent());
     systemWindow->open();
 
     return systemWindow;
@@ -83,7 +84,7 @@ void SystemWindow::close()
 
 void SystemWindow::updateAndRender()
 {
-
+    //printf("TODO: update and render\n");
 }
 
 } // End of namespace Morphic
