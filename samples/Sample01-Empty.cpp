@@ -1,3 +1,8 @@
+#include "Woden/Morphic/Morph.hpp"
+
+using namespace Woden::Morphic;
+
+/*
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <stdio.h>
@@ -60,4 +65,15 @@ int main(int argc, const char *argv[])
 
     SDL_Quit();
     return 0;
+}
+*/
+
+int main(int argc, const char *argv[])
+{
+    (void)argc;
+    (void)argv;
+    
+    auto morph = std::make_shared<Morph> ();
+    morph->openInSystemWindow();
+    return Morph::runMainLoop();
 }

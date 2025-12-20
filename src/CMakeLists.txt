@@ -1,5 +1,7 @@
 set(WodenEngine_Sources
     Assets/Image.cpp
+    Morphic/Morph.cpp
+    Morphic/SystemWindow.cpp
     Physics/CollisionShape.cpp
 )
 

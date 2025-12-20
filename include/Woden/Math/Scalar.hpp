@@ -10,7 +10,7 @@ namespace Math
 
 typedef float Scalar;
 
-const Scalar CloseToEpsilon = 1.0e-6;
+const Scalar CloseToEpsilon = Scalar(1.0e-6);
 const Scalar ScalarPositiveInfinity = INFINITY;
 const Scalar ScalarNegativeInfinity = -INFINITY;
 
@@ -43,17 +43,17 @@ inline Scalar sign(Scalar v)
 
 inline Scalar sqrt(Scalar angle)
 {
-    return ::sqrt(angle);
+    return Scalar(::sqrt(angle));
 }
 
 inline Scalar cos(Scalar angle)
 {
-    return ::cos(angle);
+    return Scalar(::cos(angle));
 }
 
 inline Scalar sin(Scalar angle)
 {
-    return ::sin(angle);
+    return Scalar(::sin(angle));
 }
 
 inline Scalar min(Scalar a, Scalar b)

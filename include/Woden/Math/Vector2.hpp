@@ -22,6 +22,16 @@ public:
     {
     }
 
+    static Vector2 PositiveInfinity()
+    {
+        return Vector2(ScalarPositiveInfinity);
+    }
+
+    static Vector2 NegativeInfinity()
+    {
+        return Vector2(ScalarNegativeInfinity);
+    }
+
     Vector2 abs() const
     {
         return Vector2(Woden::Math::abs(x), Woden::Math::abs(y));
@@ -65,6 +75,16 @@ public:
         return !(*this == o);
     }
 
+    Vector2 operator+() const
+    {
+        return *this;
+    }
+
+    Vector2 operator-() const
+    {
+        return Vector2(-x, -y);
+    }
+    
     Vector2 operator+(const Vector2 &o) const
     {
         return Vector2(x + o.x, y + o.y);
@@ -97,6 +117,16 @@ public:
 inline bool closeTo(const Vector2 &a, const Vector2 &b)
 {
     return closeTo(a.x, b.x) && closeTo(a.y, b.y);
+}
+
+inline Vector2 min(Vector2 a, Vector2 b)
+{
+    return Vector2(min(a.x, b.x), min(a.y, b.y));
+}
+
+inline Vector2 max(Vector2 a, Vector2 b)
+{
+    return Vector2(max(a.x, b.x), max(a.y, b.y));
 }
 
 }    
