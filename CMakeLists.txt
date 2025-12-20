@@ -52,7 +52,9 @@ set(LIBRARY_OUTPUT_PATH "${WodenEngine_BINARY_DIR}/dist")
 
 if(WIN32)
     set(SDL2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/thirdparty/SDL2-2.30.8/include")
+    set(SDL2_LIBRARY "${PROJECT_SOURCE_DIR}/thirdparty/SDL2-2.30.8/lib/x64/SDL2.lib")
     include_directories("${SDL2_INCLUDE_DIR}")
+    set(WodenEngine_DEP_LIBS ${WodenEngine_DEP_LIBS} ${SDL2_LIBRARY})
 
 else()
     # For VisualStudio or mingw in Window
@@ -87,6 +89,9 @@ add_subdirectory(thirdparty)
 
 # Build the engine
 add_subdirectory(src)
+
+# Build the samples
+add_subdirectory(samples)
 
 # Build the tests
 add_subdirectory(tests)
