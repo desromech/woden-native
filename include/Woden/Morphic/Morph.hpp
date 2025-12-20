@@ -25,6 +25,26 @@ public:
     static int runMainLoop();
     SystemWindowPtr openInSystemWindow();
 
+    Vector2 getOrigin() const
+    {
+        return bounds.minCorner;
+    }
+
+    void setOrigin(const Vector2 &newOrigin)
+    {
+        bounds = Rectangle(newOrigin, newOrigin + bounds.extent());
+    }
+
+    Vector2 getExtent() const
+    {
+        return bounds.extent();
+    }
+
+    void setExtent(const Vector2 &newExtent)
+    {
+        bounds = Rectangle(bounds.minCorner, newExtent);
+    }
+
     MorphPtr owner;
     Rectangle bounds = Rectangle(Vector2(0, 0), Vector2(50, 40));
     Vector4 color = Vector4(0, 0, 1, 1);
