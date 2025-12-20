@@ -3,6 +3,7 @@
 
 #include "Woden/Math/Rectangle.hpp"
 #include "Woden/Math/Vector4.hpp"
+#include <assert.h>
 #include <memory>
 #include <vector>
 
@@ -13,6 +14,7 @@ namespace Morphic
 using namespace Woden::Math;
 
 typedef std::shared_ptr<class Morph> MorphPtr;
+typedef std::weak_ptr<class Morph> MorphWeakPtr;
 typedef std::shared_ptr<class SystemWindow> SystemWindowPtr;
 
 /**
@@ -45,7 +47,14 @@ public:
         bounds = Rectangle(bounds.minCorner, newExtent);
     }
 
-    MorphPtr owner;
+    void addSubmorph(const MorphPtr &morph)
+    {
+        assert(!morph->owner.lock());
+        morph->owner = shared_from_this();
+        submorphs.push_back(morph);
+    }
+
+    MorphWeakPtr owner;
     Rectangle bounds = Rectangle(Vector2(0, 0), Vector2(50, 40));
     Vector4 color = Vector4(0, 0, 1, 1);
     std::vector<MorphPtr> submorphs;
