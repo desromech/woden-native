@@ -115,6 +115,9 @@ bool RenderingContext::initialize(int argc, const char *argv[])
     if(!createPipelineStates())
         return false;
 
+    if(!loadFonts())
+        return false;
+
     return true;
 }
 
@@ -275,6 +278,27 @@ bool RenderingContext::createPipelineStates()
         }
 
     }
+
+    return true;
+}
+
+bool RenderingContext::loadFonts()
+{
+    defaultFont = Assets::Font::loadFromFile("assets/fonts/DejaVuSans.ttf");
+    if(!defaultFont)
+    {
+        fprintf(stderr, "Failed to load the default font.");
+        return false;
+    }
+    defaultFontFace = defaultFont->getOrCreateFaceWithHeight(12);
+
+    defaultMonospacedFont = Assets::Font::loadFromFile("assets/fonts/DejaVuSansMono.ttf");
+    if(!defaultMonospacedFont)
+    {
+        fprintf(stderr, "Failed to load the default monospaced font.");
+        return false;
+    }
+    defaultMonospacedFontFace = defaultMonospacedFont->getOrCreateFaceWithHeight(12);
 
     return true;
 }

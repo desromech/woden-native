@@ -1,6 +1,7 @@
 #ifndef WODEN_RENDERING_CONTEXT_HPP
 #define WODEN_RENDERING_CONTEXT_HPP
 
+#include "Woden/Assets/Font.hpp"
 #include "AGPU/agpu.hpp"
 #include <memory>
 
@@ -42,7 +43,14 @@ public:
 
     agpu_shader_ref compileShader(const std::string &sharedCommon, const std::string &shaderFileName, agpu_shader_type type);
 
+    Assets::FontPtr defaultFont;
+    Assets::FontFacePtr defaultFontFace;
+
+    Assets::FontPtr defaultMonospacedFont;
+    Assets::FontFacePtr defaultMonospacedFontFace;
+
 private:
+    bool loadFonts();
     bool createPipelineStates();
 
     static RenderingContextPtr mainContext;
