@@ -2,7 +2,7 @@
 #define WODEN_ASSETS_IMAGE_HPP
 
 #include "PixelFormat.hpp"
-
+#include "AGPU/agpu.hpp"
 #include <stdint.h>
 #include <string>
 #include <memory>
@@ -39,6 +39,12 @@ public:
     }
 
     bool saveToTGA(const std::string &filename);
+
+    agpu_texture_ref getValidTextureHandle();
+    agpu_shader_resource_binding_ref getValidGuiTextureBinding();
+
+    agpu_texture_ref textureHandle;
+    agpu_shader_resource_binding_ref guiTextureBinding;
 };
 
 }// End of namespace Assets

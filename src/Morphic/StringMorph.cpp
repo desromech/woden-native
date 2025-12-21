@@ -13,7 +13,7 @@ StringMorph::StringMorph()
 
 void StringMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
 {
-    //renderer->fillRectangleWithColor(getLocalBounds(), color);
+    renderer->drawTextInRectangleWithColor(getLocalBounds(), label, color);
 }
 
 } // End of namespace Morphic

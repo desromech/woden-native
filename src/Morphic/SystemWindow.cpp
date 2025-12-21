@@ -208,14 +208,10 @@ void SystemWindow::swapBuffers()
     catch(agpu_exception &e)
     {
         auto errorCode = e.getErrorCode();
-        if(errorCode == AGPU_OUT_OF_DATE)
+        if(errorCode == AGPU_OUT_OF_DATE || errorCode == AGPU_SUBOPTIMAL)
         {
             // We must recreate the swap chain.
             recreateSwapChain();
-        }
-        else if(errorCode == AGPU_SUBOPTIMAL)
-        {
-            // Ignore this case.
         }
         else
         {
@@ -239,6 +235,8 @@ void SystemWindow::recreateSwapChain()
 
     windowWidth = swapChain->getWidth();
     windowHeight = swapChain->getHeight();
+
+    bounds = Rectangle(Vector2(0, 0), Vector2(windowWidth, windowHeight));
 }
 
 } // End of namespace Morphic

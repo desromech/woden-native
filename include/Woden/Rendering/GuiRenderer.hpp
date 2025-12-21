@@ -1,6 +1,7 @@
 #ifndef WODEN_GUI_RENDERER_HPP
 #define WODEN_GUI_RENDERER_HPP
 
+#include "Woden/Assets/Font.hpp"
 #include "Woden/Math/Rectangle.hpp"
 #include "Woden/Math/Vector4.hpp"
 #include "Woden/Rendering/GuiElement.hpp"
@@ -21,6 +22,12 @@ public:
     void reset();
 
     void addGuiElement(const GuiElement &element);
+    void addGuiElementWithImage(const GuiElement &element, const Assets::ImagePtr &image);
+
+    Math::Vector2 drawTextWithFaceAndColor(const Math::Vector2 &initialBaseline, const char *text, size_t textSize, const Assets::FontFacePtr &fontFace, const Math::Vector4 &color);
+    Math::Vector2 drawTextInRectangleWithColor(const Math::Rectangle &rectangle, const std::string &text, const Math::Vector4 &color);
+    Math::Vector2 drawTextWithColor(const Math::Vector2 &initialBaseline, const std::string &text, const Math::Vector4 &color);
+
     void fillRectangleWithColor(const Math::Rectangle &rectangle, const Math::Vector4 &color);
 
     void uploadDataWithCommandList(const agpu_command_list_ref &commandList);
@@ -30,6 +37,7 @@ public:
 
     agpu_buffer_ref guiElementsBuffer;
     agpu_shader_resource_binding_ref guiElementsBinding;
+    agpu_shader_resource_binding_ref currentTextureBinding;
     Math::Vector2 framebufferExtent;
 
 };

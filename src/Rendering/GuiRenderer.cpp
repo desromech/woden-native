@@ -1,5 +1,6 @@
 #include "Woden/Rendering/GuiRenderer.hpp"
 #include "Woden/Rendering/Context.hpp"
+#include "Woden/Assets/Image.hpp"
 
 namespace Woden
 {
@@ -41,6 +42,57 @@ void GUIRenderer::addGuiElement(const GuiElement &element)
     guiElements.push_back(element);
 }
 
+void GUIRenderer::addGuiElementWithImage(const GuiElement &element, const Assets::ImagePtr &image)
+{
+    currentTextureBinding = image->getValidGuiTextureBinding();
+    addGuiElement(element);
+}
+
+Math::Vector2 GUIRenderer::drawTextWithFaceAndColor(const Math::Vector2 &initialBaseline, const char *text, size_t textSize, const Assets::FontFacePtr &fontFace, const Math::Vector4 &color)
+{
+    auto currentBaseline = initialBaseline;
+    // TODO: Decode UTF8
+    for(size_t i = 0; i < textSize; ++i)
+    {
+        auto c = text[i];
+        if(c < ' ')
+            continue;
+
+        stbtt_aligned_quad quadToDraw = {0};
+        stbtt_GetBakedQuad(fontFace->bakedChars.data(), fontFace->image->width, fontFace->image->height, c - 31, &currentBaseline.x, &currentBaseline.y, &quadToDraw, true);
+
+        GuiElement quad = {};
+        quad.type = GuiElementType::TextCharacter;
+
+        quad.rectangleMin.x = quadToDraw.x0;
+        quad.rectangleMin.y = quadToDraw.y0;
+        quad.rectangleMax.x = quadToDraw.x1;
+        quad.rectangleMax.y = quadToDraw.y1;
+
+        quad.sourceImageRectangleMin.x = quadToDraw.s0;
+        quad.sourceImageRectangleMin.y = quadToDraw.t0;
+        quad.sourceImageRectangleMax.x = quadToDraw.s1;
+        quad.sourceImageRectangleMax.y = quadToDraw.t1;
+
+        quad.firstColor = color;
+        addGuiElementWithImage(quad, fontFace->image);
+    }
+
+    return currentBaseline;
+}
+
+Math::Vector2 GUIRenderer::drawTextInRectangleWithColor(const Math::Rectangle &rectangle, const std::string &text, const Math::Vector4 &color)
+{
+    auto fontFace = RenderingContext::getMainContext()->defaultFontFace;
+    auto initialBaseline = Math::Vector2(rectangle.minCorner.x, rectangle.minCorner.y + fontFace->ascent);
+    return drawTextWithFaceAndColor(initialBaseline, text.data(), text.size(), fontFace, color);
+}
+
+Math::Vector2 GUIRenderer::drawTextWithColor(const Math::Vector2 &initialBaseline, const std::string &text, const Math::Vector4 &color)
+{
+    return drawTextWithFaceAndColor(initialBaseline, text.data(), text.size(), RenderingContext::getMainContext()->defaultFontFace, color);
+}
+
 void GUIRenderer::fillRectangleWithColor(const Math::Rectangle &rectangle, const Math::Vector4 &color)
 {
     GuiElement element = {};
@@ -73,7 +125,7 @@ void GUIRenderer::drawOnCommandList(const agpu_command_list_ref &commandList)
     commandList->usePipelineState(renderingContext->guiPipelineState);
     commandList->useShaderResources(renderingContext->guiSamplerBindings);
     commandList->useShaderResources(guiElementsBinding);
-    commandList->useShaderResources(renderingContext->guiEmptyTextureBinding);
+    commandList->useShaderResources(currentTextureBinding);
     commandList->pushConstants(0, sizeof(pushConstants), &pushConstants);
     commandList->drawArrays(4, guiElements.size(), 0, 0);
 }
@@ -81,6 +133,7 @@ void GUIRenderer::drawOnCommandList(const agpu_command_list_ref &commandList)
 void GUIRenderer::reset()
 {
     guiElements.clear();
+    currentTextureBinding = RenderingContext::getMainContext()->guiEmptyTextureBinding;
 }
 
 } // End of namespace Rendering

@@ -290,7 +290,7 @@ bool RenderingContext::loadFonts()
         fprintf(stderr, "Failed to load the default font.");
         return false;
     }
-    defaultFontFace = defaultFont->getOrCreateFaceWithHeight(12);
+    defaultFontFace = defaultFont->getOrCreateFaceWithHeight(16);
 
     defaultMonospacedFont = Assets::Font::loadFromFile("assets/fonts/DejaVuSansMono.ttf");
     if(!defaultMonospacedFont)
@@ -298,7 +298,7 @@ bool RenderingContext::loadFonts()
         fprintf(stderr, "Failed to load the default monospaced font.");
         return false;
     }
-    defaultMonospacedFontFace = defaultMonospacedFont->getOrCreateFaceWithHeight(12);
+    defaultMonospacedFontFace = defaultMonospacedFont->getOrCreateFaceWithHeight(16);
 
     return true;
 }
