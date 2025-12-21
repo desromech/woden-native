@@ -174,6 +174,78 @@ bool RenderingContext::createPipelineStates()
             return false;
     }
 
+    // GUI samplers
+    {
+        guiSamplerBindings = guiShaderSignature->createShaderResourceBinding(0);
+
+        {
+            agpu_sampler_description desc = {};
+            desc.address_u = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.address_v = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.address_w = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.filter = AGPU_FILTER_MIN_LINEAR_MAG_LINEAR_MIPMAP_NEAREST;
+            desc.max_lod = 32;
+
+            linearSampler = device->createSampler(&desc);
+            if(!linearSampler)
+            {
+                fprintf(stderr, "Failed to create linear sampler.\n");
+                return false;
+            }
+
+            guiSamplerBindings->bindSampler(0, linearSampler);
+        }
+
+            {
+            agpu_sampler_description desc = {};
+            desc.address_u = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.address_v = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.address_w = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.filter = AGPU_FILTER_MIN_NEAREST_MAG_NEAREST_MIPMAP_NEAREST;
+            desc.max_lod = 32;
+
+            nearestSampler = device->createSampler(&desc);
+            if(!nearestSampler)
+            {
+                fprintf(stderr, "Failed to create nearest sampler.\n");
+                return false;
+            }
+
+            guiSamplerBindings->bindSampler(1, nearestSampler);
+        }
+    }
+
+    // GUI empty texture
+    {
+        guiEmptyTextureBinding = guiShaderSignature->createShaderResourceBinding(2);
+
+        agpu_texture_description desc = {};
+        desc.type = AGPU_TEXTURE_2D;
+        desc.width = 1;
+        desc.height = 1;
+        desc.depth = 1;
+        desc.layers = 1;
+        desc.miplevels = 1;
+        desc.format = AGPU_TEXTURE_FORMAT_B8G8R8A8_UNORM;
+        desc.usage_modes = agpu_texture_usage_mode_mask(AGPU_TEXTURE_USAGE_COPY_DESTINATION | AGPU_TEXTURE_USAGE_SAMPLED);
+        desc.main_usage_mode = AGPU_TEXTURE_USAGE_SAMPLED;
+        desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
+        desc.sample_count = 1;
+        desc.sample_quality = 0;
+
+        whiteTexture = device->createTexture(&desc);
+        if(!whiteTexture)
+        {
+            fprintf(stderr, "Failed to load empty texture.\n");
+            return whiteTexture;
+        }
+        
+        uint32_t color = 0xffffffff;
+        whiteTexture->uploadTextureData(0, 0, 4, 4, &color);
+
+        guiEmptyTextureBinding->bindSampledTextureView(0, whiteTexture->getOrCreateFullView());
+    }
+
     // Create the GUI pipeline state
     {
         auto vertexShader = compileShader("assets/shaders/GuiShaderCommon.glsl", "assets/shaders/GuiVertexShader.glsl", AGPU_VERTEX_SHADER);

@@ -71,7 +71,9 @@ void GUIRenderer::drawOnCommandList(const agpu_command_list_ref &commandList)
     auto renderingContext = RenderingContext::getMainContext();
     commandList->setShaderSignature(renderingContext->guiShaderSignature);
     commandList->usePipelineState(renderingContext->guiPipelineState);
+    commandList->useShaderResources(renderingContext->guiSamplerBindings);
     commandList->useShaderResources(guiElementsBinding);
+    commandList->useShaderResources(renderingContext->guiEmptyTextureBinding);
     commandList->pushConstants(0, sizeof(pushConstants), &pushConstants);
     commandList->drawArrays(4, guiElements.size(), 0, 0);
 }

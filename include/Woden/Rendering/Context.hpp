@@ -33,6 +33,13 @@ public:
     agpu_shader_signature_ref guiShaderSignature;
     agpu_pipeline_state_ref guiPipelineState;
 
+    agpu_sampler_ref linearSampler;
+    agpu_sampler_ref nearestSampler;
+    agpu_shader_resource_binding_ref guiSamplerBindings;
+
+    agpu_texture_ref whiteTexture;
+    agpu_shader_resource_binding_ref guiEmptyTextureBinding;
+
     agpu_shader_ref compileShader(const std::string &sharedCommon, const std::string &shaderFileName, agpu_shader_type type);
 
 private:
