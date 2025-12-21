@@ -65,6 +65,11 @@ public:
         return Vector2(x / l, y / l);
     }
     
+    Vector2 reciprocal() const
+    {
+        return Vector2(1/x, 1/y);
+    }
+
     bool operator==(const Vector2 &o) const
     {
         return x == o.x && y == o.y;

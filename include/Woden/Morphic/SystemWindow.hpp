@@ -24,6 +24,9 @@ public:
     void swapBuffers();
     void recreateSwapChain();
 
+    virtual void fullDrawWith(const Rendering::GUIRendererPtr &renderer) override;
+
+
     SDL_Window *handle = nullptr;
     std::string title;
     int windowWidth = 640;
@@ -34,6 +37,8 @@ public:
     
     agpu_command_allocator_ref commandAllocator;
     agpu_command_list_ref commandList;
+
+    Rendering::GUIRendererPtr guiRenderer;
 };
 
 

@@ -1,5 +1,6 @@
 #include "Woden/Morphic/SystemWindow.hpp"
 #include "Woden/Rendering/Context.hpp"
+#include "Woden/Rendering/GuiRenderer.hpp"
 #include "SDL_syswm.h"
 #include <assert.h>
 #include <map>
@@ -137,12 +138,31 @@ void SystemWindow::open()
     commandAllocator = device->createCommandAllocator(AGPU_COMMAND_LIST_TYPE_DIRECT, commandQueue);
     commandList = device->createCommandList(AGPU_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr);
     commandList->close();
+
+    guiRenderer = std::make_shared<Woden::Rendering::GUIRenderer> ();
+    if(!guiRenderer->initialize())
+    {
+        fprintf(stderr, "Failed to initialize the GUI renderer\n");
+        abort();
+    }
 }
 
 void SystemWindow::close()
 {
     if(!handle)
         return;
+
+    auto renderingContext = Woden::Rendering::RenderingContext::getMainContext();
+    renderingContext->device->finishExecution();
+
+    SDL_DestroyWindow(handle);
+    handle = nullptr;
+}
+
+void SystemWindow::fullDrawWith(const Rendering::GUIRendererPtr &renderer)
+{
+    drawWith(renderer);
+    drawChildrenWith(renderer);
 }
 
 void SystemWindow::updateAndRender()
@@ -151,6 +171,13 @@ void SystemWindow::updateAndRender()
     commandAllocator->reset();
     commandList->reset(commandAllocator, nullptr);
 
+    // GUI rendering
+    guiRenderer->reset();
+    guiRenderer->framebufferExtent = Vector2(windowWidth, windowHeight);
+    fullDrawWith(guiRenderer);
+    guiRenderer->uploadDataWithCommandList(commandList);
+    
+    // Window rendering
     auto backBuffer = swapChain->getCurrentBackBuffer();
 
     // Begin the rendering pass.
@@ -158,6 +185,8 @@ void SystemWindow::updateAndRender()
 
     commandList->setViewport(0, 0, windowWidth, windowHeight);
     commandList->setScissor(0, 0, windowWidth, windowHeight);
+
+    guiRenderer->drawOnCommandList(commandList);
 
     // Finish the command list
     commandList->endRenderPass();

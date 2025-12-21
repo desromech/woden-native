@@ -29,7 +29,15 @@ public:
     agpu_command_queue_ref defaultCommandQueue;
 
     agpu_renderpass_ref windowRenderPass;
+
+    agpu_shader_signature_ref guiShaderSignature;
+    agpu_pipeline_state_ref guiPipelineState;
+
+    agpu_shader_ref compileShader(const std::string &sharedCommon, const std::string &shaderFileName, agpu_shader_type type);
+
 private:
+    bool createPipelineStates();
+
     static RenderingContextPtr mainContext;
 };
 

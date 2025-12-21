@@ -4,6 +4,8 @@ set(WodenEngine_Sources
     Morphic/SystemWindow.cpp
     Physics/CollisionShape.cpp
     Rendering/Context.cpp
+    Rendering/GuiRenderer.cpp
+    Utility/ReadWholeFile.cpp
 )
 
 add_library(WodenEngine ${WodenEngine_Sources})

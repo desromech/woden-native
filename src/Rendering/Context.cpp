@@ -1,4 +1,5 @@
 #include "Woden/Rendering/Context.hpp"
+#include "Woden/Utility/ReadWholeFile.hpp"
 #include <vector>
 #include <stdio.h>
 
@@ -109,6 +110,98 @@ bool RenderingContext::initialize(int argc, const char *argv[])
         windowRenderPass = device->createRenderPass(&description);
         if(!windowRenderPass)
             return false;
+    }
+
+    if(!createPipelineStates())
+        return false;
+
+    return true;
+}
+
+agpu_shader_ref RenderingContext::compileShader(const std::string &sharedCommon, const std::string &shaderFileName, agpu_shader_type type)
+{
+    std::string shaderSource;
+    if(!sharedCommon.empty())
+        shaderSource += Woden::Utility::readWholeTextFile(sharedCommon);
+    if(!shaderFileName.empty())
+        shaderSource += Woden::Utility::readWholeTextFile(shaderFileName);
+   if(shaderSource.empty())
+        return nullptr;
+
+    // Create the shader compiler.
+    agpu_offline_shader_compiler_ref shaderCompiler = device->createOfflineShaderCompiler();
+    shaderCompiler->setShaderSource(AGPU_SHADER_LANGUAGE_VGLSL, type, shaderSource.c_str(), (agpu_string_length)shaderSource.size());
+    try
+    {
+        shaderCompiler->compileShader(AGPU_SHADER_LANGUAGE_DEVICE_SHADER, nullptr);
+    }
+    catch(agpu_exception &e)
+    {
+        auto logLength = shaderCompiler->getCompilationLogLength();
+        std::unique_ptr<char[]> logBuffer(new char[logLength+1]);
+        shaderCompiler->getCompilationLog(logLength+1, logBuffer.get());
+        fprintf(stderr, "Compilation error of '%s':%s\n", shaderFileName.c_str(), logBuffer.get());
+        return nullptr;
+    }
+
+    // Create the shader and compile it.
+    return shaderCompiler->getResultAsShader();
+}
+
+bool RenderingContext::createPipelineStates()
+{
+    // Create the GUI shader signature.
+    {
+        auto shaderSignatureBuilder = device->createShaderSignatureBuilder();
+
+        shaderSignatureBuilder->beginBindingBank(1);
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLER, 1); // Linear
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLER, 1); // Nearest
+
+        shaderSignatureBuilder->beginBindingBank(128);
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // GUI Elements
+
+        shaderSignatureBuilder->beginBindingBank(1024);
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // GUI Textures
+
+        shaderSignatureBuilder->addBindingConstant(); // hasTopLeftNDCOrigin
+        shaderSignatureBuilder->addBindingConstant(); // padding
+        shaderSignatureBuilder->addBindingConstant(); // framebufferReciprocalExtent x
+        shaderSignatureBuilder->addBindingConstant(); // framebufferReciprocalExtent y
+
+        guiShaderSignature = shaderSignatureBuilder->build();
+        if (!guiShaderSignature)
+            return false;
+    }
+
+    // Create the GUI pipeline state
+    {
+        auto vertexShader = compileShader("assets/shaders/GuiShaderCommon.glsl", "assets/shaders/GuiVertexShader.glsl", AGPU_VERTEX_SHADER);
+        auto fragmentShader = compileShader("assets/shaders/GuiShaderCommon.glsl", "assets/shaders/GuiFragmentShader.glsl", AGPU_FRAGMENT_SHADER);
+        if(!vertexShader || !fragmentShader)
+            return false;
+        
+        auto builder = device->createPipelineBuilder();
+        builder->setRenderTargetFormat(0, AGPU_TEXTURE_FORMAT_B8G8R8A8_UNORM_SRGB);
+        builder->setDepthStencilFormat(AGPU_TEXTURE_FORMAT_UNKNOWN);
+
+        builder->setShaderSignature(guiShaderSignature);
+        builder->attachShader(vertexShader);
+        builder->attachShader(fragmentShader);
+
+        builder->setPrimitiveType(AGPU_TRIANGLE_STRIP);
+        builder->setBlendState(-1, true);
+        builder->setBlendFunction(-1,
+            AGPU_BLENDING_ONE, AGPU_BLENDING_INVERTED_SRC_ALPHA, AGPU_BLENDING_OPERATION_ADD,
+            AGPU_BLENDING_ONE, AGPU_BLENDING_INVERTED_SRC_ALPHA, AGPU_BLENDING_OPERATION_ADD);
+
+        guiPipelineState = builder->build();
+        if(!guiPipelineState)
+        {
+            fprintf(stderr, "Failed to create GUI pipeline state.");
+            return false;
+        }
+
     }
 
     return true;

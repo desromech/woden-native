@@ -9,6 +9,11 @@
 
 namespace Woden
 {
+namespace Rendering
+{
+typedef std::shared_ptr<class GUIRenderer> GUIRendererPtr;
+}
+
 namespace Morphic
 {
 using namespace Woden::Math;
@@ -47,12 +52,21 @@ public:
         bounds = Rectangle(bounds.minCorner, newExtent);
     }
 
+    Rectangle getLocalBounds() const
+    {
+        return Rectangle(Vector2(0), getExtent());
+    }
+
     void addSubmorph(const MorphPtr &morph)
     {
         assert(!morph->owner.lock());
         morph->owner = shared_from_this();
         submorphs.push_back(morph);
     }
+
+    virtual void fullDrawWith(const Rendering::GUIRendererPtr &renderer);
+    virtual void drawWith(const Rendering::GUIRendererPtr &renderer);
+    virtual void drawChildrenWith(const Rendering::GUIRendererPtr &renderer);
 
     MorphWeakPtr owner;
     Rectangle bounds = Rectangle(Vector2(0, 0), Vector2(50, 40));
