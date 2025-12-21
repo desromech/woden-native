@@ -1,4 +1,6 @@
 #include "Woden/Morphic/SystemWindow.hpp"
+#include "Woden/Rendering/Context.hpp"
+#include "SDL_syswm.h"
 #include <assert.h>
 #include <map>
 
@@ -71,10 +73,70 @@ void SystemWindow::open()
     ensureSDLInitialization();
 
     auto extent = bounds.extent();
-    handle = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, int(extent.x + 0.5), int(extent.y + 0.5), SDL_WINDOW_SHOWN);
+    windowWidth = int(extent.x + 0.5);
+    windowHeight = int(extent.y + 0.5);
+    handle = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight,
+        SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 
     auto windowId = SDL_GetWindowID(handle);
     sdlWindowMap.insert(std::make_pair(windowId, std::static_pointer_cast<SystemWindow> (shared_from_this())));
+
+    // Get the window info.
+    SDL_SysWMinfo windowInfo;
+    SDL_VERSION(&windowInfo.version);
+    SDL_GetWindowWMInfo(handle, &windowInfo);
+
+    memset(&currentSwapChainCreateInfo, 0, sizeof(currentSwapChainCreateInfo));
+    switch(windowInfo.subsystem)
+    {
+#if defined(SDL_VIDEO_DRIVER_WINDOWS)
+    case SDL_SYSWM_WINDOWS:
+        currentSwapChainCreateInfo.window = (agpu_pointer)windowInfo.info.win.window;
+        break;
+#endif
+#if defined(SDL_VIDEO_DRIVER_X11)
+    case SDL_SYSWM_X11:
+        currentSwapChainCreateInfo.window = (agpu_pointer)(uintptr_t)windowInfo.info.x11.window;
+        break;
+#endif
+#if defined(SDL_VIDEO_DRIVER_COCOA)
+    case SDL_SYSWM_COCOA:
+        currentSwapChainCreateInfo.window = (agpu_pointer)windowInfo.info.cocoa.window;
+        break;
+#endif
+    default:
+        fprintf(stderr, "Unsupported window system\n");
+        return;
+    }
+
+    currentSwapChainCreateInfo.colorbuffer_format = Rendering::RenderingContext::WindowColorBufferFormat;
+    currentSwapChainCreateInfo.width = windowWidth;
+    currentSwapChainCreateInfo.height = windowHeight;
+    currentSwapChainCreateInfo.buffer_count = 3;
+    currentSwapChainCreateInfo.flags = AGPU_SWAP_CHAIN_FLAG_APPLY_SCALE_FACTOR_FOR_HI_DPI;
+    auto renderingContext = Woden::Rendering::RenderingContext::getMainContext();
+    if (renderingContext->vsyncDisabled)
+    {
+        currentSwapChainCreateInfo.presentation_mode = AGPU_SWAP_CHAIN_PRESENTATION_MODE_MAILBOX;
+        currentSwapChainCreateInfo.fallback_presentation_mode = AGPU_SWAP_CHAIN_PRESENTATION_MODE_IMMEDIATE;
+    }
+
+    auto device = renderingContext->device;
+    auto commandQueue = renderingContext->defaultCommandQueue;
+
+    swapChain = device->createSwapChain(commandQueue, &currentSwapChainCreateInfo);
+    if(!swapChain)
+    {
+        fprintf(stderr, "Failed to open the swap chain\n");
+        abort();
+    }
+
+    windowWidth = swapChain->getWidth();
+    windowHeight = swapChain->getHeight();
+
+    commandAllocator = device->createCommandAllocator(AGPU_COMMAND_LIST_TYPE_DIRECT, commandQueue);
+    commandList = device->createCommandList(AGPU_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr);
+    commandList->close();
 }
 
 void SystemWindow::close()
@@ -85,7 +147,69 @@ void SystemWindow::close()
 
 void SystemWindow::updateAndRender()
 {
-    //printf("TODO: update and render\n");
+    auto renderingContext = Woden::Rendering::RenderingContext::getMainContext();
+    commandAllocator->reset();
+    commandList->reset(commandAllocator, nullptr);
+
+    auto backBuffer = swapChain->getCurrentBackBuffer();
+
+    // Begin the rendering pass.
+    commandList->beginRenderPass(renderingContext->windowRenderPass, backBuffer, false);
+
+    commandList->setViewport(0, 0, windowWidth, windowHeight);
+    commandList->setScissor(0, 0, windowWidth, windowHeight);
+
+    // Finish the command list
+    commandList->endRenderPass();
+    commandList->close();
+
+    // Swap the buffers.
+    renderingContext->defaultCommandQueue->addCommandList(commandList);
+    swapBuffers();
+    
+    renderingContext->device->finishExecution();
+}
+
+void SystemWindow::swapBuffers()
+{
+    try
+    {
+        swapChain->swapBuffers();
+    }
+    catch(agpu_exception &e)
+    {
+        auto errorCode = e.getErrorCode();
+        if(errorCode == AGPU_OUT_OF_DATE)
+        {
+            // We must recreate the swap chain.
+            recreateSwapChain();
+        }
+        else if(errorCode == AGPU_SUBOPTIMAL)
+        {
+            // Ignore this case.
+        }
+        else
+        {
+            throw e;
+        }
+    }
+}
+
+void SystemWindow::recreateSwapChain()
+{
+    auto renderingContext = Woden::Rendering::RenderingContext::getMainContext();
+    int w, h;
+    SDL_GetWindowSize(handle, &w, &h);
+
+    renderingContext->device->finishExecution();
+    auto newSwapChainCreateInfo = currentSwapChainCreateInfo;
+    newSwapChainCreateInfo.width = w;
+    newSwapChainCreateInfo.height = h;
+    newSwapChainCreateInfo.old_swap_chain = swapChain.get();
+    swapChain = renderingContext->device->createSwapChain(renderingContext->defaultCommandQueue, &newSwapChainCreateInfo);
+
+    windowWidth = swapChain->getWidth();
+    windowHeight = swapChain->getHeight();
 }
 
 } // End of namespace Morphic

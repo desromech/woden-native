@@ -16,6 +16,8 @@ typedef std::shared_ptr<class RenderingContext> RenderingContextPtr;
 class RenderingContext
 {
 public:
+    static const agpu_texture_format WindowColorBufferFormat = AGPU_TEXTURE_FORMAT_B8G8R8A8_UNORM_SRGB;
+
     static RenderingContextPtr getMainContext();
     static RenderingContextPtr getOrCreateMainContext(int argc, const char *argv[]);
     static void releaseMainContext();
@@ -25,6 +27,8 @@ public:
     bool vsyncDisabled = false;
     agpu_device_ref device;
     agpu_command_queue_ref defaultCommandQueue;
+
+    agpu_renderpass_ref windowRenderPass;
 private:
     static RenderingContextPtr mainContext;
 };

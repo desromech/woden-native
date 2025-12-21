@@ -92,6 +92,25 @@ bool RenderingContext::initialize(int argc, const char *argv[])
 
     defaultCommandQueue = device->getDefaultCommandQueue();
 
+    // Create the window render pass
+    {
+        // Color attachment
+        agpu_renderpass_color_attachment_description colorAttachment = {};
+        colorAttachment.format = WindowColorBufferFormat;
+        colorAttachment.begin_action = AGPU_ATTACHMENT_CLEAR;
+        colorAttachment.end_action = AGPU_ATTACHMENT_KEEP;
+        colorAttachment.sample_count = 1;
+
+
+        agpu_renderpass_description description = {};
+        description.color_attachment_count = 1;
+        description.color_attachments = &colorAttachment;
+
+        windowRenderPass = device->createRenderPass(&description);
+        if(!windowRenderPass)
+            return false;
+    }
+
     return true;
 }
 
