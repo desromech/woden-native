@@ -28,7 +28,9 @@ typedef std::shared_ptr<class SystemWindow> SystemWindowPtr;
 class Morph : public std::enable_shared_from_this<Morph>
 {
 public:
-
+    Morph();
+    virtual ~Morph();
+    
     static int runMainLoop();
     SystemWindowPtr openInSystemWindow();
 

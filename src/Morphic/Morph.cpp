@@ -6,6 +6,14 @@ namespace Woden
 namespace Morphic
 {
 
+Morph::Morph()
+{
+}
+
+Morph::~Morph()
+{
+}
+
 void Morph::fullDrawWith(const Rendering::GUIRendererPtr &renderer)
 {
     drawWith(renderer);

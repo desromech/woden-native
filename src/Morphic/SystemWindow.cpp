@@ -66,6 +66,11 @@ SystemWindowPtr Morph::openInSystemWindow()
     return systemWindow;
 }
 
+SystemWindow::SystemWindow()
+{
+    color = Vector4(1, 1, 1, 1);
+}
+
 void SystemWindow::open()
 {
     if(handle)

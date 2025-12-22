@@ -18,6 +18,8 @@ namespace Morphic
 class SystemWindow : public Morph
 {
 public:
+    SystemWindow();
+
     void open();
     void close();
     void updateAndRender();
