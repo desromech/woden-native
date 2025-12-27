@@ -11,6 +11,7 @@ set(WodenEngine_Sources
 
     Rendering/Context.cpp
     Rendering/GuiRenderer.cpp
+    Rendering/SceneRenderer.cpp
 
     SceneGraph/Scene.cpp
 

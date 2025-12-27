@@ -18,7 +18,6 @@ void Morph::fullDrawWith(const Rendering::GUIRendererPtr &renderer)
 {
     drawWith(renderer);
     drawChildrenWith(renderer);
-
 }
 
 void Morph::drawWith(const Rendering::GUIRendererPtr &renderer)

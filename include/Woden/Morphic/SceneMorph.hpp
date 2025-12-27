@@ -7,8 +7,12 @@ namespace Woden
 {
 namespace SceneGraph
 {
-
 typedef std::shared_ptr<class Scene> ScenePtr;
+}
+
+namespace Rendering
+{
+typedef std::shared_ptr<class SceneRenderer> SceneRendererPtr;
 }
 
 namespace Morphic
@@ -26,6 +30,7 @@ public:
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
 
     SceneGraph::ScenePtr scene;
+    Rendering::SceneRendererPtr sceneRenderer;
 };
 
 } // End of namespace Morphic

@@ -91,6 +91,8 @@ bool RenderingContext::initialize(int argc, const char *argv[])
     if(!device)
         return false;
 
+    printf("Chosen device: %s\n", device->getName());
+
     defaultCommandQueue = device->getDefaultCommandQueue();
 
     // Create the window render pass
@@ -112,10 +114,13 @@ bool RenderingContext::initialize(int argc, const char *argv[])
             return false;
     }
 
-    if(!createPipelineStates())
+    if(!createGuiPipelineStates())
         return false;
 
     if(!loadFonts())
+        return false;
+    
+    if(!createScenePipelineStates())
         return false;
 
     return true;
@@ -151,7 +156,7 @@ agpu_shader_ref RenderingContext::compileShader(const std::string &sharedCommon,
     return shaderCompiler->getResultAsShader();
 }
 
-bool RenderingContext::createPipelineStates()
+bool RenderingContext::createGuiPipelineStates()
 {
     // Create the GUI shader signature.
     {
@@ -299,6 +304,33 @@ bool RenderingContext::loadFonts()
         return false;
     }
     defaultMonospacedFontFace = defaultMonospacedFont->getOrCreateFaceWithHeight(16);
+
+    return true;
+}
+
+bool RenderingContext::createScenePipelineStates()
+{
+    // Create the scene shader signature.
+    {
+        auto shaderSignatureBuilder = device->createShaderSignatureBuilder();
+
+        shaderSignatureBuilder->beginBindingBank(1);
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLER, 1); // Linear
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLER, 1); // Nearest
+
+        // Camera state.
+        shaderSignatureBuilder->beginBindingBank(128);
+
+        // Lighting state.
+        shaderSignatureBuilder->beginBindingBank(128);
+
+        // Object state.
+        shaderSignatureBuilder->beginBindingBank(10000);
+
+        sceneShaderSignature = shaderSignatureBuilder->build();
+        if (!sceneShaderSignature)
+            return false;
+    }
 
     return true;
 }

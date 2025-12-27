@@ -179,6 +179,7 @@ void SystemWindow::updateAndRender()
     // GUI rendering
     guiRenderer->reset();
     guiRenderer->framebufferExtent = Vector2(windowWidth, windowHeight);
+    guiRenderer->renderingCommandList = commandList;
     fullDrawWith(guiRenderer);
     guiRenderer->uploadDataWithCommandList(commandList);
     

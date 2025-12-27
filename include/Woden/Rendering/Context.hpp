@@ -24,11 +24,13 @@ public:
     static void releaseMainContext();
 
     bool initialize(int argc, const char *argv[]);
+    agpu_shader_ref compileShader(const std::string &sharedCommon, const std::string &shaderFileName, agpu_shader_type type);
 
     bool vsyncDisabled = false;
     agpu_device_ref device;
     agpu_command_queue_ref defaultCommandQueue;
 
+    // GUI Rendering.
     agpu_renderpass_ref windowRenderPass;
 
     agpu_shader_signature_ref guiShaderSignature;
@@ -41,17 +43,19 @@ public:
     agpu_texture_ref whiteTexture;
     agpu_shader_resource_binding_ref guiEmptyTextureBinding;
 
-    agpu_shader_ref compileShader(const std::string &sharedCommon, const std::string &shaderFileName, agpu_shader_type type);
-
     Assets::FontPtr defaultFont;
     Assets::FontFacePtr defaultFontFace;
 
     Assets::FontPtr defaultMonospacedFont;
     Assets::FontFacePtr defaultMonospacedFontFace;
 
+    // Scene Rendering.
+    agpu_shader_signature_ref sceneShaderSignature;
+
 private:
     bool loadFonts();
-    bool createPipelineStates();
+    bool createGuiPipelineStates();
+    bool createScenePipelineStates();
 
     static RenderingContextPtr mainContext;
 };

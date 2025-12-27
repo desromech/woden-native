@@ -40,6 +40,7 @@ public:
     agpu_shader_resource_binding_ref currentTextureBinding;
     Math::Vector2 framebufferExtent;
 
+    agpu_command_list_ref renderingCommandList;
 };
 
 } // End of namespace Rendering
