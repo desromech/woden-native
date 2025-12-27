@@ -1,0 +1,130 @@
+#ifndef WODEN_SCENE_GRAPH_SCENE_HPP
+#define WODEN_SCENE_GRAPH_SCENE_HPP
+
+#include <memory>
+#include <string>
+#include <vector>
+
+namespace Woden
+{
+namespace Morphic
+{
+typedef std::shared_ptr<class SceneMorph> SceneMorphPtr;
+typedef std::shared_ptr<class SystemWindow> SystemWindowPtr;
+}
+
+namespace SceneGraph
+{
+
+typedef std::shared_ptr<class SceneElement> SceneElementPtr;
+typedef std::weak_ptr<class SceneElement> SceneElementWeakPtr;
+typedef std::shared_ptr<class Scene> ScenePtr;
+typedef std::shared_ptr<class SceneTreeElement> SceneTreeElementPtr;
+typedef std::shared_ptr<class SceneTreeElementWithChildren> SceneTreeElementWithChildrenPtr;
+typedef std::shared_ptr<class SceneLayer> SceneLayerPtr;
+typedef std::shared_ptr<class SceneNode> SceneLayerNode;
+
+/**
+ * I am a scene element.
+ */
+class SceneElement : public std::enable_shared_from_this<SceneElement>
+{
+public:
+    virtual void addedToSceneElement(const SceneElementPtr &newParent);
+    virtual ScenePtr getScene();
+
+    std::string name;
+};
+
+/**
+ * I am a scene.
+ */
+class Scene : public SceneElement
+{
+public:
+    Scene();
+    ~Scene();
+
+    void initialize();
+    virtual ScenePtr getScene() override;
+
+    Morphic::SceneMorphPtr openInMorphic();
+    Morphic::SystemWindowPtr openInSystemWindow();
+
+    SceneLayerPtr backgroundLayer;
+    SceneLayerPtr normalLayer;
+    SceneLayerPtr foregroundLayer;
+};
+
+inline ScenePtr MakeScene()
+{
+    auto scene = std::make_shared<Scene> ();
+    scene->initialize();
+    return scene;
+}
+/**
+ * I am a scene tree element.
+ */
+class SceneTreeElement : public SceneElement
+{
+public:
+    virtual void addedToSceneElement(const SceneElementPtr &newParent);
+    virtual ScenePtr getScene() override;
+
+    SceneElementWeakPtr parent;
+};
+
+/**
+ * I am a scene tree element with children.
+ */
+class SceneTreeElementWithChildren : public SceneTreeElement
+{
+public:
+    void addChild(SceneElementPtr child);
+
+    std::vector<SceneElementPtr> children;
+};
+
+/**
+ * I am a generic scene node
+ */
+class SceneNode : public SceneTreeElementWithChildren
+{
+public:
+};
+
+/**
+ * I am a scene layer
+ */
+class SceneLayer : public SceneTreeElementWithChildren
+{
+public:
+};
+
+/**
+ * I am a background scene layer
+ */
+class BackgroundSceneLayer : public SceneLayer
+{
+public:
+};
+
+/**
+ * I am a normal scene layer
+ */
+class NormalSceneLayer : public SceneLayer
+{
+public:
+};
+
+/**
+ * I am a foreground scene layer
+ */
+class ForegroundSceneLayer : public SceneLayer
+{
+public:
+};
+
+} // End of namespace SceneGraph
+} // End of namespace Woden
+#endif //WODEN_SCENE_SCENE_GRAPH_HPP

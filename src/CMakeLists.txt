@@ -3,6 +3,7 @@ set(WodenEngine_Sources
     Assets/Image.cpp
 
     Morphic/Morph.cpp
+    Morphic/SceneMorph.cpp
     Morphic/StringMorph.cpp
     Morphic/SystemWindow.cpp
 
@@ -10,6 +11,8 @@ set(WodenEngine_Sources
 
     Rendering/Context.cpp
     Rendering/GuiRenderer.cpp
+
+    SceneGraph/Scene.cpp
 
     Utility/ReadWholeFile.cpp
 )
