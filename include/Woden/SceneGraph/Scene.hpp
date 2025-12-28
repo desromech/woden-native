@@ -13,6 +13,13 @@ typedef std::shared_ptr<class SceneMorph> SceneMorphPtr;
 typedef std::shared_ptr<class SystemWindow> SystemWindowPtr;
 }
 
+namespace Rendering
+{
+typedef std::shared_ptr<class Camera> CameraPtr;
+typedef std::shared_ptr<class Renderable> RenderablePtr;
+typedef std::shared_ptr<class LightSource> LightSourcePtr;
+}
+
 namespace SceneGraph
 {
 
@@ -91,6 +98,13 @@ public:
 class SceneNode : public SceneTreeElementWithChildren
 {
 public:
+    void addCamera(const Rendering::CameraPtr &camera);
+    void addLightSource(const Rendering::LightSourcePtr &lightSource);
+    void addRenderable(const Rendering::RenderablePtr &renderable);
+
+    std::vector<Rendering::CameraPtr> cameras;
+    std::vector<Rendering::RenderablePtr> renderables;
+    std::vector<Rendering::LightSourcePtr> lightSources;
 };
 
 /**

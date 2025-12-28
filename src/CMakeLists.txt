@@ -11,7 +11,11 @@ set(WodenEngine_Sources
 
     Rendering/Context.cpp
     Rendering/GuiRenderer.cpp
+    Rendering/MeshBuilder.cpp
+    Rendering/MeshPrimitive.cpp
+    Rendering/Renderable.cpp
     Rendering/SceneRenderer.cpp
+    Rendering/StaticMeshRenderable.cpp
 
     SceneGraph/Scene.cpp
 

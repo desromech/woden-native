@@ -87,5 +87,22 @@ void SceneTreeElementWithChildren::addChild(SceneElementPtr child)
     children.push_back(child);
 }
 
+// Scene node
+void SceneNode::addCamera(const Rendering::CameraPtr &camera)
+{
+    cameras.push_back(camera);
+}
+
+void SceneNode::addLightSource(const Rendering::LightSourcePtr &lightSource)
+{
+    lightSources.push_back(lightSource);
+}
+
+void SceneNode::addRenderable(const Rendering::RenderablePtr &renderable)
+{
+    renderables.push_back(renderable);
+}
+
+
 } // End of namespace SceneGraph
 } // End of namespace Woden

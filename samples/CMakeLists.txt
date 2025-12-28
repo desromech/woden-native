@@ -6,3 +6,6 @@ target_link_libraries(Sample02-String WodenEngine)
 
 add_executable(SceneSample01-Empty SceneSample01-Empty.cpp)
 target_link_libraries(SceneSample01-Empty WodenEngine)
+
+add_executable(SceneSample02-Cube SceneSample02-Cube.cpp)
+target_link_libraries(SceneSample02-Cube WodenEngine)

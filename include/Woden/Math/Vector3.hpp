@@ -133,6 +133,20 @@ inline Vector3 max(Vector3 a, Vector3 b)
     return Vector3(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z));
 }
 
+class CompactVector3
+{
+public:
+    CompactVector3() {}
+    CompactVector3(const Vector3 &v)
+        : x(v.x), y(v.y), z(v.z)
+    {}
+    CompactVector3(Scalar cx, Scalar cy, Scalar cz)
+        : x(cx), y(cy), z(cz)
+    {}
+    
+    Scalar x, y, z;
+};
+
 }    
 }
 
