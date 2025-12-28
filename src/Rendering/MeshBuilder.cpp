@@ -35,19 +35,16 @@ void MeshBuilder::addCubeWithBox(const Math::AABox &box)
     addTriangleI012(1, 0, 2);
     addTriangleI012(3, 2, 0);
 
-    /*self
-    "Left"
+    // Right
+    beginTriangles();
+    addPxyz(maxX, minY, minZ); addNxyz(1.0, 0.0, 0.0);
+    addPxyz(maxX, maxY, minZ); addNxyz(1.0, 0.0, 0.0);
+    addPxyz(maxX, maxY, maxZ); addNxyz(1.0, 0.0, 0.0);
+    addPxyz(maxX, minY, maxZ); addNxyz(1.0, 0.0, 0.0);
+    addTriangleI012(0, 1, 2);
+    addTriangleI012(2, 3, 0);
 
-    "Right"
-    beginTriangles;
-    addPx: maxX y: minY z: minZ; addNx: 1.0 y: 0.0 z: 0.0;
-    addPx: maxX y: maxY z: minZ; addNx: 1.0 y: 0.0 z: 0.0;
-    addPx: maxX y: maxY z: maxZ; addNx: 1.0 y: 0.0 z: 0.0;
-    addPx: maxX y: minY z: maxZ; addNx: 1.0 y: 0.0 z: 0.0;
-    addTriangleI0: 0 i1: 1 i2: 2;
-    addTriangleI0: 2 i1: 3 i2: 0;
-
-    "Top"
+    /*"Top"
     beginTriangles;
     addPx: minX y: maxY z: minZ; addNx: 0.0 y: 1.0 z: 0.0;
     addPx: maxX y: maxY z: minZ; addNx: 0.0 y: 1.0 z: 0.0;
@@ -86,7 +83,44 @@ void MeshBuilder::addCubeWithBox(const Math::AABox &box)
 
 void MeshBuilder::beginTriangles()
 {
+    beginWithTopology(AGPU_TRIANGLES);
+}
+
+void MeshBuilder::beginWithTopology(agpu_primitive_topology topology)
+{
+    beginWithTopologyAndMaterial(topology, currentMaterial);
+}
+
+void MeshBuilder::beginWithTopologyAndMaterial(agpu_primitive_topology topology, const MaterialPtr &material)
+{
+    if(!primitives.empty())
+    {
+        auto &lastPrimitive = primitives.back();
+        if(lastPrimitive.topology == topology && lastPrimitive.material == material)
+        {
+            baseVertex = positions.size();
+            return;
+        }
+        finishLastPrimitive();
+    }
+
     baseVertex = positions.size();
+    MeshBuilderPrimitive primitive = {};
+    primitive.material = currentMaterial;
+    primitive.topology = topology;
+    primitive.firstIndex = indices.size();
+
+    primitives.push_back(primitive);
+}
+
+void MeshBuilder::finishLastPrimitive()
+{
+    if(primitives.empty())
+        return;
+    
+    auto primitive = &primitives.back();
+    primitive->indexCount = indices.size() - primitive->firstIndex;
+
 }
 
 void MeshBuilder::addPxyz(Scalar x, Scalar y, Scalar z)
@@ -105,9 +139,32 @@ void MeshBuilder::addTriangleI012(uint32_t i0, uint32_t i1, uint32_t i2)
     indices.push_back(i2);
 }
 
+std::vector<MeshPrimitivePtr> MeshBuilder::encodePrimitives()
+{
+    std::vector<MeshPrimitivePtr> encodedPrimitives;
+    encodedPrimitives.reserve(primitives.size());
+
+    for(const auto &builderPrimitive : primitives)
+    {
+        auto primitive = std::make_shared<MeshPrimitive> ();
+        primitive->material = builderPrimitive.material;
+        primitive->topology = builderPrimitive.topology;
+        primitive->firstIndex = builderPrimitive.firstIndex;
+        primitive->indexCount = builderPrimitive.indexCount;
+        encodedPrimitives.push_back(primitive);
+    }
+
+    return encodedPrimitives;
+}
+
 RenderablePtr MeshBuilder::finishMesh()
 {
+    if(positions.empty())
+        return std::make_shared<StaticMeshRenderable> ();
+    finishLastPrimitive();
+
     auto mesh = std::make_shared<StaticMeshRenderable> ();
+    mesh->primitives = encodePrimitives();
     return mesh;
 }
 
