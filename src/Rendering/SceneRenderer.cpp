@@ -25,7 +25,6 @@ void SceneRenderer::setupWithScreenSize(int newScreenWidth, int newScreenHeight)
     screen->screenHeight = newScreenHeight;
 
     // Depth stencil buffers
-    printf("Creating depth-stencil buffer.\n");
     {
         agpu_texture_description desc = {};
         desc.type = AGPU_TEXTURE_2D;
@@ -34,10 +33,11 @@ void SceneRenderer::setupWithScreenSize(int newScreenWidth, int newScreenHeight)
         desc.depth = 1;
         desc.layers = 1;
         desc.miplevels = 1;
-        desc.format = DepthStencilBufferFormat;
+        desc.format = RenderingContext::DepthStencilBufferFormat;
         desc.usage_modes = agpu_texture_usage_mode_mask(AGPU_TEXTURE_USAGE_DEPTH_ATTACHMENT | AGPU_TEXTURE_USAGE_STENCIL_ATTACHMENT | AGPU_TEXTURE_USAGE_SAMPLED);
         desc.main_usage_mode = AGPU_TEXTURE_USAGE_SAMPLED;
         desc.sample_count = 1;
+        desc.clear_value.depth_stencil.depth = 0;
         screen->depthStencilBuffer = device->createTexture(&desc);
         if(!screen->depthStencilBuffer)
         {
@@ -45,6 +45,68 @@ void SceneRenderer::setupWithScreenSize(int newScreenWidth, int newScreenHeight)
             abort();
         }
     }
+
+    {
+        agpu_texture_view_description viewDesc = {};
+        screen->depthStencilBuffer->getFullViewDescription(&viewDesc);
+        viewDesc.format = RenderingContext::DepthStencilBufferViewFormat;
+
+        screen->depthStencilAttachmentView = screen->depthStencilBuffer->createView(&viewDesc);
+        if(!screen->depthStencilAttachmentView)
+        {
+            fprintf(stderr, "Failed to create depth stencil buffer view\n");
+            abort();
+        }
+    }
+    
+    // HDR Color Buffer
+    {
+        agpu_texture_description desc = {};
+        desc.type = AGPU_TEXTURE_2D;
+        desc.width = newScreenWidth;
+        desc.height = newScreenHeight;
+        desc.depth = 1;
+        desc.layers = 1;
+        desc.miplevels = 1;
+        desc.format = RenderingContext::HDRColorBufferFormat;
+        desc.usage_modes = agpu_texture_usage_mode_mask(AGPU_TEXTURE_USAGE_COLOR_ATTACHMENT | AGPU_TEXTURE_USAGE_SAMPLED);
+        desc.main_usage_mode = AGPU_TEXTURE_USAGE_SAMPLED;
+        desc.sample_count = 1;
+        desc.clear_value.depth_stencil.depth = 0;
+        screen->hdrColorBuffer = device->createTexture(&desc);
+        if(!screen->hdrColorBuffer)
+        {
+            fprintf(stderr, "Failed to create HDR color buffer\n");
+            abort();
+        }
+
+        agpu_texture_view_description attachmentViewDesc = {};
+        screen->hdrColorBuffer->getFullViewDescription(&attachmentViewDesc);
+        attachmentViewDesc.usage_mode = AGPU_TEXTURE_USAGE_COLOR_ATTACHMENT;
+
+        screen->hdrColorBufferView = screen->hdrColorBuffer->createView(&attachmentViewDesc);
+    }
+
+    // Depth-Stencil only framebuffer
+    {
+        screen->depthOnlyFramebuffer = device->createFrameBuffer(newScreenWidth, newScreenHeight, 0, nullptr, screen->depthStencilAttachmentView);
+        if(!screen->depthOnlyFramebuffer)
+        {
+            fprintf(stderr, "Failed to create depth only framebuffer\n");
+            abort();
+        }
+    }
+
+    // HDR-depth framebuffer
+    {
+        screen->hdrOpaqueFramebuffer = device->createFrameBuffer(newScreenWidth, newScreenHeight, 1, &screen->hdrColorBufferView, screen->depthStencilAttachmentView);
+        if(!screen->depthOnlyFramebuffer)
+        {
+            fprintf(stderr, "Failed to create hdr-opaque framebuffer\n");
+            abort();
+        }
+    }
+
 }
 
 } // End of namespace Rendering

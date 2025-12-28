@@ -13,7 +13,12 @@ class SceneRendererScreen
 {
 public:
     agpu_texture_ref depthStencilBuffer;
+    agpu_texture_view_ref depthStencilAttachmentView;
+    agpu_texture_view_ref depthStencilSampledView;
+
     agpu_texture_ref hdrColorBuffer;
+    agpu_texture_view_ref hdrColorBufferView;
+
     agpu_framebuffer_ref depthOnlyFramebuffer;
     agpu_framebuffer_ref hdrOpaqueFramebuffer;
 
@@ -27,10 +32,6 @@ public:
 class SceneRenderer
 {
 public:
-    static const agpu_texture_format HDRColorBufferFormat = AGPU_TEXTURE_FORMAT_R16G16B16A16_FLOAT;
-    static const agpu_texture_format DepthStencilBufferFormat = AGPU_TEXTURE_FORMAT_R32_TYPELESS;
-    static const agpu_texture_format DepthStencilBufferViewFormat = AGPU_TEXTURE_FORMAT_D32_FLOAT;
-
     void renderScene(const SceneGraph::ScenePtr &scene);
     void setupWithScreenSize(int newScreenWidth, int newScreenHeight);
 
