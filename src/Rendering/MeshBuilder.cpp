@@ -1,5 +1,6 @@
 #include "Woden/Rendering/MeshBuilder.hpp"
 #include "Woden/Rendering/StaticMeshRenderable.hpp"
+#include "Woden/Rendering/VertexBinding.hpp"
 #include "Woden/Assets/BinaryBuffer.hpp"
 
 namespace Woden
@@ -147,11 +148,19 @@ std::vector<MeshPrimitivePtr> MeshBuilder::encodePrimitives()
 
     for(const auto &builderPrimitive : primitives)
     {
+        auto indexAccessor = std::make_shared<Assets::BinaryBufferAccessor> ();
+        indexAccessor->bufferView = indexBufferView;
+        indexAccessor->byteOffset = builderPrimitive.firstIndex * indexBufferView->byteStride;
+        indexAccessor->count = builderPrimitive.indexCount;
+        indexAccessor->type = Assets::BinaryBufferAccessorType::Scalar;
+        indexAccessor->componentType = indexBufferView->byteStride <= 2
+            ? Assets::BinaryBufferAccessorComponentType::UInt16
+            : Assets::BinaryBufferAccessorComponentType::UInt32;
+
         auto primitive = std::make_shared<MeshPrimitive> ();
         primitive->material = builderPrimitive.material;
         primitive->topology = builderPrimitive.topology;
-        primitive->firstIndex = builderPrimitive.firstIndex;
-        primitive->indexCount = builderPrimitive.indexCount;
+        primitive->indices = indexAccessor;
         encodedPrimitives.push_back(primitive);
     }
 
@@ -167,7 +176,29 @@ void MeshBuilder::encodeBufferData()
     vertexBufferView->buffer = buffer;
     vertexBufferView->byteOffset = buffer->data.size();
 
-    buffer->addDataFromVector(positions);
+    vertexBinding = std::make_shared<VertexBinding> ();
+
+    // Position
+    {
+        auto startOffset = buffer->data.size();
+        buffer->addDataFromVector(positions);
+        vertexBinding->addAttributeWithBufferView(
+            VertexBufferAttribute::PositionLocation, vertexBufferView,
+            startOffset, positions.size(),
+            Assets::BinaryBufferAccessorType::Vector3, Assets::BinaryBufferAccessorComponentType::Float32
+        );
+    }
+
+    // Normal
+    {
+        auto startOffset = buffer->data.size();
+        buffer->addDataFromVector(normals);
+        vertexBinding->addAttributeWithBufferView(
+            VertexBufferAttribute::NormalLocation, vertexBufferView,
+            startOffset, normals.size(),
+            Assets::BinaryBufferAccessorType::Vector3, Assets::BinaryBufferAccessorComponentType::Float32
+        );
+    }
 
     vertexBufferView->byteLength = buffer->data.size() - vertexBufferView->byteOffset;
 
@@ -175,6 +206,9 @@ void MeshBuilder::encodeBufferData()
     indexBufferView = std::make_shared<Assets::BinaryBufferView> ();
     indexBufferView->buffer = buffer;
     indexBufferView->byteOffset = buffer->data.size();
+    indexBufferView->byteStride = 4;
+
+    buffer->addDataFromVector(indices);
 
     indexBufferView->byteLength = buffer->data.size() - indexBufferView->byteOffset;
 }

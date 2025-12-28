@@ -18,6 +18,7 @@ namespace Assets
 {
 typedef std::shared_ptr<class BinaryBuffer> BinaryBufferPtr;
 typedef std::shared_ptr<class BinaryBufferView> BinaryBufferViewPtr;
+typedef std::shared_ptr<class VertexBinding> VertexBindingPtr;
 } // End of namespace Assets
 
 namespace Rendering
@@ -59,6 +60,7 @@ public:
     Assets::BinaryBufferPtr buffer;
     Assets::BinaryBufferViewPtr vertexBufferView;
     Assets::BinaryBufferViewPtr indexBufferView;
+    VertexBindingPtr vertexBinding;
 
     std::vector<Math::CompactVector3> positions;
     std::vector<Math::Vector4> colors;

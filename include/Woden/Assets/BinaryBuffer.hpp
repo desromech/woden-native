@@ -12,7 +12,11 @@ namespace Assets
 {
 typedef std::shared_ptr<class BinaryBuffer> BinaryBufferPtr;
 typedef std::shared_ptr<class BinaryBufferView> BinaryBufferViewPtr;
+typedef std::shared_ptr<class BinaryBufferAccessor> BinaryBufferAccessorPtr;
 
+/**
+ * A binary buffer.
+ */
 class BinaryBuffer
 {
 public:
@@ -28,6 +32,9 @@ public:
     }
 };
 
+/**
+ * A binary buffer view.
+ */
 class BinaryBufferView
 {
 public:
@@ -36,6 +43,48 @@ public:
 	size_t byteStride = 0;
 	size_t byteLength = 0;
     BinaryBufferPtr buffer;
+};
+
+/**
+ * Binary buffer type.
+ */
+enum class BinaryBufferAccessorType
+{
+    Scalar,
+    Vector2,
+    Vector3,
+    Vector4,
+    Matrix4x4
+};
+
+/**
+ * Binary buffer component type.
+ */
+enum class BinaryBufferAccessorComponentType
+{
+    Float32,
+    Float64,
+    Int16,
+    Int32,
+    Int64,
+    UInt16,
+    UInt32,
+    UInt64,
+};
+
+/**
+ * A binary buffer accessor.
+ */
+class BinaryBufferAccessor
+{
+public:
+    std::string name;
+    size_t byteOffset = 0;
+    size_t count = 0;
+    bool normalized = false;
+    BinaryBufferAccessorType type = BinaryBufferAccessorType::Scalar;
+    BinaryBufferAccessorComponentType componentType = BinaryBufferAccessorComponentType::Float32;
+	BinaryBufferViewPtr bufferView;
 };
 
 } // End of namespace Assets
