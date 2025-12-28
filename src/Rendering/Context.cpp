@@ -335,6 +335,50 @@ bool RenderingContext::createScenePipelineStates()
             return false;
     }
 
+    // Create the depth stencil render pass
+    {
+        agpu_renderpass_depth_stencil_description depthStencilAttachment = {};
+        depthStencilAttachment.format = DepthStencilBufferViewFormat;
+        depthStencilAttachment.begin_action = AGPU_ATTACHMENT_CLEAR;
+        depthStencilAttachment.end_action = AGPU_ATTACHMENT_KEEP;
+        depthStencilAttachment.stencil_begin_action = AGPU_ATTACHMENT_CLEAR;
+        depthStencilAttachment.stencil_end_action = AGPU_ATTACHMENT_KEEP;
+
+        depthStencilAttachment.sample_count = 1;
+
+        agpu_renderpass_description description = {};
+        description.depth_stencil_attachment = &depthStencilAttachment;
+
+        depthStencilRenderPass = device->createRenderPass(&description);
+        if(!depthStencilRenderPass)
+            return false;
+    }
+    {
+        agpu_renderpass_depth_stencil_description depthStencilAttachment = {};
+        depthStencilAttachment.format = DepthStencilBufferViewFormat;
+        depthStencilAttachment.begin_action = AGPU_ATTACHMENT_KEEP;
+        depthStencilAttachment.end_action = AGPU_ATTACHMENT_KEEP;
+        depthStencilAttachment.stencil_begin_action = AGPU_ATTACHMENT_KEEP;
+        depthStencilAttachment.stencil_end_action = AGPU_ATTACHMENT_KEEP;
+        depthStencilAttachment.sample_count = 1;
+
+        // Color attachment
+        agpu_renderpass_color_attachment_description colorAttachment = {};
+        colorAttachment.format = HDRColorBufferFormat;
+        colorAttachment.begin_action = AGPU_ATTACHMENT_CLEAR;
+        colorAttachment.end_action = AGPU_ATTACHMENT_KEEP;
+        colorAttachment.sample_count = 1;
+
+        agpu_renderpass_description description = {};
+        description.depth_stencil_attachment = &depthStencilAttachment;
+        description.color_attachment_count = 1;
+        description.color_attachments = &colorAttachment;
+
+        hdrOpaqueRenderPass = device->createRenderPass(&description);
+        if(!hdrOpaqueRenderPass)
+            return false;
+    }
+
     return true;
 }
 

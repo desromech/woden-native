@@ -32,7 +32,7 @@ public:
 class SceneRenderer
 {
 public:
-    void renderScene(const SceneGraph::ScenePtr &scene);
+    void renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene);
     void setupWithScreenSize(int newScreenWidth, int newScreenHeight);
 
     std::shared_ptr<SceneRendererScreen> screen;

@@ -22,7 +22,7 @@ void SceneMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
     auto extent = getExtent();
     sceneRenderer->setupWithScreenSize(int(extent.x + 0.5), int(extent.y + 0.5));
 
-    sceneRenderer->renderScene(scene);
+    sceneRenderer->renderScene(renderer->renderingCommandList, scene);
 }
 
 } // End of namespace Morphic

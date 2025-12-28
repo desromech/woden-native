@@ -6,8 +6,20 @@ namespace Woden
 namespace Rendering
 {
 
-void SceneRenderer::renderScene(const SceneGraph::ScenePtr &scene)
+void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene)
 {
+    auto context = RenderingContext::getMainContext();
+
+    // Depth-Stencil render pass.
+    commandList->beginRenderPass(context->depthStencilRenderPass, screen->depthOnlyFramebuffer, false);
+
+    commandList->endRenderPass();
+
+    // HDR opaque render pass.
+    commandList->beginRenderPass(context->hdrOpaqueRenderPass, screen->hdrOpaqueFramebuffer, false);
+
+    commandList->endRenderPass();
+
 }
 
 void SceneRenderer::setupWithScreenSize(int newScreenWidth, int newScreenHeight)

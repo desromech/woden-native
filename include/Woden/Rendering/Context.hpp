@@ -55,6 +55,9 @@ public:
     Assets::FontFacePtr defaultMonospacedFontFace;
 
     // Scene Rendering.
+    agpu_renderpass_ref depthStencilRenderPass;
+    agpu_renderpass_ref hdrOpaqueRenderPass;
+
     agpu_shader_signature_ref sceneShaderSignature;
 
 private:
