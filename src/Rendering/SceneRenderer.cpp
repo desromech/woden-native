@@ -10,23 +10,54 @@ namespace Rendering
 void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene)
 {
     auto context = RenderingContext::getMainContext();
+    currentCommandList = commandList;
 
     currentRenderingScene = std::make_shared<RenderingScene> ();
     scene->addIntoRenderingScene(currentRenderingScene);
 
     // Depth-Stencil render pass.
     commandList->beginRenderPass(context->depthStencilRenderPass, screen->depthOnlyFramebuffer, false);
+    commandList->setViewport(0, 0, screen->screenWidth, screen->screenHeight);
+    commandList->setScissor(0, 0, screen->screenWidth, screen->screenHeight);
     commandList->setShaderSignature(context->sceneShaderSignature);
 
-
+    performDepthOnlyPass();
 
     commandList->endRenderPass();
 
     // HDR opaque render pass.
     commandList->beginRenderPass(context->hdrOpaqueRenderPass, screen->hdrOpaqueFramebuffer, false);
+    commandList->setViewport(0, 0, screen->screenWidth, screen->screenHeight);
+    commandList->setScissor(0, 0, screen->screenWidth, screen->screenHeight);
+
+    performHDROpaquePass();
 
     commandList->endRenderPass();
+    currentCommandList.reset();
+}
 
+
+void SceneRenderer::performDepthOnlyPass()
+{
+    for(auto &object : currentRenderingScene->opaqueObjects)
+        object.renderable->renderDepthOnlyWith(this);
+}
+
+void SceneRenderer::performHDROpaquePass()
+{
+    for(auto &object : currentRenderingScene->opaqueObjects)
+        object.renderable->renderOpaqueWith(this);
+}
+
+void SceneRenderer::useIndexBuffer(const Assets::BinaryBufferAccessorPtr &indices)
+{
+    auto bufferHandle = indices->bufferView->buffer->getOrCreateBufferWithContents();
+    currentCommandList->useIndexBufferAt(
+        bufferHandle,
+        indices->bufferView->byteOffset + indices->byteOffset,
+        indices->bufferView->byteStride
+    );
+    
 }
 
 void SceneRenderer::setupWithScreenSize(int newScreenWidth, int newScreenHeight)

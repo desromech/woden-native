@@ -46,41 +46,41 @@ void MeshBuilder::addCubeWithBox(const Math::AABox &box)
     addTriangleI012(0, 1, 2);
     addTriangleI012(2, 3, 0);
 
-    /*"Top"
-    beginTriangles;
-    addPx: minX y: maxY z: minZ; addNx: 0.0 y: 1.0 z: 0.0;
-    addPx: maxX y: maxY z: minZ; addNx: 0.0 y: 1.0 z: 0.0;
-    addPx: maxX y: maxY z: maxZ; addNx: 0.0 y: 1.0 z: 0.0;
-    addPx: minX y: maxY z: maxZ; addNx: 0.0 y: 1.0 z: 0.0;
-    addTriangleI0: 1 i1: 0 i2: 2;
-    addTriangleI0: 3 i1: 2 i2: 0;
+    // Top
+    beginTriangles();
+    addPxyz(minX, maxY, minZ); addNxyz(0.0, 1.0, 0.0);
+    addPxyz(maxX, maxY, minZ); addNxyz(0.0, 1.0, 0.0);
+    addPxyz(maxX, maxY, maxZ); addNxyz(0.0, 1.0, 0.0);
+    addPxyz(minX, maxY, maxZ); addNxyz(0.0, 1.0, 0.0);
+    addTriangleI012(1, 0, 2);
+    addTriangleI012(3, 2, 0);
 
-    "Bottom"
-    beginTriangles;
-    addPx: minX y: minY z: minZ; addNx: 0.0 y: -1.0 z: 0.0;
-    addPx: maxX y: minY z: minZ; addNx: 0.0 y: -1.0 z: 0.0;
-    addPx: maxX y: minY z: maxZ; addNx: 0.0 y: -1.0 z: 0.0;
-    addPx: minX y: minY z: maxZ; addNx: 0.0 y: -1.0 z: 0.0;
-    addTriangleI0: 0 i1: 1 i2: 2;
-    addTriangleI0: 2 i1: 3 i2: 0;
+    // Bottom
+    beginTriangles();
+    addPxyz(minX, minY, minZ); addNxyz(0.0, -1.0, 0.0);
+    addPxyz(maxX, minY, minZ); addNxyz(0.0, -1.0, 0.0);
+    addPxyz(maxX, minY, maxZ); addNxyz(0.0, -1.0, 0.0);
+    addPxyz(minX, minY, maxZ); addNxyz(0.0, -1.0, 0.0);
+    addTriangleI012(0, 1, 2);
+    addTriangleI012(2, 3, 0);
 
-    "Back"
-    beginTriangles;
-    addPx: minX y: minY z: minZ; addNx: 0.0 y: 0.0 z: -1.0;
-    addPx: maxX y: minY z: minZ; addNx: 0.0 y: 0.0 z: -1.0;
-    addPx: maxX y: maxY z: minZ; addNx: 0.0 y: 0.0 z: -1.0;
-    addPx: minX y: maxY z: minZ; addNx: 0.0 y: 0.0 z: -1.0;
-    addTriangleI0: 1 i1: 0 i2: 2;
-    addTriangleI0: 3 i1: 2 i2: 0;
+    // Back
+    beginTriangles();
+    addPxyz(minX, minY, minZ); addNxyz(0.0, 0.0, -1.0);
+    addPxyz(maxX, minY, minZ); addNxyz(0.0, 0.0, -1.0);
+    addPxyz(maxX, maxY, minZ); addNxyz(0.0, 0.0, -1.0);
+    addPxyz(minX, maxY, minZ); addNxyz(0.0, 0.0, -1.0);
+    addTriangleI012(1, 0, 2);
+    addTriangleI012(3, 2, 0);
 
-    "Front"
-    beginTriangles;
-    addPx: minX y: minY z: maxZ; addNx: 0.0 y: 0.0 z: 1.0;
-    addPx: maxX y: minY z: maxZ; addNx: 0.0 y: 0.0 z: 1.0;
-    addPx: maxX y: maxY z: maxZ; addNx: 0.0 y: 0.0 z: 1.0;
-    addPx: minX y: maxY z: maxZ; addNx: 0.0 y: 0.0 z: 1.0;
-    addTriangleI0: 0 i1: 1 i2: 2;
-    addTriangleI0: 2 i1: 3 i2: 0*/
+    // Front
+    beginTriangles();
+    addPxyz(minX, minY, maxZ); addNxyz(0.0, 0.0, 1.0);
+    addPxyz(maxX, minY, maxZ); addNxyz(0.0, 0.0, 1.0);
+    addPxyz(maxX, maxY, maxZ); addNxyz(0.0, 0.0, 1.0);
+    addPxyz(minX, maxY, maxZ); addNxyz(0.0, 0.0, 1.0);
+    addTriangleI012(0, 1, 2);
+    addTriangleI012(2, 3, 0);
 }
 
 void MeshBuilder::beginTriangles()
@@ -136,9 +136,9 @@ void MeshBuilder::addNxyz(Scalar x, Scalar y, Scalar z)
 }
 void MeshBuilder::addTriangleI012(uint32_t i0, uint32_t i1, uint32_t i2)
 {
-    indices.push_back(i0);
-    indices.push_back(i1);
-    indices.push_back(i2);
+    indices.push_back(i0 + baseVertex);
+    indices.push_back(i1 + baseVertex);
+    indices.push_back(i2 + baseVertex);
 }
 
 std::vector<MeshPrimitivePtr> MeshBuilder::encodePrimitives()
@@ -160,6 +160,7 @@ std::vector<MeshPrimitivePtr> MeshBuilder::encodePrimitives()
         auto primitive = std::make_shared<MeshPrimitive> ();
         primitive->material = builderPrimitive.material;
         primitive->topology = builderPrimitive.topology;
+        primitive->vertexBinding = vertexBinding;
         primitive->indices = indexAccessor;
         encodedPrimitives.push_back(primitive);
     }
@@ -191,12 +192,40 @@ void MeshBuilder::encodeBufferData()
 
     // Normal
     {
+        normals.resize(positions.size());
+
         auto startOffset = buffer->data.size();
         buffer->addDataFromVector(normals);
         vertexBinding->addAttributeWithBufferView(
             VertexBufferAttribute::NormalLocation, vertexBufferView,
             startOffset, normals.size(),
             Assets::BinaryBufferAccessorType::Vector3, Assets::BinaryBufferAccessorComponentType::Float32
+        );
+    }
+
+    // Texcoords
+    {
+        texcoords.resize(positions.size());
+
+        auto startOffset = buffer->data.size();
+        buffer->addDataFromVector(texcoords);
+        vertexBinding->addAttributeWithBufferView(
+            VertexBufferAttribute::Texcoord0Location, vertexBufferView,
+            startOffset, texcoords.size(),
+            Assets::BinaryBufferAccessorType::Vector2, Assets::BinaryBufferAccessorComponentType::Float32
+        );
+    }
+
+    // Tangent4
+    {
+        tangents4.resize(positions.size());
+
+        auto startOffset = buffer->data.size();
+        buffer->addDataFromVector(tangents4);
+        vertexBinding->addAttributeWithBufferView(
+            VertexBufferAttribute::Tangent4Location, vertexBufferView,
+            startOffset, tangents4.size(),
+            Assets::BinaryBufferAccessorType::Vector4, Assets::BinaryBufferAccessorComponentType::Float32
         );
     }
 

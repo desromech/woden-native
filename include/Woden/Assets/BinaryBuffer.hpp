@@ -1,6 +1,7 @@
 #ifndef WODEN_ASSET_BINARY_BUFFER_HPP
 #define WODEN_ASSET_BINARY_BUFFER_HPP
 
+#include "AGPU/agpu.hpp"
 #include <stdint.h>
 #include <memory>
 #include <string>
@@ -30,6 +31,10 @@ public:
         auto end = reinterpret_cast<const uint8_t*> (inputVector.data() + inputVector.size());
         data.insert(data.end(), start, end);
     }
+
+    agpu_buffer_ref getOrCreateBufferWithContents();
+    
+    agpu_buffer_ref handle;
 };
 
 /**

@@ -10,6 +10,7 @@ namespace Woden
 {
 namespace Rendering
 {
+class SceneRenderer;
 typedef std::shared_ptr<class VertexBinding> VertexBindingPtr;
 
 class VertexBufferAttribute
@@ -18,10 +19,9 @@ public:
 	static const uint32_t PositionLocation    = 0;
 	static const uint32_t NormalLocation      = 1;
 	static const uint32_t Texcoord0Location   = 2;
-	static const uint32_t Texcoord1Location   = 3;
+	static const uint32_t Tangent4Location    = 3;
 	static const uint32_t BoneIndicesLocation = 4;
 	static const uint32_t BoneWeightsLocation = 5;
-	static const uint32_t Tangent4Location    = 6;
 
     uint32_t location = 0;
     Assets::BinaryBufferAccessorPtr accessor;
@@ -33,8 +33,11 @@ public:
     void addAttribute(uint32_t location, Assets::BinaryBufferAccessorPtr accessor);
     void addAttributeWithBufferView(uint32_t location, Assets::BinaryBufferViewPtr bufferView, size_t byteOffset, size_t count, Assets::BinaryBufferAccessorType accessorType, Assets::BinaryBufferAccessorComponentType accessorComponentType);
 
+	void useWithRenderer(SceneRenderer *sceneRenderer);
+
     uint32_t vertexCount = 0;
     std::vector<VertexBufferAttribute> attributes;
+	agpu_vertex_binding_ref handle;
 };
 
 } // End of namespace Rendering

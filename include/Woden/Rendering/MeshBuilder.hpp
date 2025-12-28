@@ -63,9 +63,8 @@ public:
     VertexBindingPtr vertexBinding;
 
     std::vector<Math::CompactVector3> positions;
-    std::vector<Math::Vector4> colors;
-    std::vector<Math::Vector2> texcoords;
     std::vector<Math::CompactVector3> normals;
+    std::vector<Math::Vector2> texcoords;
     std::vector<Math::Vector4> tangents4;
     std::vector<uint32_t> indices;
     std::vector<MeshBuilderPrimitive> primitives;

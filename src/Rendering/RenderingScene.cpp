@@ -9,7 +9,7 @@ void RenderingScene::addObjectWithRenderable(const RenderablePtr &renderable)
 {
     RenderingSceneObject sceneObject = {};
     sceneObject.renderable = renderable;
-    objects.push_back(sceneObject);
+    opaqueObjects.push_back(sceneObject);
 }
 
 } // End of namespace Rendering

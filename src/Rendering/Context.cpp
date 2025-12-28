@@ -1,4 +1,5 @@
 #include "Woden/Rendering/Context.hpp"
+#include "Woden/Rendering/VertexBinding.hpp"
 #include "Woden/Utility/ReadWholeFile.hpp"
 #include <vector>
 #include <stdio.h>
@@ -377,6 +378,55 @@ bool RenderingContext::createScenePipelineStates()
         hdrOpaqueRenderPass = device->createRenderPass(&description);
         if(!hdrOpaqueRenderPass)
             return false;
+    }
+
+    // Static vertex layout
+    {
+        agpu_size vertexStrides[] = {
+            12, // Position
+            12, // Normal 
+            8,  // Texcoord
+            16, // Tangent4
+        };
+
+        agpu_vertex_attrib_description vertexAttributes[] = {
+            {0, VertexBufferAttribute::PositionLocation,  AGPU_TEXTURE_FORMAT_R32G32B32_FLOAT,    0, 0},
+            {1, VertexBufferAttribute::NormalLocation,    AGPU_TEXTURE_FORMAT_R32G32B32_FLOAT,    0, 0},
+            {2, VertexBufferAttribute::Texcoord0Location, AGPU_TEXTURE_FORMAT_R32G32_FLOAT,       0, 0},
+            {3, VertexBufferAttribute::Tangent4Location,  AGPU_TEXTURE_FORMAT_R32G32B32A32_FLOAT, 0, 0},
+        };
+
+        staticVertexLayout = device->createVertexLayout();
+        staticVertexLayout->addVertexAttributeBindings(
+            sizeof(vertexStrides)/sizeof(vertexStrides[0]), vertexStrides,
+            sizeof(vertexAttributes)/sizeof(vertexAttributes[0]), vertexAttributes
+        );
+    }
+
+    // Create the depth only pipeline state
+    {
+        auto vertexShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/DepthOnlySceneVertexShader.glsl", AGPU_VERTEX_SHADER);
+        //auto fragmentShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/GuiFragmentShader.glsl", AGPU_FRAGMENT_SHADER);
+        if(!vertexShader)
+            return false;
+        
+        auto builder = device->createPipelineBuilder();
+        builder->setRenderTargetCount(0);
+        builder->setDepthStencilFormat(DepthStencilBufferViewFormat);
+
+        builder->setShaderSignature(sceneShaderSignature);
+        builder->attachShader(vertexShader);
+
+        builder->setPrimitiveType(AGPU_TRIANGLES);
+        builder->setVertexLayout(staticVertexLayout);
+
+        depthOnlyScenePipelineState = builder->build();
+        if(!depthOnlyScenePipelineState)
+        {
+            fprintf(stderr, "Failed to create depth only scene pipeline state.");
+            return false;
+        }
+
     }
 
     return true;

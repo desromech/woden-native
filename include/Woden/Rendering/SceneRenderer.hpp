@@ -2,6 +2,7 @@
 #define WODEN_SCENE_RENDERER_HPP
 
 #include "Woden/SceneGraph/Scene.hpp"
+#include "Woden/Assets/BinaryBuffer.hpp"
 #include "AGPU/agpu.hpp"
 
 namespace Woden
@@ -35,8 +36,15 @@ public:
     void renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene);
     void setupWithScreenSize(int newScreenWidth, int newScreenHeight);
 
+    void useIndexBuffer(const Assets::BinaryBufferAccessorPtr &indices);
+
     std::shared_ptr<SceneRendererScreen> screen;
+    agpu_command_list_ref currentCommandList;
     RenderingScenePtr currentRenderingScene;
+
+private:
+    void performDepthOnlyPass();
+    void performHDROpaquePass();
 
 };
 

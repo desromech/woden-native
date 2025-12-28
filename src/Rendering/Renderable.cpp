@@ -11,6 +11,16 @@ void Renderable::addIntoRenderingScene(const RenderingScenePtr &renderingScene)
     (void)renderingScene;
 }
 
+void Renderable::renderDepthOnlyWith(SceneRenderer *renderer)
+{
+    (void)renderer;
+}
+
+void Renderable::renderOpaqueWith(SceneRenderer *renderer)
+{
+    (void)renderer;
+}
+
 SceneGraph::SceneNodePtr Renderable::asSceneNode()
 {
     auto sceneNode = std::make_shared<SceneGraph::SceneNode> ();

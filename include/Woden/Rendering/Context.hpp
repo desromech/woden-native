@@ -58,6 +58,9 @@ public:
     agpu_renderpass_ref depthStencilRenderPass;
     agpu_renderpass_ref hdrOpaqueRenderPass;
 
+    agpu_vertex_layout_ref staticVertexLayout;
+    agpu_pipeline_state_ref depthOnlyScenePipelineState;
+
     agpu_shader_signature_ref sceneShaderSignature;
 
 private:

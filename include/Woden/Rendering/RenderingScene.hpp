@@ -19,8 +19,10 @@ class RenderingScene
 {
 public:
     void addObjectWithRenderable(const RenderablePtr &renderable);
-    
-    std::vector<RenderingSceneObject> objects;
+
+    std::vector<RenderingSceneObject> backgroundObjects;
+    std::vector<RenderingSceneObject> opaqueObjects;
+    std::vector<RenderingSceneObject> translucentObject;
 };
 
 } // End of namespace Rendering
