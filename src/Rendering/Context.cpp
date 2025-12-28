@@ -406,13 +406,13 @@ bool RenderingContext::createScenePipelineStates()
     // Create the depth only pipeline state
     {
         auto vertexShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/DepthOnlySceneVertexShader.glsl", AGPU_VERTEX_SHADER);
-        //auto fragmentShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/GuiFragmentShader.glsl", AGPU_FRAGMENT_SHADER);
         if(!vertexShader)
             return false;
         
         auto builder = device->createPipelineBuilder();
         builder->setRenderTargetCount(0);
         builder->setDepthStencilFormat(DepthStencilBufferViewFormat);
+        builder->setDepthState(true, true, AGPU_GREATER_EQUAL);
 
         builder->setShaderSignature(sceneShaderSignature);
         builder->attachShader(vertexShader);
