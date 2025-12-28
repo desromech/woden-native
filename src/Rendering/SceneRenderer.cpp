@@ -1,4 +1,5 @@
 #include "Woden/Rendering/SceneRenderer.hpp"
+#include "Woden/Rendering/RenderingScene.hpp"
 #include "Woden/Rendering/Context.hpp"
 
 namespace Woden
@@ -10,8 +11,14 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
 {
     auto context = RenderingContext::getMainContext();
 
+    currentRenderingScene = std::make_shared<RenderingScene> ();
+    scene->addIntoRenderingScene(currentRenderingScene);
+
     // Depth-Stencil render pass.
     commandList->beginRenderPass(context->depthStencilRenderPass, screen->depthOnlyFramebuffer, false);
+    commandList->setShaderSignature(context->sceneShaderSignature);
+
+
 
     commandList->endRenderPass();
 

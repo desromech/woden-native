@@ -14,7 +14,8 @@ typedef std::shared_ptr<class MeshPrimitive> MeshPrimitivePtr;
 class StaticMeshRenderable : public Renderable
 {
 public:
-
+    virtual void addIntoRenderingScene(const RenderingScenePtr &renderingScene) override;
+    
     std::vector<MeshPrimitivePtr> primitives;
 };
 

@@ -16,6 +16,8 @@ typedef std::shared_ptr<class VertexBinding> VertexBindingPtr;
 class MeshPrimitive : public Renderable
 {
 public:
+    virtual void addIntoRenderingScene(const RenderingScenePtr &renderingScene) override;
+    
     agpu_primitive_topology topology = AGPU_TRIANGLES;
     MaterialPtr material;
     VertexBindingPtr vertexBinding;

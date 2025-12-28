@@ -15,10 +15,12 @@ typedef std::shared_ptr<class SceneNode> SceneNodePtr;
 namespace Rendering
 {
 typedef std::shared_ptr<class Renderable> RenderablePtr;
+typedef std::shared_ptr<class RenderingScene> RenderingScenePtr;
 
 class Renderable : public std::enable_shared_from_this<Renderable>
 {
 public:
+    virtual void addIntoRenderingScene(const RenderingScenePtr &renderingScene);
     SceneGraph::SceneNodePtr asSceneNode();
 };
 

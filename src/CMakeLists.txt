@@ -15,6 +15,7 @@ set(WodenEngine_Sources
     Rendering/MeshBuilder.cpp
     Rendering/MeshPrimitive.cpp
     Rendering/Renderable.cpp
+    Rendering/RenderingScene.cpp
     Rendering/SceneRenderer.cpp
     Rendering/StaticMeshRenderable.cpp
     Rendering/VertexBinding.cpp

@@ -36,6 +36,7 @@ public:
     void setupWithScreenSize(int newScreenWidth, int newScreenHeight);
 
     std::shared_ptr<SceneRendererScreen> screen;
+    RenderingScenePtr currentRenderingScene;
 
 };
 

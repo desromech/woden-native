@@ -1,5 +1,6 @@
 #include "Woden/SceneGraph/Scene.hpp"
 #include "Woden/Morphic/SceneMorph.hpp"
+#include "Woden/Rendering/Renderable.hpp"
 
 namespace Woden
 {
@@ -10,6 +11,11 @@ namespace SceneGraph
 void SceneElement::addedToSceneElement(const SceneElementPtr &newParent)
 {
     assert(0 && "Element does not support having a parent.");
+}
+
+void SceneElement::addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene)
+{
+    (void)renderingScene;
 }
 
 ScenePtr SceneElement::getScene()
@@ -52,6 +58,13 @@ ScenePtr Scene::getScene()
     return std::static_pointer_cast<Scene> (shared_from_this());
 }
 
+void Scene::addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene)
+{
+    backgroundLayer->addIntoRenderingScene(renderingScene);
+    normalLayer->addIntoRenderingScene(renderingScene);
+    foregroundLayer->addIntoRenderingScene(renderingScene);
+}
+
 Morphic::SceneMorphPtr Scene::openInMorphic()
 {
     auto sceneMorph = std::make_shared<Morphic::SceneMorph> ();
@@ -87,6 +100,12 @@ void SceneTreeElementWithChildren::addChild(SceneElementPtr child)
     children.push_back(child);
 }
 
+void SceneTreeElementWithChildren::addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene)
+{
+    for(auto &child : children)
+        child->addIntoRenderingScene(renderingScene);
+}
+
 // Scene node
 void SceneNode::addCamera(const Rendering::CameraPtr &camera)
 {
@@ -103,6 +122,12 @@ void SceneNode::addRenderable(const Rendering::RenderablePtr &renderable)
     renderables.push_back(renderable);
 }
 
+void SceneNode::addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene)
+{
+    for(auto &renderable : renderables)
+        renderable->addIntoRenderingScene(renderingScene);
+    SceneTreeElementWithChildren::addIntoRenderingScene(renderingScene);
+}
 
 } // End of namespace SceneGraph
 } // End of namespace Woden

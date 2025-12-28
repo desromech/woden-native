@@ -5,7 +5,12 @@ namespace Woden
 {
 namespace Rendering
 {
-    
+
+void Renderable::addIntoRenderingScene(const RenderingScenePtr &renderingScene)
+{
+    (void)renderingScene;
+}
+
 SceneGraph::SceneNodePtr Renderable::asSceneNode()
 {
     auto sceneNode = std::make_shared<SceneGraph::SceneNode> ();
