@@ -1,5 +1,6 @@
 #include "Woden/Rendering/MeshBuilder.hpp"
 #include "Woden/Rendering/StaticMeshRenderable.hpp"
+#include "Woden/Assets/BinaryBuffer.hpp"
 
 namespace Woden
 {
@@ -157,11 +158,33 @@ std::vector<MeshPrimitivePtr> MeshBuilder::encodePrimitives()
     return encodedPrimitives;
 }
 
+void MeshBuilder::encodeBufferData()
+{
+    buffer = std::make_shared<Assets::BinaryBuffer> ();
+
+    // Vertex buffer
+    vertexBufferView = std::make_shared<Assets::BinaryBufferView> ();
+    vertexBufferView->buffer = buffer;
+    vertexBufferView->byteOffset = buffer->data.size();
+
+    buffer->addDataFromVector(positions);
+
+    vertexBufferView->byteLength = buffer->data.size() - vertexBufferView->byteOffset;
+
+    // Index buffer.
+    indexBufferView = std::make_shared<Assets::BinaryBufferView> ();
+    indexBufferView->buffer = buffer;
+    indexBufferView->byteOffset = buffer->data.size();
+
+    indexBufferView->byteLength = buffer->data.size() - indexBufferView->byteOffset;
+}
+
 RenderablePtr MeshBuilder::finishMesh()
 {
     if(positions.empty())
         return std::make_shared<StaticMeshRenderable> ();
     finishLastPrimitive();
+    encodeBufferData();
 
     auto mesh = std::make_shared<StaticMeshRenderable> ();
     mesh->primitives = encodePrimitives();

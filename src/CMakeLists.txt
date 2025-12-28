@@ -1,4 +1,5 @@
 set(WodenEngine_Sources
+    Assets/BinaryBuffer.cpp
     Assets/Font.cpp
     Assets/Image.cpp
 

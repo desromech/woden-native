@@ -14,6 +14,12 @@
 
 namespace Woden
 {
+namespace Assets
+{
+typedef std::shared_ptr<class BinaryBuffer> BinaryBufferPtr;
+typedef std::shared_ptr<class BinaryBufferView> BinaryBufferViewPtr;
+} // End of namespace Assets
+
 namespace Rendering
 {
 using Math::Scalar;
@@ -44,12 +50,15 @@ public:
     void addNxyz(Scalar x, Scalar y, Scalar z);
     void addTriangleI012(uint32_t i0, uint32_t i1, uint32_t i2);
 
+    void encodeBufferData();
     std::vector<MeshPrimitivePtr> encodePrimitives();
     RenderablePtr finishMesh();
 
-
     uint32_t baseVertex = 0;
     MaterialPtr currentMaterial;
+    Assets::BinaryBufferPtr buffer;
+    Assets::BinaryBufferViewPtr vertexBufferView;
+    Assets::BinaryBufferViewPtr indexBufferView;
 
     std::vector<Math::CompactVector3> positions;
     std::vector<Math::Vector4> colors;
