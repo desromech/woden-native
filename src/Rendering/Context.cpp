@@ -319,17 +319,12 @@ bool RenderingContext::createScenePipelineStates()
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLER, 1); // Linear
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLER, 1); // Nearest
 
-        // Camera state.
+        // Rendering states.
         shaderSignatureBuilder->beginBindingBank(128);
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_UNIFORM_BUFFER, 1);
-
-        // Lighting state.
-        shaderSignatureBuilder->beginBindingBank(128);
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_UNIFORM_BUFFER, 1);
-
-        // Object state.
-        shaderSignatureBuilder->beginBindingBank(10000);
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_UNIFORM_BUFFER, 1);
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Camera
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Lighting
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Object
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Material
 
         sceneShaderSignature = shaderSignatureBuilder->build();
         if (!sceneShaderSignature)
@@ -426,7 +421,34 @@ bool RenderingContext::createScenePipelineStates()
             fprintf(stderr, "Failed to create depth only scene pipeline state.");
             return false;
         }
+    }
 
+    // Create the static opaque pipeline state
+    {
+        auto vertexShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/StaticSceneVertexShader.glsl", AGPU_VERTEX_SHADER);
+        auto fragmentShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/OpaqueFragmentShader.glsl", AGPU_FRAGMENT_SHADER);
+        if(!vertexShader || !fragmentShader)
+            return false;
+        
+        auto builder = device->createPipelineBuilder();
+        builder->setRenderTargetCount(1);
+        builder->setRenderTargetFormat(0, HDRColorBufferFormat);
+        builder->setDepthStencilFormat(DepthStencilBufferViewFormat);
+        builder->setDepthState(true, true, AGPU_EQUAL);
+
+        builder->setShaderSignature(sceneShaderSignature);
+        builder->attachShader(vertexShader);
+        builder->attachShader(fragmentShader);
+
+        builder->setPrimitiveType(AGPU_TRIANGLES);
+        builder->setVertexLayout(staticVertexLayout);
+
+        staticOpaqueScenePipelineState = builder->build();
+        if(!staticOpaqueScenePipelineState)
+        {
+            fprintf(stderr, "Failed to create static opaque pipeline state.");
+            return false;
+        }
     }
 
     return true;

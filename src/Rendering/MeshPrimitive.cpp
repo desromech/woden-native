@@ -27,6 +27,13 @@ void MeshPrimitive::renderDepthOnlyWith(SceneRenderer *renderer)
 
 void MeshPrimitive::renderOpaqueWith(SceneRenderer *renderer) 
 {
+    auto context = RenderingContext::getMainContext();
+
+    auto &commandList = renderer->currentCommandList;
+    commandList->usePipelineState(context->staticOpaqueScenePipelineState);
+    vertexBinding->useWithRenderer(renderer);
+    renderer->useIndexBuffer(indices);
+    commandList->drawElements(indices->count, 1, 0, 0, 0);
 }
 
 } // End of namespace Rendering
