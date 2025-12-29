@@ -42,31 +42,46 @@ void Morph::handleUnknownEvent(const MorphicEventPtr &event)
 
 void Morph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
 {
-    printf("Mouse button %d down event %f,%f\n",
-        event->buttonIndex,
-        event->position.x, event->position.y
-    );
+    event->withTranslationInverseDo(getOrigin(), [&](){
+        for(auto &submorph : submorphs)
+        {
+            if(submorph->bounds.containsPoint(event->position))
+                submorph->processEvent(event);
+        }
+    });
 }
 
 void Morph::handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event)
 {
-    printf("Mouse button %d up event %f,%f\n",
-        event->buttonIndex,
-        event->position.x, event->position.y
-    );
+    event->withTranslationInverseDo(getOrigin(), [&](){
+        for(auto &submorph : submorphs)
+        {
+            if(submorph->bounds.containsPoint(event->position))
+                submorph->processEvent(event);
+        }
+    });
 }
 
 void Morph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
 {
-    printf("Mouse motion event %04x %f,%f %f,%f\n",
-        event->buttonState,
-        event->position.x, event->position.y,
-        event->delta.x, event->delta.y
-    );
+    event->withTranslationInverseDo(getOrigin(), [&](){
+        for(auto &submorph : submorphs)
+        {
+            if(submorph->bounds.containsPoint(event->position))
+                submorph->processEvent(event);
+        }
+    });
 }
 
 void Morph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
 {
+    event->withTranslationInverseDo(getOrigin(), [&](){
+        for(auto &submorph : submorphs)
+        {
+            if(submorph->bounds.containsPoint(event->position))
+                submorph->processEvent(event);
+        }
+    });
 }
 
 } // End of namespace Morphic

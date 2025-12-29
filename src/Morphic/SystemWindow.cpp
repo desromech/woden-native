@@ -77,7 +77,12 @@ static void onMouseWheel(const SDL_MouseWheelEvent &event)
     if(!window)
         return;
 
+    int mouseX, mouseY;
+    SDL_GetMouseState(&mouseX, &mouseY);
+
     auto morphicEvent = std::make_shared<MouseWheelEvent> ();
+    morphicEvent->position = Vector2(mouseX, mouseY);
+    morphicEvent->scrollAmount = Vector2(event.x, event.y);
     window->processEvent(morphicEvent);
 }
 

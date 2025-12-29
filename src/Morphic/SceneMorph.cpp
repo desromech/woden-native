@@ -39,5 +39,39 @@ void SceneMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
     }
 }
 
+Math::Quaternion SceneMorph::computeCameraOrientation() const
+{
+    return Quaternion::YRotation(cameraAngles.y) * Quaternion::XRotation(cameraAngles.x);
+}
+
+void SceneMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
+{
+    if(event->hasLeftButtonDown())
+    {
+        cameraAngles += Vector3(-event->delta.y, -event->delta.x, 0)*(M_PI/180.0);
+        cameraNode->transform.rotation = computeCameraOrientation();
+        //printf("Scene morph left  %f,%f\n", event->delta.x, event->delta.y);
+    }
+
+    if(event->hasRightButtonDown())
+    {
+        cameraNode->transform.translation +=
+            cameraNode->transform.rotation.rotateVector(
+                Vector3(event->delta.x, -event->delta.y, 0).normalized()*0.05
+            );
+    }
+
+}
+
+void SceneMorph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
+{
+    printf("Wheel %f %f\n", event->position.x, event->position.y);
+    cameraNode->transform.translation += 
+        cameraNode->transform.rotation.rotateVector(
+            Vector3(event->scrollAmount.x, 0, -event->scrollAmount.y)*0.1
+        );
+}
+
+
 } // End of namespace Morphic
 } // End of namespace Woden

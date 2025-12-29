@@ -39,6 +39,12 @@ public:
         maxCorner = max(maxCorner, point);
     }
 
+    bool containsPoint(const Vector2 &point)
+    {
+        return minCorner.x <= point.x && point.x <= maxCorner.x &&
+               minCorner.y <= point.y && point.y <= maxCorner.y;
+    }
+
     Vector2 extent() const
     {
         return maxCorner - minCorner;

@@ -2,6 +2,7 @@
 #define WODEN_MORPHIC_SCENE_MORPH_HPP
 
 #include "Morph.hpp"
+#include "Woden/Math/Quaternion.hpp"
 
 namespace Woden
 {
@@ -30,8 +31,14 @@ public:
 
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
 
+    virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event);
+    virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event);
+
+    Math::Quaternion computeCameraOrientation() const;
+
     SceneGraph::ScenePtr scene;
     SceneGraph::SceneNodePtr cameraNode;
+    Math::Vector3 cameraAngles = Vector3();
     Rendering::SceneRendererPtr sceneRenderer;
 };
 
