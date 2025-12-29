@@ -23,6 +23,7 @@ public:
 
     void addGuiElement(const GuiElement &element);
     void addGuiElementWithImage(const GuiElement &element, const Assets::ImagePtr &image);
+    void addGuiElementWithBinding(const GuiElement &element, const agpu_shader_resource_binding_ref &newTextureBinding);
 
     Math::Vector2 drawTextWithFaceAndColor(const Math::Vector2 &initialBaseline, const char *text, size_t textSize, const Assets::FontFacePtr &fontFace, const Math::Vector4 &color);
     Math::Vector2 drawTextInRectangleWithColor(const Math::Rectangle &rectangle, const std::string &text, const Math::Vector4 &color);

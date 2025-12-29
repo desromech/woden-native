@@ -44,7 +44,12 @@ void GUIRenderer::addGuiElement(const GuiElement &element)
 
 void GUIRenderer::addGuiElementWithImage(const GuiElement &element, const Assets::ImagePtr &image)
 {
-    currentTextureBinding = image->getValidGuiTextureBinding();
+    addGuiElementWithBinding(element, image->getValidGuiTextureBinding());
+}
+
+void GUIRenderer::addGuiElementWithBinding(const GuiElement &element, const agpu_shader_resource_binding_ref &newTextureBinding)
+{
+    currentTextureBinding = newTextureBinding;
     addGuiElement(element);
 }
 

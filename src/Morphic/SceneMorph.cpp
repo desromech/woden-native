@@ -23,6 +23,14 @@ void SceneMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
     sceneRenderer->setupWithScreenSize(int(extent.x + 0.5), int(extent.y + 0.5));
 
     sceneRenderer->renderScene(renderer->renderingCommandList, scene);
+    auto guiTextureBinding = sceneRenderer->screen->getValidGuiTextureBinding();
+    {
+        Rendering::GuiElement screenQuad = {};
+        screenQuad.type = Rendering::GuiElementType::TexturedRectangle;
+        screenQuad.rectangleMax = extent;
+        screenQuad.sourceImageRectangleMax = Vector2(1.0, 1.0);
+        renderer->addGuiElementWithBinding(screenQuad, guiTextureBinding);
+    }
 }
 
 } // End of namespace Morphic

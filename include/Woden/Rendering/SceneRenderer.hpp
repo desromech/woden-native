@@ -23,6 +23,9 @@ public:
     agpu_framebuffer_ref depthOnlyFramebuffer;
     agpu_framebuffer_ref hdrOpaqueFramebuffer;
 
+    agpu_shader_resource_binding_ref guiTextureBinding;
+    agpu_shader_resource_binding_ref getValidGuiTextureBinding();
+
     int screenWidth = -1;
     int screenHeight = -1;
 };

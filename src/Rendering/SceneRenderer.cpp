@@ -7,6 +7,16 @@ namespace Woden
 namespace Rendering
 {
 
+agpu_shader_resource_binding_ref SceneRendererScreen::getValidGuiTextureBinding()
+{
+    if(guiTextureBinding)
+        return guiTextureBinding;
+
+    guiTextureBinding = Rendering::RenderingContext::getMainContext()->guiShaderSignature->createShaderResourceBinding(2);
+    guiTextureBinding->bindSampledTextureView(0, hdrColorBuffer->getOrCreateFullView());
+    return guiTextureBinding;
+}
+
 void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene)
 {
     auto context = RenderingContext::getMainContext();
