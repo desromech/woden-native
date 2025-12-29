@@ -29,3 +29,23 @@ layout( push_constant ) uniform constants
     uint cameraStateIndex;
     uint materialStateIndex;
 } PushConstants;
+
+mat3 topLeft3x3FromMat4(mat4 mat)
+{
+    return mat3(mat[0].xyz, mat[1].xyz, mat[2].xyz);
+}
+
+vec3 transformNormalToWorld(vec3 normal)
+{ 
+    return normal * topLeft3x3FromMat4(SceneObjectStateList.list[PushConstants.objectStateIndex].inverseTransformation);
+}
+
+vec3 transformNormalWorldToView(vec3 normal)
+{ 
+    return normal * topLeft3x3FromMat4(SceneCameraStateList.list[PushConstants.cameraStateIndex].transformation);
+}
+
+vec3 transformNormalToView(vec3 normal)
+{ 
+	return transformNormalWorldToView(transformNormalToWorld(normal));
+}

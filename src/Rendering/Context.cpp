@@ -323,8 +323,19 @@ bool RenderingContext::createScenePipelineStates()
         shaderSignatureBuilder->beginBindingBank(128);
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Object
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Camera
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Lighting
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Material
+
+        // Lighting states
+        shaderSignatureBuilder->beginBindingBank(128);
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_UNIFORM_BUFFER, 1); // Global lighting state
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // All Lights
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Tile Light Index List
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Light grid Index List
+
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // Shadow Map atlas texture
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // BRDF LUT
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // IBL Diffuse Light Probe
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // IBL Specular Light Probe
 
         shaderSignatureBuilder->addBindingConstant(); // Object index
         shaderSignatureBuilder->addBindingConstant(); // Camera index
