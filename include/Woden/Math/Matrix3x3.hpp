@@ -163,8 +163,9 @@ public:
     bool operator==(const Matrix3x3 &o) const
     {
         return
-            m11 == o.m11 && m12 == o.m12 &&
-            m21 == o.m21 && m22 == o.m22;
+            m11 == o.m11 && m12 == o.m12 && m13 == o.m13 &&
+            m21 == o.m21 && m22 == o.m22 && m23 == o.m23 &&
+            m31 == o.m31 && m32 == o.m32 && m33 == o.m33;
     }
 
     bool operator!=(const Matrix3x3 &o) const

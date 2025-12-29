@@ -4,6 +4,7 @@ set(WodenTests_Sources
     Math/Matrix2x2.cpp
     Math/Matrix3x3.cpp
     Math/Matrix4x4.cpp
+    Math/Quaternion.cpp
     Math/Ray3D.cpp
     Math/Scalar.cpp
     Math/Sphere.cpp
