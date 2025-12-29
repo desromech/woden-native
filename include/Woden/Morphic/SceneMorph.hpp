@@ -8,6 +8,7 @@ namespace Woden
 namespace SceneGraph
 {
 typedef std::shared_ptr<class Scene> ScenePtr;
+typedef std::shared_ptr<class SceneNode> SceneNodePtr;
 }
 
 namespace Rendering
@@ -30,6 +31,7 @@ public:
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
 
     SceneGraph::ScenePtr scene;
+    SceneGraph::SceneNodePtr cameraNode;
     Rendering::SceneRendererPtr sceneRenderer;
 };
 

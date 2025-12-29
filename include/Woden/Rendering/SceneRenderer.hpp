@@ -41,7 +41,7 @@ public:
     static const size_t MaxSceneObjectStateCapacity = 1024;
     static const size_t MaxSceneCameraStateCapacity = 128;
 
-    void renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene);
+    void renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene, const SceneGraph::SceneNodePtr &cameraNode);
     void setupWithScreenSize(int newScreenWidth, int newScreenHeight);
 
     void useIndexBuffer(const Assets::BinaryBufferAccessorPtr &indices);
@@ -49,6 +49,7 @@ public:
     std::shared_ptr<SceneRendererScreen> screen;
     agpu_command_list_ref currentCommandList;
     RenderingScenePtr currentRenderingScene;
+    SceneGraph::SceneNodePtr currentCameraNode;
 
     agpu_shader_resource_binding_ref statesBinding;
     agpu_buffer_ref sceneObjectStatesBuffer;

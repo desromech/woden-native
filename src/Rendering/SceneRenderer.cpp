@@ -1,5 +1,6 @@
 #include "Woden/Rendering/SceneRenderer.hpp"
 #include "Woden/Rendering/RenderingScene.hpp"
+#include "Woden/Rendering/Camera.hpp"
 #include "Woden/Rendering/Context.hpp"
 #include <assert.h>
 
@@ -43,11 +44,24 @@ void SceneRenderer::gatherRenderingSceneStates()
     {
         SceneCameraState cameraState = {};
         auto aspect = Math::Scalar(screen->screenWidth) / Math::Scalar(screen->screenHeight);
-        cameraState.inverseTransformationMatrix = Math::Matrix4x4::WithTranslation(-Math::Vector3(0, 1, 3));
-        cameraState.projectionMatrix = Math::Matrix4x4::ReverseDepthPerspective(60.0, aspect, 0.1, 1000.0);
+
+        if(currentCameraNode && !currentCameraNode->cameras.empty())
+        {
+            const auto &cameraStateObject = currentCameraNode->cameras.front();
+            cameraState.transformationMatrix = currentCameraNode->transform.asMatrix();
+            cameraState.inverseTransformationMatrix = currentCameraNode->transform.asInverseMatrix();
+
+            cameraState.projectionMatrix = cameraStateObject->computeProjectionMatrix(aspect);
+        }
+        else
+        {
+            cameraState.projectionMatrix = Math::Matrix4x4::ReverseDepthPerspective(60.0, aspect, 0.1, 1000.0);
+        }
 
         if(RenderingContext::getMainContext()->device->hasTopLeftNdcOrigin())
+        {
             cameraState.projectionMatrix = Math::Matrix4x4::ProjectionInvertYMatrix() * cameraState.projectionMatrix;
+        }
         sceneCameraStates.push_back(cameraState);
     }
 }
@@ -91,12 +105,13 @@ void SceneRenderer::uploadRenderingSceneStates()
     sceneCameraStatesBuffer->uploadBufferData(0, sizeof(SceneCameraState)*sceneCameraStates.size(), sceneCameraStates.data());
 }
 
-void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene)
+void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene, const SceneGraph::SceneNodePtr &cameraNode)
 {
     auto context = RenderingContext::getMainContext();
     currentCommandList = commandList;
 
     currentRenderingScene = std::make_shared<RenderingScene> ();
+    currentCameraNode = cameraNode;
     scene->addIntoRenderingScene(currentRenderingScene);
 
     // Gather and rendering scene states.

@@ -31,7 +31,7 @@ typedef std::shared_ptr<class Scene> ScenePtr;
 typedef std::shared_ptr<class SceneTreeElement> SceneTreeElementPtr;
 typedef std::shared_ptr<class SceneTreeElementWithChildren> SceneTreeElementWithChildrenPtr;
 typedef std::shared_ptr<class SceneLayer> SceneLayerPtr;
-typedef std::shared_ptr<class SceneNode> SceneLayerNode;
+typedef std::shared_ptr<class SceneNode> SceneNodePtr;
 
 /**
  * I am a scene element.

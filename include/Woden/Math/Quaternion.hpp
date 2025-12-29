@@ -52,7 +52,7 @@ struct Quaternion
 
     Quaternion conjugated() const
     {
-        return Quaternion(-x, -y, -z, -w);
+        return Quaternion(-x, -y, -z, w);
     }
 
     Scalar dot(const Quaternion &o) const
