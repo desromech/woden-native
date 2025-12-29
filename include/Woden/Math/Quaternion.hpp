@@ -107,7 +107,7 @@ struct Quaternion
         return Quaternion(x - o.x, y - o.y, z - o.z, w - o.w);
     }
 
-    Quaternion operator*(const Quaternion &o)
+    Quaternion operator*(const Quaternion &o) const
     {
         return Quaternion(
             (r * o.i) + (i * o.r) + (j * o.k) - (k * o.j),
@@ -115,6 +115,21 @@ struct Quaternion
             (r * o.k) + (i * o.j) - (j * o.i) + (k * o.r),    
             (r * o.r) - (i * o.i) - (j * o.j) - (k * o.k)
         );
+    }
+
+    Vector3 rotateVector(const Vector3 &v) const
+    {
+        return ((*this)*Quaternion(v.x, v.y, v.z, 0)*conjugated()).xyz();
+    }
+
+    Vector3 inverseRotateVector(const Vector3 &v) const
+    {
+        return (conjugated()*Quaternion(v.x, v.y, v.z, 0)*(*this)).xyz();
+    }
+
+    Vector3 xyz() const
+    {
+        return Vector3(x, y, z);
     }
 
     union

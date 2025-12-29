@@ -8,6 +8,7 @@ set(WodenTests_Sources
     Math/Ray3D.cpp
     Math/Scalar.cpp
     Math/Sphere.cpp
+    Math/TRSTransform3D.cpp
     Math/Vector2.cpp
     Math/Vector3.cpp
     Math/Vector4.cpp

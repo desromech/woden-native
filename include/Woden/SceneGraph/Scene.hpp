@@ -1,6 +1,7 @@
 #ifndef WODEN_SCENE_GRAPH_SCENE_HPP
 #define WODEN_SCENE_GRAPH_SCENE_HPP
 
+#include "Woden/Math/TRSTransform3D.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -107,6 +108,7 @@ public:
     void addRenderable(const Rendering::RenderablePtr &renderable);
     virtual void addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene) override;
 
+    Math::TRSTransform3D transform;
     std::vector<Rendering::CameraPtr> cameras;
     std::vector<Rendering::RenderablePtr> renderables;
     std::vector<Rendering::LightSourcePtr> lightSources;

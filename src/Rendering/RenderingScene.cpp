@@ -9,6 +9,8 @@ void RenderingScene::addObjectWithRenderable(const RenderablePtr &renderable)
 {
     RenderingSceneObject sceneObject = {};
     sceneObject.renderable = renderable;
+    sceneObject.modelMatrix = currentModelMatrix;
+    sceneObject.inverseModelMatrix = currentInverseModelMatrix;
     opaqueObjects.push_back(sceneObject);
 }
 

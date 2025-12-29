@@ -1,6 +1,7 @@
 #include "Woden/SceneGraph/Scene.hpp"
 #include "Woden/Morphic/SceneMorph.hpp"
 #include "Woden/Rendering/Renderable.hpp"
+#include "Woden/Rendering/RenderingScene.hpp"
 
 namespace Woden
 {
@@ -124,9 +125,11 @@ void SceneNode::addRenderable(const Rendering::RenderablePtr &renderable)
 
 void SceneNode::addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene)
 {
-    for(auto &renderable : renderables)
-        renderable->addIntoRenderingScene(renderingScene);
-    SceneTreeElementWithChildren::addIntoRenderingScene(renderingScene);
+    renderingScene->withTRSTransformDuring(transform, [&](){
+        for(auto &renderable : renderables)
+            renderable->addIntoRenderingScene(renderingScene);
+        SceneTreeElementWithChildren::addIntoRenderingScene(renderingScene);
+    });
 }
 
 } // End of namespace SceneGraph

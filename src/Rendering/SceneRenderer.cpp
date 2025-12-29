@@ -23,6 +23,8 @@ void SceneRenderer::addRenderingSceneObjectStateFor(RenderingSceneObject &sceneO
     sceneObject.sceneObjectStateIndex = sceneObjectStates.size();
 
     SceneObjectState objectState = {};
+    objectState.transformationMatrix = sceneObject.modelMatrix;
+    objectState.inverseTransformationMatrix = sceneObject.inverseModelMatrix;
     sceneObjectStates.push_back(objectState);
 }
 
