@@ -1,6 +1,7 @@
 #ifndef WODEN_MATH_SCALAR_HPP
 #define WODEN_MATH_SCALAR_HPP
 
+#define _USE_MATH_DEFINES 
 #include <math.h>
 
 namespace Woden
