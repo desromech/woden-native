@@ -1,6 +1,7 @@
 #ifndef WODEN_MORPHIC_MORPH_HPP
 #define WODEN_MORPHIC_MORPH_HPP
 
+#include "Event.hpp"
 #include "Woden/Math/Rectangle.hpp"
 #include "Woden/Math/Vector4.hpp"
 #include <assert.h>
@@ -69,6 +70,14 @@ public:
     virtual void fullDrawWith(const Rendering::GUIRendererPtr &renderer);
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer);
     virtual void drawChildrenWith(const Rendering::GUIRendererPtr &renderer);
+
+    virtual void processEvent(const MorphicEventPtr &event);
+
+    virtual void handleUnknownEvent(const MorphicEventPtr &event);
+    virtual void handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event);
+    virtual void handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event);
+    virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event);
+    virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event);
 
     MorphWeakPtr owner;
     Rectangle bounds = Rectangle(Vector2(0, 0), Vector2(50, 40));

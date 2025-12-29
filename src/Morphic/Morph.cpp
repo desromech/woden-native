@@ -31,5 +31,43 @@ void Morph::drawChildrenWith(const Rendering::GUIRendererPtr &renderer)
         submorph->fullDrawWith(renderer);
 }
 
+void Morph::processEvent(const MorphicEventPtr &event)
+{
+    event->sentTo(shared_from_this());
+}
+
+void Morph::handleUnknownEvent(const MorphicEventPtr &event)
+{
+}
+
+void Morph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
+{
+    printf("Mouse button %d down event %f,%f\n",
+        event->buttonIndex,
+        event->position.x, event->position.y
+    );
+}
+
+void Morph::handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event)
+{
+    printf("Mouse button %d up event %f,%f\n",
+        event->buttonIndex,
+        event->position.x, event->position.y
+    );
+}
+
+void Morph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
+{
+    printf("Mouse motion event %04x %f,%f %f,%f\n",
+        event->buttonState,
+        event->position.x, event->position.y,
+        event->delta.x, event->delta.y
+    );
+}
+
+void Morph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
+{
+}
+
 } // End of namespace Morphic
 } // End of namespace Woden

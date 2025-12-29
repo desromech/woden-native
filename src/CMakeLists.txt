@@ -3,6 +3,7 @@ set(WodenEngine_Sources
     Assets/Font.cpp
     Assets/Image.cpp
 
+    Morphic/Event.cpp
     Morphic/Morph.cpp
     Morphic/SceneMorph.cpp
     Morphic/StringMorph.cpp

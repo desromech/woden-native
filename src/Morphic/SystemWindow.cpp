@@ -14,7 +14,7 @@ static bool hasInitializedSDL2 = false;
 static bool isQuitting = false;
 static std::map<uint32_t, SystemWindowPtr> sdlWindowMap;
 
-void ensureSDLInitialization()
+static void ensureSDLInitialization()
 {
     if(hasInitializedSDL2)
         return;
@@ -23,10 +23,80 @@ void ensureSDLInitialization()
     hasInitializedSDL2 = true;
 }
 
+static SystemWindowPtr getWindowWithID(uint32_t id)
+{
+    auto it = sdlWindowMap.find(id);
+    if(it == sdlWindowMap.end())
+        return nullptr;
+    return it->second;
+}
+
+static void onMouseButtonDown(const SDL_MouseButtonEvent &event)
+{
+    auto window = getWindowWithID(event.windowID);
+    if(!window)
+        return;
+
+    auto morphicEvent = std::make_shared<MouseButtonDownEvent> ();
+    morphicEvent->position = Vector2(event.x, event.y);
+    morphicEvent->buttonIndex = event.button;
+
+    window->processEvent(morphicEvent);
+}
+
+static void onMouseButtonUp(const SDL_MouseButtonEvent &event)
+{
+    auto window = getWindowWithID(event.windowID);
+    if(!window)
+        return;
+
+    auto morphicEvent = std::make_shared<MouseButtonUpEvent> ();
+    morphicEvent->position = Vector2(event.x, event.y);
+    morphicEvent->buttonIndex = event.button;
+
+    window->processEvent(morphicEvent);
+}
+
+static void onMouseMotion(const SDL_MouseMotionEvent &event)
+{
+    auto window = getWindowWithID(event.windowID);
+    if(!window)
+        return;
+
+    auto morphicEvent = std::make_shared<MouseMotionEvent> ();
+    morphicEvent->buttonState = event.state;
+    morphicEvent->position = Vector2(event.x, event.y);
+    morphicEvent->delta = Vector2(event.xrel, event.yrel);
+
+    window->processEvent(morphicEvent);
+}
+
+static void onMouseWheel(const SDL_MouseWheelEvent &event)
+{
+    auto window = getWindowWithID(event.windowID);
+    if(!window)
+        return;
+
+    auto morphicEvent = std::make_shared<MouseWheelEvent> ();
+    window->processEvent(morphicEvent);
+}
+
 void processEvent(const SDL_Event *event)
 {
     switch(event->type)
     {
+    case SDL_MOUSEBUTTONDOWN:
+        onMouseButtonDown(event->button);
+        break;
+    case SDL_MOUSEBUTTONUP:
+        onMouseButtonUp(event->button);
+        break;
+    case SDL_MOUSEMOTION:
+        onMouseMotion(event->motion);
+        break;
+    case SDL_MOUSEWHEEL:
+        onMouseWheel(event->wheel);
+        break;
     case SDL_QUIT:
         isQuitting = true;
         break;
