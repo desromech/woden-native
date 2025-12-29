@@ -363,16 +363,26 @@ bool RenderingContext::createScenePipelineStates()
         depthStencilAttachment.sample_count = 1;
 
         // Color attachment
-        agpu_renderpass_color_attachment_description colorAttachment = {};
-        colorAttachment.format = HDRColorBufferFormat;
-        colorAttachment.begin_action = AGPU_ATTACHMENT_CLEAR;
-        colorAttachment.end_action = AGPU_ATTACHMENT_KEEP;
-        colorAttachment.sample_count = 1;
+        agpu_renderpass_color_attachment_description colorAttachment[3] = {};
+        colorAttachment[0].format = HDRColorBufferFormat;
+        colorAttachment[0].begin_action = AGPU_ATTACHMENT_CLEAR;
+        colorAttachment[0].end_action = AGPU_ATTACHMENT_KEEP;
+        colorAttachment[0].sample_count = 1;
+
+        colorAttachment[1].format = NormalGBufferFormat;
+        colorAttachment[1].begin_action = AGPU_ATTACHMENT_CLEAR;
+        colorAttachment[1].end_action = AGPU_ATTACHMENT_KEEP;
+        colorAttachment[1].sample_count = 1;
+
+        colorAttachment[2].format = SpecularGBufferFormat;
+        colorAttachment[2].begin_action = AGPU_ATTACHMENT_CLEAR;
+        colorAttachment[2].end_action = AGPU_ATTACHMENT_KEEP;
+        colorAttachment[2].sample_count = 1;
 
         agpu_renderpass_description description = {};
         description.depth_stencil_attachment = &depthStencilAttachment;
-        description.color_attachment_count = 1;
-        description.color_attachments = &colorAttachment;
+        description.color_attachment_count = 3;
+        description.color_attachments = colorAttachment;
 
         hdrOpaqueRenderPass = device->createRenderPass(&description);
         if(!hdrOpaqueRenderPass)
@@ -435,8 +445,10 @@ bool RenderingContext::createScenePipelineStates()
             return false;
         
         auto builder = device->createPipelineBuilder();
-        builder->setRenderTargetCount(1);
+        builder->setRenderTargetCount(3);
         builder->setRenderTargetFormat(0, HDRColorBufferFormat);
+        builder->setRenderTargetFormat(1, NormalGBufferFormat);
+        builder->setRenderTargetFormat(2, SpecularGBufferFormat);
         builder->setDepthStencilFormat(DepthStencilBufferViewFormat);
         builder->setDepthState(true, true, AGPU_EQUAL);
 

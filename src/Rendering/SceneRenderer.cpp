@@ -257,7 +257,62 @@ void SceneRenderer::setupWithScreenSize(int newScreenWidth, int newScreenHeight)
         attachmentViewDesc.usage_mode = AGPU_TEXTURE_USAGE_COLOR_ATTACHMENT;
 
         screen->hdrColorBufferView = screen->hdrColorBuffer->createView(&attachmentViewDesc);
+    }   
+
+    // Normal G-Buffer
+    {
+        agpu_texture_description desc = {};
+        desc.type = AGPU_TEXTURE_2D;
+        desc.width = newScreenWidth;
+        desc.height = newScreenHeight;
+        desc.depth = 1;
+        desc.layers = 1;
+        desc.miplevels = 1;
+        desc.format = RenderingContext::NormalGBufferFormat;
+        desc.usage_modes = agpu_texture_usage_mode_mask(AGPU_TEXTURE_USAGE_COLOR_ATTACHMENT | AGPU_TEXTURE_USAGE_SAMPLED);
+        desc.main_usage_mode = AGPU_TEXTURE_USAGE_SAMPLED;
+        desc.sample_count = 1;
+        screen->normalGBuffer = device->createTexture(&desc);
+        if(!screen->normalGBuffer)
+        {
+            fprintf(stderr, "Failed to create the normal G-buffer\n");
+            abort();
+        }
+
+        agpu_texture_view_description attachmentViewDesc = {};
+        screen->normalGBuffer->getFullViewDescription(&attachmentViewDesc);
+        attachmentViewDesc.usage_mode = AGPU_TEXTURE_USAGE_COLOR_ATTACHMENT;
+
+        screen->normalGBufferView = screen->normalGBuffer->createView(&attachmentViewDesc);
     }
+
+    // Specular G-Buffer
+    {
+        agpu_texture_description desc = {};
+        desc.type = AGPU_TEXTURE_2D;
+        desc.width = newScreenWidth;
+        desc.height = newScreenHeight;
+        desc.depth = 1;
+        desc.layers = 1;
+        desc.miplevels = 1;
+        desc.format = RenderingContext::SpecularGBufferFormat;
+        desc.usage_modes = agpu_texture_usage_mode_mask(AGPU_TEXTURE_USAGE_COLOR_ATTACHMENT | AGPU_TEXTURE_USAGE_SAMPLED);
+        desc.main_usage_mode = AGPU_TEXTURE_USAGE_SAMPLED;
+        desc.sample_count = 1;
+        screen->specularGBuffer = device->createTexture(&desc);
+        if(!screen->specularGBuffer)
+        {
+            fprintf(stderr, "Failed to create the normal G-buffer\n");
+            abort();
+        }
+
+        agpu_texture_view_description attachmentViewDesc = {};
+        screen->specularGBuffer->getFullViewDescription(&attachmentViewDesc);
+        attachmentViewDesc.usage_mode = AGPU_TEXTURE_USAGE_COLOR_ATTACHMENT;
+
+        screen->specularGBufferView = screen->specularGBuffer->createView(&attachmentViewDesc);
+    }
+    
 
     // Depth-Stencil only framebuffer
     {
@@ -271,8 +326,14 @@ void SceneRenderer::setupWithScreenSize(int newScreenWidth, int newScreenHeight)
 
     // HDR-depth framebuffer
     {
-        screen->hdrOpaqueFramebuffer = device->createFrameBuffer(newScreenWidth, newScreenHeight, 1, &screen->hdrColorBufferView, screen->depthStencilAttachmentView);
-        if(!screen->depthOnlyFramebuffer)
+        agpu_texture_view_ref colorAttachments[3] = {
+            screen->hdrColorBufferView,
+            screen->normalGBufferView,
+            screen->specularGBufferView
+        };
+
+        screen->hdrOpaqueFramebuffer = device->createFrameBuffer(newScreenWidth, newScreenHeight, 3, colorAttachments, screen->depthStencilAttachmentView);
+        if(!screen->hdrOpaqueFramebuffer)
         {
             fprintf(stderr, "Failed to create hdr-opaque framebuffer\n");
             abort();

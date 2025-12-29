@@ -22,6 +22,12 @@ public:
     agpu_texture_ref hdrColorBuffer;
     agpu_texture_view_ref hdrColorBufferView;
 
+    agpu_texture_ref normalGBuffer;
+    agpu_texture_view_ref normalGBufferView;
+
+    agpu_texture_ref specularGBuffer;
+    agpu_texture_view_ref specularGBufferView;
+
     agpu_framebuffer_ref depthOnlyFramebuffer;
     agpu_framebuffer_ref hdrOpaqueFramebuffer;
 

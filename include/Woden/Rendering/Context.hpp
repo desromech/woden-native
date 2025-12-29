@@ -20,6 +20,9 @@ public:
     static const agpu_texture_format WindowColorBufferFormat = AGPU_TEXTURE_FORMAT_B8G8R8A8_UNORM_SRGB;
 
     static const agpu_texture_format HDRColorBufferFormat = AGPU_TEXTURE_FORMAT_R16G16B16A16_FLOAT;
+    static const agpu_texture_format NormalGBufferFormat = AGPU_TEXTURE_FORMAT_R16G16_FLOAT;
+    static const agpu_texture_format SpecularGBufferFormat = AGPU_TEXTURE_FORMAT_R8G8B8A8_UNORM;
+
     static const agpu_texture_format DepthStencilBufferFormat = AGPU_TEXTURE_FORMAT_R32G8X24_TYPELESS;
     static const agpu_texture_format DepthStencilBufferViewFormat = AGPU_TEXTURE_FORMAT_D32_FLOAT_S8X24_UINT;
     static const agpu_texture_format DepthStencilBufferSampledFormat = AGPU_TEXTURE_FORMAT_R32_FLOAT_S8X24_TYPELESS;
