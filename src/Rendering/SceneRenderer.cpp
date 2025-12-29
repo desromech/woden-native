@@ -1,6 +1,7 @@
 #include "Woden/Rendering/SceneRenderer.hpp"
 #include "Woden/Rendering/RenderingScene.hpp"
 #include "Woden/Rendering/Context.hpp"
+#include <assert.h>
 
 namespace Woden
 {
@@ -17,6 +18,77 @@ agpu_shader_resource_binding_ref SceneRendererScreen::getValidGuiTextureBinding(
     return guiTextureBinding;
 }
 
+void SceneRenderer::addRenderingSceneObjectStateFor(RenderingSceneObject &sceneObject)
+{
+    sceneObject.sceneObjectStateIndex = sceneObjectStates.size();
+
+    SceneObjectState objectState = {};
+    sceneObjectStates.push_back(objectState);
+}
+
+void SceneRenderer::gatherRenderingSceneStates()
+{
+    sceneObjectStates.clear();
+    sceneCameraStates.clear();
+
+    for(auto &object : currentRenderingScene->backgroundObjects)
+        addRenderingSceneObjectStateFor(object);
+    for(auto &object : currentRenderingScene->opaqueObjects)
+        addRenderingSceneObjectStateFor(object);
+    for(auto &object : currentRenderingScene->translucentObject)
+        addRenderingSceneObjectStateFor(object);
+
+    {
+        SceneCameraState cameraState = {};
+        auto aspect = Math::Scalar(screen->screenWidth) / Math::Scalar(screen->screenHeight);
+        cameraState.inverseTransformationMatrix = Math::Matrix4x4::WithTranslation(-Math::Vector3(0, 1, 3));
+        cameraState.projectionMatrix = Math::Matrix4x4::ReverseDepthPerspective(60.0, aspect, 0.1, 1000.0);
+
+        if(RenderingContext::getMainContext()->device->hasTopLeftNdcOrigin())
+            cameraState.projectionMatrix = Math::Matrix4x4::ProjectionInvertYMatrix() * cameraState.projectionMatrix;
+        sceneCameraStates.push_back(cameraState);
+    }
+}
+
+void SceneRenderer::uploadRenderingSceneStates()
+{
+    assert(sceneObjectStates.size() <= MaxSceneObjectStateCapacity);
+    assert(sceneCameraStates.size() <= MaxSceneCameraStateCapacity);
+
+    if(!statesBinding)
+    {
+        auto context = RenderingContext::getMainContext();
+        statesBinding = context->sceneShaderSignature->createShaderResourceBinding(1);
+
+        {
+            agpu_buffer_description desc = {};
+            desc.size = sizeof(SceneObjectState)*MaxSceneObjectStateCapacity;
+            desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
+            desc.usage_modes = desc.main_usage_mode = agpu_buffer_usage_mask(AGPU_STORAGE_BUFFER);
+            desc.mapping_flags = AGPU_MAP_DYNAMIC_STORAGE_BIT;
+            desc.stride = 0;
+
+            sceneObjectStatesBuffer = context->device-> createBuffer(&desc, nullptr);
+            statesBinding->bindStorageBuffer(0, sceneObjectStatesBuffer);
+        }
+
+        {
+            agpu_buffer_description desc = {};
+            desc.size = sizeof(SceneCameraState)*MaxSceneCameraStateCapacity;
+            desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
+            desc.usage_modes = desc.main_usage_mode = agpu_buffer_usage_mask(AGPU_STORAGE_BUFFER);
+            desc.mapping_flags = AGPU_MAP_DYNAMIC_STORAGE_BIT;
+            desc.stride = 0;
+
+            sceneCameraStatesBuffer = context->device-> createBuffer(&desc, nullptr);
+            statesBinding->bindStorageBuffer(1, sceneCameraStatesBuffer);
+        }
+    }
+    
+    sceneObjectStatesBuffer->uploadBufferData(0, sizeof(SceneObjectState)*sceneObjectStates.size(), sceneObjectStates.data());
+    sceneCameraStatesBuffer->uploadBufferData(0, sizeof(SceneCameraState)*sceneCameraStates.size(), sceneCameraStates.data());
+}
+
 void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene)
 {
     auto context = RenderingContext::getMainContext();
@@ -25,11 +97,19 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
     currentRenderingScene = std::make_shared<RenderingScene> ();
     scene->addIntoRenderingScene(currentRenderingScene);
 
+    // Gather and rendering scene states.
+    gatherRenderingSceneStates();
+    uploadRenderingSceneStates();
+
     // Depth-Stencil render pass.
     commandList->beginRenderPass(context->depthStencilRenderPass, screen->depthOnlyFramebuffer, false);
     commandList->setViewport(0, 0, screen->screenWidth, screen->screenHeight);
     commandList->setScissor(0, 0, screen->screenWidth, screen->screenHeight);
     commandList->setShaderSignature(context->sceneShaderSignature);
+    commandList->useShaderResources(statesBinding);
+
+    ScenePushConstants initialPushConstants = {};
+    commandList->pushConstants(0, sizeof(initialPushConstants), &initialPushConstants);
 
     performDepthOnlyPass();
 
@@ -39,6 +119,9 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
     commandList->beginRenderPass(context->hdrOpaqueRenderPass, screen->hdrOpaqueFramebuffer, false);
     commandList->setViewport(0, 0, screen->screenWidth, screen->screenHeight);
     commandList->setScissor(0, 0, screen->screenWidth, screen->screenHeight);
+    commandList->setShaderSignature(context->sceneShaderSignature);
+    commandList->useShaderResources(statesBinding);
+    commandList->pushConstants(0, sizeof(initialPushConstants), &initialPushConstants);
 
     performHDROpaquePass();
 
@@ -50,13 +133,25 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
 void SceneRenderer::performDepthOnlyPass()
 {
     for(auto &object : currentRenderingScene->opaqueObjects)
+    {
+        currentCommandList->pushConstants(0, 4, &object.sceneObjectStateIndex);
         object.renderable->renderDepthOnlyWith(this);
+    }
 }
 
 void SceneRenderer::performHDROpaquePass()
 {
-    for(auto &object : currentRenderingScene->opaqueObjects)
+    for(auto &object : currentRenderingScene->backgroundObjects)
+    {
+        currentCommandList->pushConstants(0, 4, &object.sceneObjectStateIndex);
         object.renderable->renderOpaqueWith(this);
+    }
+
+    for(auto &object : currentRenderingScene->opaqueObjects)
+    {
+        currentCommandList->pushConstants(0, 4, &object.sceneObjectStateIndex);
+        object.renderable->renderOpaqueWith(this);
+    }
 }
 
 void SceneRenderer::useIndexBuffer(const Assets::BinaryBufferAccessorPtr &indices)

@@ -1,0 +1,138 @@
+#ifndef WODEN_MATH_Matrix4x4_HPP
+#define WODEN_MATH_Matrix4x4_HPP
+
+#include "Scalar.hpp"
+#include "Matrix3x3.hpp"
+#include "Vector3.hpp"
+
+namespace Woden
+{
+namespace Math
+{
+/**
+ * 4x4 Matrix
+ */
+class Matrix4x4
+{
+public:
+    
+    Matrix4x4(Scalar s = 1)
+    {
+        m11 = s; m12 = 0; m13 = 0; m14 = 0;
+        m21 = 0; m22 = s; m23 = 0; m24 = 0;
+        m31 = 0; m32 = 0; m33 = s; m34 = 0;
+        m41 = 0; m42 = 0; m43 = 0; m44 = s;
+    }
+
+    Matrix4x4(
+        Scalar cm11, Scalar cm12, Scalar cm13, Scalar cm14,
+        Scalar cm21, Scalar cm22, Scalar cm23, Scalar cm24,
+        Scalar cm31, Scalar cm32, Scalar cm33, Scalar cm34,
+        Scalar cm41, Scalar cm42, Scalar cm43, Scalar cm44
+    )
+    {
+        m11 = cm11; m12 = cm12; m13 = cm13; m14 = cm14;
+        m21 = cm21; m22 = cm22; m23 = cm23; m24 = cm24;
+        m31 = cm31; m32 = cm32; m33 = cm33; m34 = cm34;
+        m41 = cm41; m42 = cm42; m43 = cm43; m44 = cm44;
+    }
+
+    static Matrix4x4 WithMatrix3AndTranslation(const Matrix3x3 &m, const Vector3 &t)
+    {
+        return Matrix4x4(
+            m.m11, m.m12, m.m13, t.x,
+            m.m21, m.m22, m.m23, t.y,
+            m.m31, m.m32, m.m33, t.z,
+            0,     0,     0,     1
+        );
+    }
+
+    static Matrix4x4 WithTranslation(const Vector3 &t)
+    {
+        return Matrix4x4(
+            1, 0, 0, t.x,
+            0, 1, 0, t.y,
+            0, 0, 1, t.z,
+            0, 0, 0, 1
+        );
+    }
+
+    static Matrix4x4 ProjectionInvertYMatrix()
+    {
+        return Matrix4x4(
+            1,  0, 0, 0,
+            0, -1, 0, 0,
+            0,  0, 1, 0,
+            0,  0, 0, 1
+        );
+    }
+
+    static Matrix4x4 ReverseDepthFrustum(Scalar left, Scalar right, Scalar bottom, Scalar top, Scalar near, Scalar far)
+    {
+        return Matrix4x4(
+            2*near /(right - left), 0, (right + left) / (right - left), 0,
+            0, 2*near /(top - bottom), (top + bottom) / (top - bottom), 0,
+            0, 0, near / (far - near), near*far / (far - near),
+            0, 0, -1, 0
+        );
+    }
+
+    static Matrix4x4 ReverseDepthPerspective(Scalar fovy, Scalar aspect, Scalar near, Scalar far)
+    {
+        auto fovyRad = (fovy *M_PI / 180.0) * 0.5;
+        auto top = near * tan(fovyRad);
+        auto right = top*aspect;
+
+        return ReverseDepthFrustum(
+            -right, right,
+            -top, top,
+             near, far
+        );
+    }
+
+    friend Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b)
+    {
+        return Matrix4x4(
+            a.m11*b.m11 + a.m12*b.m21 + a.m13*b.m31 + a.m14*b.m41,
+            a.m11*b.m12 + a.m12*b.m22 + a.m13*b.m32 + a.m14*b.m42,
+            a.m11*b.m13 + a.m12*b.m23 + a.m13*b.m33 + a.m14*b.m43,
+            a.m11*b.m14 + a.m12*b.m24 + a.m13*b.m34 + a.m14*b.m44,
+
+            a.m21*b.m11 + a.m22*b.m21 + a.m23*b.m31 + a.m24*b.m41,
+            a.m21*b.m12 + a.m22*b.m22 + a.m23*b.m32 + a.m24*b.m42,
+            a.m21*b.m13 + a.m22*b.m23 + a.m23*b.m33 + a.m24*b.m43,
+            a.m21*b.m14 + a.m22*b.m24 + a.m23*b.m34 + a.m24*b.m44,
+
+            a.m31*b.m11 + a.m32*b.m21 + a.m33*b.m31 + a.m34*b.m41,
+            a.m31*b.m12 + a.m32*b.m22 + a.m33*b.m32 + a.m34*b.m42,
+            a.m31*b.m13 + a.m32*b.m23 + a.m33*b.m33 + a.m34*b.m43,
+            a.m31*b.m14 + a.m32*b.m24 + a.m33*b.m34 + a.m34*b.m44,
+
+            a.m41*b.m11 + a.m42*b.m21 + a.m43*b.m31 + a.m44*b.m41,
+            a.m41*b.m12 + a.m42*b.m22 + a.m43*b.m32 + a.m44*b.m42,
+            a.m41*b.m13 + a.m42*b.m23 + a.m43*b.m33 + a.m44*b.m43,
+            a.m41*b.m14 + a.m42*b.m24 + a.m43*b.m34 + a.m44*b.m44
+        );
+    }
+
+    friend std::ostream &operator<<(std::ostream &out, const Matrix4x4 &m)
+    {
+        out << "Matrix4x4(\n"
+            << m.m11 << ", " << m.m12 << ", " << m.m13 << ", " << m.m14 << "\n"
+            << m.m21 << ", " << m.m22 << ", " << m.m23 << ", " << m.m24 << "\n"
+            << m.m31 << ", " << m.m32 << ", " << m.m33 << ", " << m.m34 << "\n"
+            << m.m41 << ", " << m.m42 << ", " << m.m43 << ", " << m.m44 << "\n"
+        ")";
+        return out;
+    }
+
+    Scalar m11, m21, m31, m41;
+    Scalar m12, m22, m32, m42;
+    Scalar m13, m23, m33, m43;
+    Scalar m14, m24, m34, m44;
+};
+
+}    
+}
+
+#endif // WODEN_MATH_Matrix4x4_HPP

@@ -321,10 +321,14 @@ bool RenderingContext::createScenePipelineStates()
 
         // Rendering states.
         shaderSignatureBuilder->beginBindingBank(128);
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Object
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Camera
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Lighting
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Object
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Material
+
+        shaderSignatureBuilder->addBindingConstant(); // Object index
+        shaderSignatureBuilder->addBindingConstant(); // Camera index
+        shaderSignatureBuilder->addBindingConstant(); // Material index
 
         sceneShaderSignature = shaderSignatureBuilder->build();
         if (!sceneShaderSignature)

@@ -12,6 +12,7 @@ namespace Rendering
 class RenderingSceneObject
 {
 public:
+    uint32_t sceneObjectStateIndex;
     RenderablePtr renderable;
 };
 

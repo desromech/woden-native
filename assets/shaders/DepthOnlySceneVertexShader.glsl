@@ -7,6 +7,8 @@ layout(location = 3) in vec4 inTangent4;
 
 void main()
 {
-    gl_Position = vec4(inPosition, 1.0);
+    vec4 worldPosition = SceneObjectStateList.list[PushConstants.objectStateIndex].transformation * vec4(inPosition, 1.0);
+    vec4 viewPosition = SceneCameraStateList.list[PushConstants.cameraStateIndex].inverseTransformation * worldPosition;
+    gl_Position = SceneCameraStateList.list[PushConstants.cameraStateIndex].projectionMatrix * viewPosition;
 }
 

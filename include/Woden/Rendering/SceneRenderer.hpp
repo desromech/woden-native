@@ -3,6 +3,8 @@
 
 #include "Woden/SceneGraph/Scene.hpp"
 #include "Woden/Assets/BinaryBuffer.hpp"
+#include "Woden/Rendering/SceneShaderCommon.hpp"
+
 #include "AGPU/agpu.hpp"
 
 namespace Woden
@@ -36,6 +38,9 @@ public:
 class SceneRenderer
 {
 public:
+    static const size_t MaxSceneObjectStateCapacity = 1024;
+    static const size_t MaxSceneCameraStateCapacity = 128;
+
     void renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene);
     void setupWithScreenSize(int newScreenWidth, int newScreenHeight);
 
@@ -45,7 +50,18 @@ public:
     agpu_command_list_ref currentCommandList;
     RenderingScenePtr currentRenderingScene;
 
+    agpu_shader_resource_binding_ref statesBinding;
+    agpu_buffer_ref sceneObjectStatesBuffer;
+    agpu_buffer_ref sceneCameraStatesBuffer;
+
+    std::vector<SceneObjectState> sceneObjectStates;
+    std::vector<SceneCameraState> sceneCameraStates;
+
 private:
+    void addRenderingSceneObjectStateFor(class RenderingSceneObject &sceneObject);
+    void gatherRenderingSceneStates();
+    void uploadRenderingSceneStates();
+
     void performDepthOnlyPass();
     void performHDROpaquePass();
 
