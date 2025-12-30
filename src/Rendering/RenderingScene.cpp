@@ -1,4 +1,5 @@
 #include "Woden/Rendering/RenderingScene.hpp"
+#include "Woden/Rendering/LightSource.hpp"
 
 namespace Woden
 {
@@ -11,6 +12,14 @@ void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lig
 
 void RenderingScene::addPointLightSource(const PointLightSource *lightSource)
 {
+    RenderingLightSourceObject renderingLight = {};
+    renderingLight.positionOrDirection = currentViewMatrix * currentModelMatrix.fourthColumn();
+    renderingLight.intensityAndColor = lightSource->color*lightSource->intensity;
+    renderingLight.influenceRadius = lightSource->influenceRadius;
+    lightSources.push_back(renderingLight);
+    //printf("renderingLight.positionOrDirection %f %f %f %f\n",
+    //    renderingLight.positionOrDirection.x, renderingLight.positionOrDirection.y, renderingLight.positionOrDirection.z, renderingLight.positionOrDirection.w
+    //);
 }
 
 void RenderingScene::addSpotLightSource(const SpotLightSource *lightSource)

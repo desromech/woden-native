@@ -4,6 +4,7 @@
 #include "Scalar.hpp"
 #include "Matrix3x3.hpp"
 #include "Vector3.hpp"
+#include "Vector4.hpp"
 
 namespace Woden
 {
@@ -90,6 +91,26 @@ public:
         );
     }
 
+    Vector4 firstColumn() const
+    {
+        return Vector4(m11, m21, m31, m41);
+    }
+
+    Vector4 secondColumn() const
+    {
+        return Vector4(m12, m22, m32, m42);
+    }
+
+    Vector4 thirdColumn() const
+    {
+        return Vector4(m13, m23, m33, m43);
+    }
+
+    Vector4 fourthColumn() const
+    {
+        return Vector4(m14, m24, m34, m44);
+    }
+
     friend Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b)
     {
         return Matrix4x4(
@@ -112,6 +133,22 @@ public:
             a.m41*b.m12 + a.m42*b.m22 + a.m43*b.m32 + a.m44*b.m42,
             a.m41*b.m13 + a.m42*b.m23 + a.m43*b.m33 + a.m44*b.m43,
             a.m41*b.m14 + a.m42*b.m24 + a.m43*b.m34 + a.m44*b.m44
+        );
+    }
+
+
+    friend Vector4 operator*(const Matrix4x4 &m, const Vector4 &v)
+    {
+        return m.firstColumn()*v.x + m.secondColumn()*v.y + m.thirdColumn()*v.z + m.fourthColumn()*v.w;
+    }
+
+    friend Vector4 operator*(const Vector4 &v, const Matrix4x4 &m)
+    {
+        return Vector4(
+            m.firstColumn().dot(v),
+            m.secondColumn().dot(v),
+            m.thirdColumn().dot(v),
+            m.fourthColumn().dot(v)
         );
     }
 

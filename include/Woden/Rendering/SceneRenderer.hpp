@@ -72,6 +72,7 @@ public:
 
 private:
     void addRenderingSceneObjectStateFor(class RenderingSceneObject &sceneObject);
+    void addRenderingLightSourceObject(class RenderingLightSourceObject &lightSource);
     void gatherRenderingSceneStates();
     void uploadRenderingSceneStates();
 

@@ -34,10 +34,20 @@ void SceneRenderer::addRenderingSceneObjectStateFor(RenderingSceneObject &sceneO
     sceneObjectStates.push_back(objectState);
 }
 
+void SceneRenderer::addRenderingLightSourceObject(class RenderingLightSourceObject &lightSource)
+{
+    LightSourceState state = {};
+    state.positionOrDirection = lightSource.positionOrDirection;
+    state.intensity = Math::CompactVector3(lightSource.intensityAndColor);
+    state.influenceRadius = lightSource.influenceRadius;
+    sceneLightSourceStates.push_back(state);
+}
+
 void SceneRenderer::gatherRenderingSceneStates()
 {
     sceneObjectStates.clear();
     sceneCameraStates.clear();
+    sceneLightSourceStates.clear();
 
     for(auto &object : currentRenderingScene->backgroundObjects)
         addRenderingSceneObjectStateFor(object);
@@ -45,6 +55,9 @@ void SceneRenderer::gatherRenderingSceneStates()
         addRenderingSceneObjectStateFor(object);
     for(auto &object : currentRenderingScene->translucentObject)
         addRenderingSceneObjectStateFor(object);
+
+    for(auto &light : currentRenderingScene->lightSources)
+        addRenderingLightSourceObject(light);
 
     {
         SceneCameraState cameraState = {};

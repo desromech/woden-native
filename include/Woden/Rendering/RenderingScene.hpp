@@ -3,6 +3,7 @@
 
 #include "Renderable.hpp"
 #include "Woden/Math/TRSTransform3D.hpp"
+#include "Woden/Math/Vector4.hpp"
 #include <vector>
 
 namespace Woden
@@ -20,6 +21,14 @@ public:
     Math::Matrix4x4 modelMatrix;
     Math::Matrix4x4 inverseModelMatrix;
     RenderablePtr renderable;
+};
+
+class RenderingLightSourceObject
+{
+public:
+    Math::Vector4 positionOrDirection;
+    Math::Vector3 intensityAndColor;
+    Math::Scalar influenceRadius = 0;
 };
 
 class RenderingScene
@@ -55,7 +64,7 @@ public:
     std::vector<RenderingSceneObject> backgroundObjects;
     std::vector<RenderingSceneObject> opaqueObjects;
     std::vector<RenderingSceneObject> translucentObject;
-    std::vector<LightSourceState> lightSourceStates;
+    std::vector<RenderingLightSourceObject> lightSources;
 };
 
 } // End of namespace Rendering
