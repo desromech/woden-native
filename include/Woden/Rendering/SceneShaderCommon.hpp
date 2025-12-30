@@ -2,6 +2,7 @@
 #define WODEN_SCENE_SHADER_COMMON_HPP
 
 #include "Woden/Math/Matrix4x4.hpp"
+#include "Woden/Math/Vector4.hpp"
 
 namespace Woden
 {
@@ -14,7 +15,6 @@ struct SceneObjectState
     Math::Matrix4x4 inverseTransformationMatrix;
 };
 
-
 struct SceneCameraState
 {
     Math::Matrix4x4 transformationMatrix;
@@ -22,6 +22,20 @@ struct SceneCameraState
 
     Math::Matrix4x4 projectionMatrix;
     Math::Matrix4x4 inverseProjectionMatrix;
+};
+
+struct GlobalLightingState
+{
+    Math::CompactVector3 ambientLighting = Math::CompactVector3(0.2, 0.2, 0.2);
+    uint32_t numberOfLights;
+};
+
+struct LightSourceState
+{
+    Math::Vector4 positionOrDirection = Math::Vector4(0, 0, 0, 0);
+
+    Math::CompactVector3 intensity = Math::CompactVector3(0, 0, 0);
+    float radius = 0.0;
 };
 
 struct ScenePushConstants

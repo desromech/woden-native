@@ -5,6 +5,10 @@ namespace Woden
 namespace Rendering
 {
 
+void RenderingScene::addLightSource(const LightSource *lightSource)
+{
+}
+
 void RenderingScene::addObjectWithRenderable(const RenderablePtr &renderable)
 {
     RenderingSceneObject sceneObject = {};

@@ -13,6 +13,7 @@ set(WodenEngine_Sources
 
     Rendering/Context.cpp
     Rendering/GuiRenderer.cpp
+    Rendering/LightSource.cpp
     Rendering/MeshBuilder.cpp
     Rendering/MeshPrimitive.cpp
     Rendering/Renderable.cpp

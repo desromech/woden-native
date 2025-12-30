@@ -9,7 +9,7 @@ namespace Woden
 {
 namespace Rendering
 {
-
+class LightSource;
 class RenderingSceneObject
 {
 public:
@@ -37,6 +37,7 @@ public:
         currentInverseModelMatrix = oldInverseModelMatrix;
     }
 
+    void addLightSource(const LightSource *lightSource);
     void addObjectWithRenderable(const RenderablePtr &renderable);
 
     Math::Matrix4x4 currentModelMatrix;
