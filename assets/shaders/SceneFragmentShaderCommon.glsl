@@ -70,6 +70,29 @@ float computeLightAttenuation(float distance, float influenceRadius)
     return num*num / (distance*distance + 1.0);
 }
 
+uint computeLightTileSliceIndexForLinearDepth(float depth)
+{
+	vec2 scaleAndOffset = CurrentCameraState.lightGridDepthSliceScaleOffset;
+	return uint(log(-depth)*scaleAndOffset.x + scaleAndOffset.y);
+}
+
+uvec3 computeLightTileCoordinateForCurrentScreenCoordinateWithLinearDepth(float depth)
+{
+	uvec3 gridExtent = CurrentCameraState.lightGridExtent;
+	vec2 normalizedScreenCoordinate = vec2(gl_FragCoord.xy * CurrentCameraState.framebufferReciprocalExtent);
+	
+	return min(uvec3(uvec2(normalizedScreenCoordinate * vec2(gridExtent.xy)),
+		computeLightTileSliceIndexForLinearDepth(depth)), gridExtent - 1u);
+}
+
+uint computeLightTileIndexForCurrentScreenCoordinateWithLinearDepth(float depth)
+{
+	uvec3 gridExtent = CurrentCameraState.lightGridExtent;
+	uvec3 gridCoordinate = computeLightTileCoordinateForCurrentScreenCoordinateWithLinearDepth(depth);
+	
+	return gridCoordinate.x + gridCoordinate.y * gridExtent.x + gridCoordinate.z*gridExtent.x*gridExtent.y;
+}
+
 vec4 performLightingModelComputation(in SurfaceLightingParameters surfaceParameters, out vec2 gbufferNormal, out vec4 gbufferSpecularity)
 {
 	vec3 dielectricF0 = vec3(0.04);
@@ -97,9 +120,16 @@ vec4 performLightingModelComputation(in SurfaceLightingParameters surfaceParamet
 	lightedColor *= surfaceParameters.occlusionFactor;
 	lightedColor += surfaceParameters.emissiveFactor;
 
-    for(uint lightIndex = 0; lightIndex < GlobalLightingState.numberOfLights; ++lightIndex)
-    {
+	// Direct light accumulation.
+	uint tileIndex = computeLightTileIndexForCurrentScreenCoordinateWithLinearDepth(surfaceParameters.P.z);
+	uvec2 tileLightList = LightClusterLists.lists[tileIndex];
+
+	for(uint i = 0u; i < tileLightList.y; ++i)
+	{
+		uint lightIndex = TileLightIndices.indices[tileLightList.x + i];
+
 #define currentLightSource ViewLightSourceStateList.list[lightIndex]
+
 		vec4 lightSourcePosition = currentLightSource.positionOrDirection;
 		vec3 L = lightSourcePosition.xyz;
 		float lightDistance = 0.0;
