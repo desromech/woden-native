@@ -129,9 +129,16 @@ bool RenderingContext::initialize(int argc, const char *argv[])
 
 agpu_shader_ref RenderingContext::compileShader(const std::string &sharedCommon, const std::string &shaderFileName, agpu_shader_type type)
 {
+    return compileShader(sharedCommon, std::string(), shaderFileName, type);
+}
+
+agpu_shader_ref RenderingContext::compileShader(const std::string &sharedCommon, const std::string &sharedCommon2, const std::string &shaderFileName, agpu_shader_type type)
+{
     std::string shaderSource;
     if(!sharedCommon.empty())
         shaderSource += Woden::Utility::readWholeTextFile(sharedCommon);
+    if(!sharedCommon2.empty())
+        shaderSource += Woden::Utility::readWholeTextFile(sharedCommon2);
     if(!shaderFileName.empty())
         shaderSource += Woden::Utility::readWholeTextFile(shaderFileName);
    if(shaderSource.empty())
@@ -459,7 +466,7 @@ bool RenderingContext::createScenePipelineStates()
     // Create the static opaque pipeline state
     {
         auto vertexShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/StaticSceneVertexShader.glsl", AGPU_VERTEX_SHADER);
-        auto fragmentShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/OpaqueFragmentShader.glsl", AGPU_FRAGMENT_SHADER);
+        auto fragmentShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/SceneFragmentShaderCommon.glsl", "assets/shaders/OpaqueFragmentShader.glsl", AGPU_FRAGMENT_SHADER);
         if(!vertexShader || !fragmentShader)
             return false;
         
