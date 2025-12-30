@@ -64,6 +64,27 @@ struct LightCluster
     Math::Scalar padding2;
 };
 
+struct SceneSurfaceMaterial
+{
+    float alphaCutoff = 0.5;
+    uint32_t doubleSided = false;
+};
+
+struct SceneMetallicRoughnessMaterial : SceneSurfaceMaterial
+{
+    Math::Vector4 baseColorFactor = Math::Vector4(1, 1, 1, 1);
+
+    Math::CompactVector3 emissiveFactor = Math::CompactVector3(0, 0, 0);
+    float occlusionFactor = 1;
+
+    float roughnessFactor = 1;
+    float metallicFactor = 1;
+    Math::Vector2 texcoordOffset = Math::Vector2(0, 0);
+
+    Math::Vector2 texcoordScale = Math::Vector2(1, 1);
+    Math::Vector2 texcoordOffsetVelocity = Math::Vector2(0, 0);
+};
+
 struct ScenePushConstants
 {
     uint32_t objectStateIndex = 0;

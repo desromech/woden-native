@@ -24,6 +24,8 @@ public:
     virtual void addIntoRenderingScene(const RenderingScenePtr &renderingScene);
     virtual void renderDepthOnlyWith(SceneRenderer *renderer);
     virtual void renderOpaqueWith(SceneRenderer *renderer);
+    virtual void renderTranslucentWith(SceneRenderer *renderer);
+    
     SceneGraph::SceneNodePtr asSceneNode();
 };
 

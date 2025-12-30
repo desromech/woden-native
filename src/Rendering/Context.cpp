@@ -555,8 +555,8 @@ bool RenderingContext::createScenePipelineStates()
         builder->setPrimitiveType(AGPU_TRIANGLES);
         builder->setVertexLayout(staticVertexLayout);
 
-        staticOpaqueScenePipelineState = builder->build();
-        if(!staticOpaqueScenePipelineState)
+        metallicRoughnessOpaqueScenePipelineState = builder->build();
+        if(!metallicRoughnessOpaqueScenePipelineState)
         {
             fprintf(stderr, "Failed to create static opaque pipeline state.");
             return false;

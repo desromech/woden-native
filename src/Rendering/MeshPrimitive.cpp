@@ -1,4 +1,5 @@
 #include "Woden/Rendering/MeshPrimitive.hpp"
+#include "Woden/Rendering/Material.hpp"
 #include "Woden/Rendering/RenderingScene.hpp"
 #include "Woden/Rendering/SceneRenderer.hpp"
 #include "Woden/Rendering/Context.hpp"
@@ -14,12 +15,17 @@ void MeshPrimitive::addIntoRenderingScene(const RenderingScenePtr &renderingScen
     renderingScene->addObjectWithRenderable(shared_from_this());
 }
 
+MaterialPtr MeshPrimitive::getValidMaterial() const
+{
+    return material ? material : Material::getDefaultMaterial();
+}
+
 void MeshPrimitive::renderDepthOnlyWith(SceneRenderer *renderer) 
 {
-    auto context = RenderingContext::getMainContext();
+    if(!getValidMaterial()->activateDepthOnlyWithRenderer(renderer))
+        return;
 
     auto &commandList = renderer->currentCommandList;
-    commandList->usePipelineState(context->depthOnlyScenePipelineState);
     vertexBinding->useWithRenderer(renderer);
     renderer->useIndexBuffer(indices);
     commandList->drawElements(indices->count, 1, 0, 0, 0);
@@ -27,10 +33,10 @@ void MeshPrimitive::renderDepthOnlyWith(SceneRenderer *renderer)
 
 void MeshPrimitive::renderOpaqueWith(SceneRenderer *renderer) 
 {
-    auto context = RenderingContext::getMainContext();
+    if(!getValidMaterial()->activateOpaqueWithRenderer(renderer))
+        return;
 
     auto &commandList = renderer->currentCommandList;
-    commandList->usePipelineState(context->staticOpaqueScenePipelineState);
     vertexBinding->useWithRenderer(renderer);
     renderer->useIndexBuffer(indices);
     commandList->drawElements(indices->count, 1, 0, 0, 0);

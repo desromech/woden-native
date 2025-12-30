@@ -14,8 +14,10 @@ set(WodenEngine_Sources
     Rendering/Context.cpp
     Rendering/GuiRenderer.cpp
     Rendering/LightSource.cpp
+    Rendering/Material.cpp
     Rendering/MeshBuilder.cpp
     Rendering/MeshPrimitive.cpp
+    Rendering/MetallicRoughnessMaterial.cpp
     Rendering/Renderable.cpp
     Rendering/RenderingScene.cpp
     Rendering/SceneRenderer.cpp
