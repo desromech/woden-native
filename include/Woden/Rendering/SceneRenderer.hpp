@@ -45,7 +45,7 @@ class SceneRenderer
 {
 public:
     static const size_t MaxSceneObjectStateCapacity = 1024;
-    static const size_t MaxSceneCameraStateCapacity = 128;
+    static const size_t MaxSceneCameraStateCapacity = 32;
     static const size_t MaxSceneLightSourceCapacity = 1024;
 
     void renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene, const SceneGraph::SceneNodePtr &cameraNode);
@@ -61,11 +61,14 @@ public:
     agpu_shader_resource_binding_ref statesBinding;
     agpu_buffer_ref sceneObjectStatesBuffer;
     agpu_buffer_ref sceneCameraStatesBuffer;
+    agpu_buffer_ref sceneGlobalLightingStateBuffer;
     agpu_buffer_ref sceneLightSourceStatesBuffer;
 
     std::vector<SceneObjectState> sceneObjectStates;
     std::vector<SceneCameraState> sceneCameraStates;
-    std::vector<SceneCameraState> sceneLightSourceStates;
+
+    GlobalLightingState globalLightingState;
+    std::vector<LightSourceState> sceneLightSourceStates;
 
 private:
     void addRenderingSceneObjectStateFor(class RenderingSceneObject &sceneObject);

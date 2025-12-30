@@ -14,8 +14,17 @@ void main()
     vec3 V = normalize(-inViewPosition);
     vec3 N = normalize(inNormal);
     float VdotN = max(dot(V, N), 0.0);
+    vec3 color = GlobalLightingState.ambientLighting;
+    for(uint lightIndex = 0; lightIndex < GlobalLightingState.numberOfLights; ++lightIndex)
+    {
+#define lightSource LightSourceStateList.list[lightIndex]
+        color += lightSource.intensity;
+#undef lightSource
+    }
+
     
-    outColor = vec4(VdotN.xxx, 1.0);
+    outColor = vec4(color, 1.0);
+    //outColor = vec4(VdotN.xxx, 1.0);
     outNormal = N.xy;
     outSpecular = vec4(0.2);
 }

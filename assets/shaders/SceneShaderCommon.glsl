@@ -23,6 +23,25 @@ layout(set=1, binding=1, std430) buffer SceneCameraStateBlock
 	SceneCameraState[] list;
 } SceneCameraStateList;
 
+layout(set=1, binding=2, std140) uniform GlobalLightingStateBlock
+{
+	vec3 ambientLighting;
+    uint numberOfLights;
+} GlobalLightingState;
+
+struct LightSourceState
+{
+    vec4 positionOrDirection;
+    vec3 intensity;
+    float influenceRadius;
+};
+
+layout(set=1, binding=3, std430) buffer LightSourceStateBlock
+{
+	LightSourceState[] list;
+} LightSourceStateList;
+
+
 layout( push_constant ) uniform constants
 {
     uint objectStateIndex;

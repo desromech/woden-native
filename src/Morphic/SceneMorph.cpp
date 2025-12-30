@@ -65,7 +65,7 @@ void SceneMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
 
 void SceneMorph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
 {
-    printf("Wheel %f %f\n", event->position.x, event->position.y);
+    //printf("Wheel %f %f\n", event->position.x, event->position.y);
     cameraNode->transform.translation += 
         cameraNode->transform.rotation.rotateVector(
             Vector3(event->scrollAmount.x, 0, -event->scrollAmount.y)*0.1

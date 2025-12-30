@@ -9,6 +9,11 @@ namespace Woden
 namespace Rendering
 {
 
+inline size_t alignedTo(size_t value, size_t alignment)
+{
+    return (value + alignment - 1) & size_t(-intptr_t(alignment));
+}
+
 agpu_shader_resource_binding_ref SceneRendererScreen::getValidGuiTextureBinding()
 {
     if(guiTextureBinding)
@@ -99,10 +104,39 @@ void SceneRenderer::uploadRenderingSceneStates()
             sceneCameraStatesBuffer = context->device-> createBuffer(&desc, nullptr);
             statesBinding->bindStorageBuffer(1, sceneCameraStatesBuffer);
         }
+
+        {
+            agpu_buffer_description desc = {};
+            desc.size = alignedTo(sizeof(GlobalLightingState), 256);
+            desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
+            desc.usage_modes = desc.main_usage_mode = agpu_buffer_usage_mask(AGPU_UNIFORM_BUFFER);
+            desc.mapping_flags = AGPU_MAP_DYNAMIC_STORAGE_BIT;
+            desc.stride = 0;
+
+            sceneGlobalLightingStateBuffer = context->device-> createBuffer(&desc, nullptr);
+            statesBinding->bindUniformBuffer(2, sceneGlobalLightingStateBuffer);
+        }
+
+        {
+            agpu_buffer_description desc = {};
+            desc.size = sizeof(LightSourceState)*MaxSceneLightSourceCapacity;
+            desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
+            desc.usage_modes = desc.main_usage_mode = agpu_buffer_usage_mask(AGPU_STORAGE_BUFFER);
+            desc.mapping_flags = AGPU_MAP_DYNAMIC_STORAGE_BIT;
+            desc.stride = 0;
+
+            sceneLightSourceStatesBuffer = context->device-> createBuffer(&desc, nullptr);
+            statesBinding->bindStorageBuffer(3, sceneLightSourceStatesBuffer);
+        }
+          
     }
     
     sceneObjectStatesBuffer->uploadBufferData(0, sizeof(SceneObjectState)*sceneObjectStates.size(), sceneObjectStates.data());
     sceneCameraStatesBuffer->uploadBufferData(0, sizeof(SceneCameraState)*sceneCameraStates.size(), sceneCameraStates.data());
+
+    globalLightingState.numberOfLights = sceneLightSourceStates.size();
+    sceneGlobalLightingStateBuffer->uploadBufferData(0, sizeof(GlobalLightingState), &globalLightingState);
+    sceneLightSourceStatesBuffer->uploadBufferData(0, sizeof(LightSourceState)*sceneLightSourceStates.size(), sceneLightSourceStates.data());
 }
 
 void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene, const SceneGraph::SceneNodePtr &cameraNode)

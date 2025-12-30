@@ -35,7 +35,7 @@ struct LightSourceState
     Math::Vector4 positionOrDirection = Math::Vector4(0, 0, 0, 0);
 
     Math::CompactVector3 intensity = Math::CompactVector3(0, 0, 0);
-    float radius = 0.0;
+    float influenceRadius = 0.0;
 };
 
 struct ScenePushConstants
