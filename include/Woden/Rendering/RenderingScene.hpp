@@ -55,6 +55,7 @@ public:
     std::vector<RenderingSceneObject> backgroundObjects;
     std::vector<RenderingSceneObject> opaqueObjects;
     std::vector<RenderingSceneObject> translucentObject;
+    std::vector<LightSourceState> lightSourceStates;
 };
 
 } // End of namespace Rendering
