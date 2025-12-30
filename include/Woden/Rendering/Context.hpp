@@ -67,6 +67,9 @@ public:
     agpu_pipeline_state_ref staticOpaqueScenePipelineState;
 
     agpu_pipeline_state_ref transformLightsToViewPipeline;
+    agpu_pipeline_state_ref lightGridComputationPipeline;
+    agpu_pipeline_state_ref lightClusterBeginComputationPipeline;
+    agpu_pipeline_state_ref lightClusterListComputationPipeline;
 
     agpu_shader_signature_ref sceneShaderSignature;
 

@@ -11,6 +11,21 @@ layout(set=1, binding=0, std430) buffer SceneObjectStateBlock
 
 struct SceneCameraState
 {
+    vec2 framebufferExtent;
+    vec2 framebufferReciprocalExtent;
+
+    uint flipVertically;
+    float nearDistance;
+    float farDistance;
+    float exposure;
+    
+    vec2 lightGridDepthSliceScaleOffset;
+	bool hasTopLeftNDCOrigin;
+	bool hasBottomLeftTextureCoordinates;
+
+    uvec3 lightGridExtent;
+    float padding;
+
     mat4 transformation;
     mat4 inverseTransformation;
 
@@ -46,6 +61,28 @@ layout(set=1, binding=4, std430) buffer ViewLightSourceStateBlock
 	LightSourceState[] list;
 } ViewLightSourceStateList;
 
+struct LightCluster
+{
+	vec3 min;
+	vec3 max;
+};
+
+layout(set=1, binding=5, std430) buffer LightClustersBlock
+{
+	LightCluster[] list;
+} LightClusterList;
+
+layout(set=1, binding=6, std430) buffer TileLightIndicesBlock
+{
+	uint[] indices;
+} TileLightIndices;
+
+layout(set=1, binding=7, std430) buffer LightClusterListsBlock
+{
+    uint listSize;
+    uint padding;
+	uvec2[] lists;
+} LightClusterLists;
 
 layout( push_constant ) uniform constants
 {

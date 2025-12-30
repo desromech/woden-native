@@ -9,6 +9,25 @@ namespace Woden
 namespace Rendering
 {
 
+static Math::Scalar computeLightGridDepthSliceScale(Math::Scalar lightGridDepth, Math::Scalar nearDistance, Math::Scalar farDistance)
+{
+    return lightGridDepth / log(farDistance / nearDistance);
+}
+
+static Math::Scalar computeLightGridDepthSliceOffset(Math::Scalar lightGridDepth, Math::Scalar nearDistance, Math::Scalar farDistance)
+{
+    return -lightGridDepth * log(nearDistance) / log(farDistance / nearDistance);
+}
+
+static Math::Vector2 computeLightGridDepthSliceScaleOffset(double lightGridDepth, double nearDistance, double farDistance)
+{
+    Math::Scalar scale = computeLightGridDepthSliceScale(lightGridDepth, nearDistance, farDistance);
+    Math::Scalar offset = computeLightGridDepthSliceOffset(lightGridDepth, nearDistance, farDistance);
+    
+    // Formula from: http://www.aortiz.me/2018/12/21/CG.html#building-a-cluster-grid [January 2025]
+    return Math::Vector2(scale, offset);
+}
+
 inline size_t alignedTo(size_t value, size_t alignment)
 {
     return (value + alignment - 1) & size_t(-intptr_t(alignment));
@@ -60,12 +79,30 @@ void SceneRenderer::gatherRenderingSceneStates()
         addRenderingLightSourceObject(light);
 
     {
+        auto device = RenderingContext::getMainContext()->device;
+        uint32_t flipVertically = device->hasTopLeftNdcOrigin();
+
         SceneCameraState cameraState = {};
         auto aspect = Math::Scalar(screen->screenWidth) / Math::Scalar(screen->screenHeight);
+        cameraState.framebufferExtent = Math::Vector2(screen->screenWidth, screen->screenHeight);
+        cameraState.framebufferReciprocalExtent = cameraState.framebufferExtent.reciprocal();
+        cameraState.flipVertically = flipVertically;
+
+        cameraState.hasTopLeftNDCOrigin = device->hasTopLeftNdcOrigin();
+    	cameraState.hasBottomLeftTextureCoordinates = device->hasBottomLeftTextureCoordinates();
+
+        cameraState.lightGridWidth = LightGridWidth;
+        cameraState.lightGridHeight = LightGridHeight;
+        cameraState.lightGridDepth = LightGridDepth;
 
         if(currentCameraNode && !currentCameraNode->cameras.empty())
         {
+            const auto &camera = currentCameraNode->cameras.front();
+
             const auto &cameraStateObject = currentCameraNode->cameras.front();
+            cameraState.nearDistance = camera->nearDistance;
+            cameraState.farDistance = camera->farDistance;
+
             cameraState.transformationMatrix = currentCameraNode->transform.asMatrix();
             cameraState.inverseTransformationMatrix = currentCameraNode->transform.asInverseMatrix();
 
@@ -76,10 +113,11 @@ void SceneRenderer::gatherRenderingSceneStates()
             cameraState.projectionMatrix = Math::Matrix4x4::ReverseDepthPerspective(60.0, aspect, 0.1, 1000.0);
         }
 
-        if(RenderingContext::getMainContext()->device->hasTopLeftNdcOrigin())
-        {
+        if(flipVertically)
             cameraState.projectionMatrix = Math::Matrix4x4::ProjectionInvertYMatrix() * cameraState.projectionMatrix;
-        }
+
+        cameraState.lightGridDepthSliceScaleOffset = computeLightGridDepthSliceScaleOffset(LightGridDepth, cameraState.nearDistance, cameraState.farDistance);
+
         sceneCameraStates.push_back(cameraState);
     }
 }
@@ -138,13 +176,53 @@ void SceneRenderer::uploadRenderingSceneStates()
             desc.mapping_flags = AGPU_MAP_DYNAMIC_STORAGE_BIT;
             desc.stride = 0;
 
-            sceneWorldLightSourceStatesBuffer = context->device-> createBuffer(&desc, nullptr);
+            sceneWorldLightSourceStatesBuffer = context->device->createBuffer(&desc, nullptr);
             statesBinding->bindStorageBuffer(3, sceneWorldLightSourceStatesBuffer);
+        }
 
-            sceneViewLightSourceStatesBuffer = context->device-> createBuffer(&desc, nullptr);
+        {
+            agpu_buffer_description desc = {};
+            desc.size = sizeof(LightSourceState)*MaxSceneLightSourceCapacity;
+            desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
+            desc.usage_modes = desc.main_usage_mode = AGPU_STORAGE_BUFFER;
+            desc.stride = 0;
+
+            sceneViewLightSourceStatesBuffer = context->device->createBuffer(&desc, nullptr);
             statesBinding->bindStorageBuffer(4, sceneViewLightSourceStatesBuffer);
         }
-          
+
+        {
+            agpu_buffer_description desc = {};
+            desc.size = sizeof(LightCluster)*LightGridCellCount;
+            desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
+            desc.usage_modes = desc.main_usage_mode = AGPU_STORAGE_BUFFER;
+            desc.stride = 0;
+
+            lightClusterBuffer = context->device->createBuffer(&desc, nullptr);
+            statesBinding->bindStorageBuffer(5, lightClusterBuffer);
+        }
+
+        {
+            agpu_buffer_description desc = {};
+            desc.size =  4 * MaxLightClusterCapacity * LightGridCellCount;
+            desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
+            desc.usage_modes = desc.main_usage_mode = AGPU_STORAGE_BUFFER;
+            desc.stride = 0;
+
+            tileLightIndexListBuffer = context->device->createBuffer(&desc, nullptr);
+            statesBinding->bindStorageBuffer(6, tileLightIndexListBuffer);
+        }
+
+        {
+            agpu_buffer_description desc = {};
+            desc.size = 8 + 8 * MaxLightClusterCapacity * LightGridCellCount;
+            desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
+            desc.usage_modes = desc.main_usage_mode = AGPU_STORAGE_BUFFER;
+            desc.stride = 0;
+
+            lightGridBuffer = context->device->createBuffer(&desc, nullptr);
+            statesBinding->bindStorageBuffer(7, lightGridBuffer);
+        }
     }
     
     sceneObjectStatesBuffer->uploadBufferData(0, sizeof(SceneObjectState)*sceneObjectStates.size(), sceneObjectStates.data());
@@ -172,13 +250,34 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
 
     ScenePushConstants initialPushConstants = {};
 
-    // Transform lights to view.
+    // Compute the lighting grid.
     {
+        // Transform lights from world space into view space.
         commandList->setShaderSignature(context->sceneShaderSignature);
         commandList->usePipelineState(context->transformLightsToViewPipeline);
         commandList->useComputeShaderResources(statesBinding);
         commandList->pushConstants(0, sizeof(initialPushConstants), &initialPushConstants);
         commandList->dispatchCompute((sceneLightSourceStates.size() + 127)/128, 1, 1);
+        commandList->memoryBarrier(AGPU_PIPELINE_STAGE_COMPUTE_SHADER, agpu_pipeline_stage_flags(AGPU_PIPELINE_STAGE_COMPUTE_SHADER | AGPU_PIPELINE_STAGE_FRAGMENT_SHADER), AGPU_ACCESS_SHADER_WRITE, AGPU_ACCESS_SHADER_READ);
+
+        // Light grid computation.
+        uint32_t workgroupCountX = (LightGridWidth + 3) / 4;
+        uint32_t workgroupCountY = (LightGridHeight + 3) / 4;
+        uint32_t workgroupCountZ = (LightGridDepth + 3) / 4;
+        
+        uint32_t workgroupCount = (LightGridCellCount + 63) / 64;
+
+        commandList->usePipelineState(context->lightGridComputationPipeline);
+        commandList->dispatchCompute(workgroupCountX, workgroupCountY, workgroupCountZ);
+        commandList->memoryBarrier(AGPU_PIPELINE_STAGE_COMPUTE_SHADER, AGPU_PIPELINE_STAGE_COMPUTE_SHADER, AGPU_ACCESS_SHADER_WRITE, AGPU_ACCESS_SHADER_READ);
+
+        commandList->usePipelineState(context->lightClusterBeginComputationPipeline);
+        commandList->dispatchCompute(1, 1, 1);
+        commandList->memoryBarrier(AGPU_PIPELINE_STAGE_COMPUTE_SHADER, AGPU_PIPELINE_STAGE_COMPUTE_SHADER, AGPU_ACCESS_SHADER_WRITE, AGPU_ACCESS_SHADER_READ);
+
+        commandList->usePipelineState(context->lightClusterListComputationPipeline);
+        commandList->dispatchCompute(workgroupCount, 1, 1);
+        commandList->memoryBarrier(AGPU_PIPELINE_STAGE_COMPUTE_SHADER, agpu_pipeline_stage_flags(AGPU_PIPELINE_STAGE_COMPUTE_SHADER | AGPU_PIPELINE_STAGE_FRAGMENT_SHADER), AGPU_ACCESS_SHADER_WRITE, AGPU_ACCESS_SHADER_READ);
     }
 
     // Depth-Stencil render pass.

@@ -328,14 +328,15 @@ bool RenderingContext::createScenePipelineStates()
 
         // Rendering states.
         shaderSignatureBuilder->beginBindingBank(128);
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Object
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Camera
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // 0; Object
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // 1; Camera
 
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_UNIFORM_BUFFER, 1); // Global lighting state
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // World space Lights
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // View space lights
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Tile Light Index List
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Light grid Index List
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_UNIFORM_BUFFER, 1); // 2: Global lighting state
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // 3: World space Lights
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // 4: View space lights
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // 5: LightClustersBlock
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // 6: Tile Light Index List
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // 7: Light grid Index List
 
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // Shadow Map atlas texture
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // BRDF LUT
@@ -477,6 +478,57 @@ bool RenderingContext::createScenePipelineStates()
         if(!transformLightsToViewPipeline)
         {
             fprintf(stderr, "Failed to create transform lights to view compute state.");
+            return false;
+        }
+    }
+
+    {
+        auto computeShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/LightGridComputation.glsl", AGPU_COMPUTE_SHADER);
+        if(!computeShader)
+            return false;
+        
+        auto builder = device->createComputePipelineBuilder();
+        builder->setShaderSignature(sceneShaderSignature);
+        builder->attachShader(computeShader);
+
+        lightGridComputationPipeline = builder->build();
+        if(!lightGridComputationPipeline)
+        {
+            fprintf(stderr, "Failed to create light grid computation state.");
+            return false;
+        }
+    }
+
+    {
+        auto computeShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/LightClusterBeginComputation.glsl", AGPU_COMPUTE_SHADER);
+        if(!computeShader)
+            return false;
+        
+        auto builder = device->createComputePipelineBuilder();
+        builder->setShaderSignature(sceneShaderSignature);
+        builder->attachShader(computeShader);
+
+        lightClusterBeginComputationPipeline = builder->build();
+        if(!lightClusterBeginComputationPipeline)
+        {
+            fprintf(stderr, "Failed to create light grid cluster begin pipeline state.");
+            return false;
+        }
+    }
+
+    {
+        auto computeShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/LightClusterListComputation.glsl", AGPU_COMPUTE_SHADER);
+        if(!computeShader)
+            return false;
+        
+        auto builder = device->createComputePipelineBuilder();
+        builder->setShaderSignature(sceneShaderSignature);
+        builder->attachShader(computeShader);
+
+        lightClusterListComputationPipeline = builder->build();
+        if(!lightClusterListComputationPipeline)
+        {
+            fprintf(stderr, "Failed to create light grid cluster list pipeline state.");
             return false;
         }
     }

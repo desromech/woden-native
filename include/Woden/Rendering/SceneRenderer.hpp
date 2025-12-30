@@ -48,6 +48,13 @@ public:
     static const size_t MaxSceneCameraStateCapacity = 32;
     static const size_t MaxSceneLightSourceCapacity = 1024;
 
+    static const uint32_t LightGridWidth = 16;
+    static const uint32_t LightGridHeight = 9;
+    static const uint32_t LightGridDepth = 24;
+
+    static const uint32_t LightGridCellCount = LightGridWidth*LightGridHeight*LightGridDepth;
+    static const uint32_t MaxLightClusterCapacity = 100;
+
     void renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene, const SceneGraph::SceneNodePtr &cameraNode);
     void setupWithScreenSize(int newScreenWidth, int newScreenHeight);
 
@@ -62,8 +69,13 @@ public:
     agpu_buffer_ref sceneObjectStatesBuffer;
     agpu_buffer_ref sceneCameraStatesBuffer;
     agpu_buffer_ref sceneGlobalLightingStateBuffer;
+
     agpu_buffer_ref sceneWorldLightSourceStatesBuffer;
     agpu_buffer_ref sceneViewLightSourceStatesBuffer;
+
+    agpu_buffer_ref lightClusterBuffer;
+    agpu_buffer_ref tileLightIndexListBuffer;
+    agpu_buffer_ref lightGridBuffer;
 
     std::vector<SceneObjectState> sceneObjectStates;
     std::vector<SceneCameraState> sceneCameraStates;
