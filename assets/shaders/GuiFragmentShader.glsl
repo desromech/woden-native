@@ -24,11 +24,11 @@ void main()
         backgroundColor = mix(thisElement.firstColor, thisElement.secondColor, inTexcoord.y);
         break;
     case GuiElementType_TextCharacter:
-        float fontAlpha = texture(sampler2D(Texture, NearestTextureSampler), mappedTexcoord).r;
+        float fontAlpha = textureLod(sampler2D(Texture, NearestTextureSampler), mappedTexcoord, 0.0).r;
         backgroundColor = thisElement.firstColor*fontAlpha;
         break;
     case GuiElementType_TexturedRectangle:
-        backgroundColor = texture(sampler2D(Texture, LinearTextureSampler), mappedTexcoord);
+        backgroundColor = textureLod(sampler2D(Texture, LinearTextureSampler), mappedTexcoord, 0.0);
         break;
     default:
         backgroundColor = vec4(inTexcoord, 0.0, 1.0);

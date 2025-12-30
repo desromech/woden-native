@@ -51,6 +51,13 @@ static agpu_error compileHlslShader(const agpu::device_ref& device, agpu_shader_
 	auto res = D3DCompile(sourceCode, sourceCodeSize, "agpuShader", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", getHlslTarget(stageType), compileFlags, 0, &shaderBlob, &errorBlob);
 	if (FAILED(res))
 	{
+		FILE *f = fopen("agpuShader.hlsl", "wb");
+		if(f)
+		{
+			fprintf(f, "%s", sourceCode);
+			fclose(f);
+		}
+
 		if (errorBlob)
 		{
 			const char* buffer = reinterpret_cast<const char*> (errorBlob->GetBufferPointer());
