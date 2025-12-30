@@ -69,3 +69,72 @@ float computeLightAttenuation(float distance, float influenceRadius)
     float num = clamp(1.0f - a4, 0.0, 1.0);
     return num*num / (distance*distance + 1.0);
 }
+
+vec4 performLightingModelComputation(in SurfaceLightingParameters surfaceParameters, out vec2 gbufferNormal, out vec4 gbufferSpecularity)
+{
+	vec3 dielectricF0 = vec3(0.04);
+	vec3 Cdiffuse = mix(surfaceParameters.baseColor.rgb * (1.0 - dielectricF0), vec3(0.0), surfaceParameters.metallicFactor);
+	vec3 diffuse = Cdiffuse * PiReciprocal;
+	vec3 F0 = mix(dielectricF0, surfaceParameters.baseColor.rgb, surfaceParameters.metallicFactor);
+
+	gbufferNormal = surfaceParameters.N.xy;
+	gbufferSpecularity = vec4(F0, surfaceParameters.roughnessFactor);
+
+	float directRoughness = mix(0.01, 1.0, surfaceParameters.roughnessFactor);
+	float directAlpha = directRoughness*directRoughness;
+
+	float directKRoughness = (directRoughness + 1.0);
+	float directK = directKRoughness*directKRoughness / 8.0;
+
+    float NdotV = max(0.0, dot(surfaceParameters.N, surfaceParameters.V));
+
+    vec3 lightedColor = vec3(0);
+
+    // Ambient lighting
+    lightedColor += GlobalLightingState.ambientLighting * diffuse;
+
+    // Ambient occlusion and emissive factor.
+	lightedColor *= surfaceParameters.occlusionFactor;
+	lightedColor += surfaceParameters.emissiveFactor;
+
+    for(uint lightIndex = 0; lightIndex < GlobalLightingState.numberOfLights; ++lightIndex)
+    {
+#define currentLightSource LightSourceStateList.list[lightIndex]
+		vec4 lightSourcePosition = currentLightSource.positionOrDirection;
+		vec3 L = lightSourcePosition.xyz;
+		float lightDistance = 0.0;
+		float attenuation = 1.0;
+		float lightMaxDistance = 1.0;
+		if(lightSourcePosition.w != 0)
+		{ 
+			L = L - surfaceParameters.P;
+			lightDistance = length(L);
+			L = L/ max(lightDistance, DistanceEpsilon);
+			lightMaxDistance = currentLightSource.influenceRadius;
+			attenuation = computeLightAttenuation(lightDistance, currentLightSource.influenceRadius);
+		}
+		else
+		{
+			L = normalize(L);
+		}
+
+        float NdotL = max(0.0, dot(surfaceParameters.N, L));
+		if(NdotL > 0.0 && attenuation > 0.0)
+        {
+			vec3 H = normalize(L + surfaceParameters.V);
+			float NdotH = max(0.0, dot(surfaceParameters.N, H));
+			float VdotH = max(0.0, dot(surfaceParameters.V, H));
+			
+			vec3 F = fresnelSchlick(F0, VdotH);
+			float D = ggxSpecularDistribution(directAlpha, NdotH);
+			float G = cookTorranceSmithSchlickGGXMasking(directK, NdotL, NdotV);
+
+			lightedColor += (currentLightSource.intensity * (diffuse + F*(D*G))) * (attenuation*NdotL*Pi);
+        }
+
+        //color += lightSource.intensity;
+#undef currentLightSource
+    }
+
+    return vec4(lightedColor, surfaceParameters.occlusionFactor);
+}

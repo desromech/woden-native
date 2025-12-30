@@ -17,40 +17,17 @@ void main()
     float VdotN = max(dot(V, N), 0.0);
     vec3 lightedColor = GlobalLightingState.ambientLighting;
 
-    for(uint lightIndex = 0; lightIndex < GlobalLightingState.numberOfLights; ++lightIndex)
-    {
-#define currentLightSource LightSourceStateList.list[lightIndex]
-		vec4 lightSourcePosition = currentLightSource.positionOrDirection;
-		vec3 L = lightSourcePosition.xyz;
-		float lightDistance = 0.0;
-		float attenuation = 1.0;
-		float lightMaxDistance = 1.0;
-		if(lightSourcePosition.w != 0)
-		{ 
-			L = L - P;
-			lightDistance = length(L);
-			L = L/ max(lightDistance, DistanceEpsilon);
-			lightMaxDistance = currentLightSource.influenceRadius;
-			attenuation = computeLightAttenuation(lightDistance, currentLightSource.influenceRadius);
-		}
-		else
-		{
-			L = normalize(L);
-		}
+    SurfaceLightingParameters surfaceParameters;
+    surfaceParameters.baseColor = vec4(1.0, 1.0, 1.0, 1.0);
+    surfaceParameters.emissiveFactor = vec3(0.0);
+    surfaceParameters.occlusionFactor = 1.0;
+    surfaceParameters.N = N;
+    surfaceParameters.metallicFactor = 0.0;
 
-        float NdotL = max(0.0, dot(N, L));
-		if(NdotL > 0.0 && attenuation > 0.0)
-        {
-            lightedColor += currentLightSource.intensity*attenuation*NdotL;
-        }
+    surfaceParameters.V = V;
+    surfaceParameters.roughnessFactor = 0.4;
 
-        //color += lightSource.intensity;
-#undef currentLightSource
-    }
+    surfaceParameters.P = inViewPosition;
 
-    
-    outColor = vec4(lightedColor, 1.0);
-    //outColor = vec4(VdotN.xxx, 1.0);
-    outNormal = N.xy;
-    outSpecular = vec4(0.2);
+    outColor = performLightingModelComputation(surfaceParameters, outNormal, outSpecular);
 }
