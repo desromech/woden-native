@@ -5,7 +5,15 @@ namespace Woden
 namespace Rendering
 {
 
-void RenderingScene::addLightSource(const LightSource *lightSource)
+void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lightSource)
+{
+}
+
+void RenderingScene::addPointLightSource(const PointLightSource *lightSource)
+{
+}
+
+void RenderingScene::addSpotLightSource(const SpotLightSource *lightSource)
 {
 }
 

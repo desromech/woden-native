@@ -6,9 +6,19 @@ namespace Woden
 namespace Rendering
 {
 
-void LightSource::addIntoRenderingScene(const RenderingScenePtr &renderingScene)
+void DirectionalLightSource::addIntoRenderingScene(const RenderingScenePtr &renderingScene)
 {
-    renderingScene->addLightSource(this);
+    renderingScene->addDirectionalLightSource(this);
+}
+
+void PointLightSource::addIntoRenderingScene(const RenderingScenePtr &renderingScene)
+{
+    renderingScene->addPointLightSource(this);
+}
+
+void SpotLightSource::addIntoRenderingScene(const RenderingScenePtr &renderingScene)
+{
+    renderingScene->addSpotLightSource(this);
 }
 
 } // End of namespace Rendering

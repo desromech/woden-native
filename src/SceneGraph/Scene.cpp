@@ -2,6 +2,7 @@
 #include "Woden/Morphic/SceneMorph.hpp"
 #include "Woden/Rendering/Renderable.hpp"
 #include "Woden/Rendering/RenderingScene.hpp"
+#include "Woden/Rendering/LightSource.hpp"
 
 namespace Woden
 {
@@ -128,6 +129,8 @@ void SceneNode::addIntoRenderingScene(const Rendering::RenderingScenePtr &render
     renderingScene->withTRSTransformDuring(transform, [&](){
         for(auto &renderable : renderables)
             renderable->addIntoRenderingScene(renderingScene);
+        for(auto &lightSource : lightSources)
+            lightSource->addIntoRenderingScene(renderingScene);
         SceneTreeElementWithChildren::addIntoRenderingScene(renderingScene);
     });
 }

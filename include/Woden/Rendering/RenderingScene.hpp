@@ -9,7 +9,10 @@ namespace Woden
 {
 namespace Rendering
 {
-class LightSource;
+class DirectionalLightSource;
+class PointLightSource;
+class SpotLightSource;
+
 class RenderingSceneObject
 {
 public:
@@ -37,11 +40,17 @@ public:
         currentInverseModelMatrix = oldInverseModelMatrix;
     }
 
-    void addLightSource(const LightSource *lightSource);
+    void addDirectionalLightSource(const DirectionalLightSource *lightSource);
+    void addPointLightSource(const PointLightSource *lightSource);
+    void addSpotLightSource(const SpotLightSource *lightSource);
+
     void addObjectWithRenderable(const RenderablePtr &renderable);
 
     Math::Matrix4x4 currentModelMatrix;
     Math::Matrix4x4 currentInverseModelMatrix;
+
+    Math::Matrix4x4 currentViewMatrix;
+    Math::Matrix4x4 currentInverseViewMatrix;
 
     std::vector<RenderingSceneObject> backgroundObjects;
     std::vector<RenderingSceneObject> opaqueObjects;

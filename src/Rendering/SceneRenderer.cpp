@@ -112,6 +112,8 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
 
     currentRenderingScene = std::make_shared<RenderingScene> ();
     currentCameraNode = cameraNode;
+    currentRenderingScene->currentInverseViewMatrix = currentCameraNode->transform.asMatrix();
+    currentRenderingScene->currentViewMatrix = currentCameraNode->transform.asInverseMatrix();
     scene->addIntoRenderingScene(currentRenderingScene);
 
     // Gather and rendering scene states.
