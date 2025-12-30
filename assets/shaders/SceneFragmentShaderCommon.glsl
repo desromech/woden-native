@@ -132,7 +132,6 @@ vec4 performLightingModelComputation(in SurfaceLightingParameters surfaceParamet
 			lightedColor += (currentLightSource.intensity * (diffuse + F*(D*G))) * (attenuation*NdotL*Pi);
         }
 
-        //color += lightSource.intensity;
 #undef currentLightSource
     }
 
