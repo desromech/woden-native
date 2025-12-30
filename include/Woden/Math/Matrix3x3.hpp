@@ -38,6 +38,15 @@ public:
     {
     }
 
+    static Matrix3x3 WithColumns(const Vector3 &first, const Vector3 &second, const Vector3 &third)
+    {
+        return Matrix3x3(
+            first.x, second.x, third.x,
+            first.y, second.y, third.y,
+            first.z, second.z, third.z
+        );
+    }
+
     static Matrix3x3 WithRows(const Vector3 &first, const Vector3 &second, const Vector3 &third)
     {
         return Matrix3x3(

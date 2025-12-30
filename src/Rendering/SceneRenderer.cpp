@@ -115,6 +115,7 @@ void SceneRenderer::gatherRenderingSceneStates()
 
         if(flipVertically)
             cameraState.projectionMatrix = Math::Matrix4x4::ProjectionInvertYMatrix() * cameraState.projectionMatrix;
+        cameraState.inverseProjectionMatrix = cameraState.projectionMatrix.inverse();
 
         cameraState.lightGridDepthSliceScaleOffset = computeLightGridDepthSliceScaleOffset(LightGridDepth, cameraState.nearDistance, cameraState.farDistance);
 

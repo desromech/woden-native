@@ -38,6 +38,11 @@ public:
         m41 = cm41; m42 = cm42; m43 = cm43; m44 = cm44;
     }
 
+    static Matrix4x4 Identity()
+    {
+        return Matrix4x4(1);
+    }
+
     static Matrix4x4 WithMatrix3AndTranslation(const Matrix3x3 &m, const Vector3 &t)
     {
         return Matrix4x4(
@@ -111,6 +116,91 @@ public:
         return Vector4(m14, m24, m34, m44);
     }
 
+    Matrix3x3 minorMatrixAt(int row, int column) const
+    {
+
+        switch(column)
+        {
+        case 0: return Matrix3x3::WithColumns(
+                secondColumn().minorAt(row),
+                thirdColumn().minorAt(row),
+                fourthColumn().minorAt(row)
+            );
+        case 1: return Matrix3x3::WithColumns(
+                firstColumn().minorAt(row),
+                thirdColumn().minorAt(row),
+                fourthColumn().minorAt(row)
+            );
+        case 2: return Matrix3x3::WithColumns(
+                firstColumn().minorAt(row),
+                secondColumn().minorAt(row),
+                fourthColumn().minorAt(row)
+            );
+        case 3: return Matrix3x3::WithColumns(
+                firstColumn().minorAt(row),
+                secondColumn().minorAt(row),
+                thirdColumn().minorAt(row)
+        );
+        default: abort();
+        }
+    }
+
+    Scalar minorAt(int row, int column) const
+    {
+        return minorMatrixAt(row, column).determinant();
+    }
+
+    Scalar determinant() const
+    {
+        return
+          minorAt(0, 0)*firstColumn() .x
+        - minorAt(0, 1)*secondColumn().x
+        + minorAt(0, 2)*thirdColumn() .x
+        - minorAt(0, 3)*fourthColumn().x;
+    }
+
+    Scalar cofactorAt(int row, int column) const
+    {
+        return minorAt(column, row) * ((row + column) & 1 ? -1 : 1);
+    }
+
+    Matrix4x4 adjugate()const
+    {
+        return Matrix4x4(
+            cofactorAt(0, 0),
+            cofactorAt(0, 1),
+            cofactorAt(0, 2),
+            cofactorAt(0, 3),
+
+            cofactorAt(1, 0),
+            cofactorAt(1, 1),
+            cofactorAt(1, 2),
+            cofactorAt(1, 3),
+
+            cofactorAt(2, 0),
+            cofactorAt(2, 1),
+            cofactorAt(2, 2),
+            cofactorAt(2, 3),
+
+            cofactorAt(3, 0),
+            cofactorAt(3, 1),
+            cofactorAt(3, 2),
+            cofactorAt(3, 3)
+        );
+    }
+
+    Matrix4x4 inverse() const
+    {
+        auto det = determinant();
+        auto adj = adjugate();
+        return Matrix4x4(
+            adj.m11 / det, adj.m12 / det, adj.m13 / det, adj.m14 / det,
+            adj.m21 / det, adj.m22 / det, adj.m23 / det, adj.m24 / det,
+            adj.m31 / det, adj.m32 / det, adj.m33 / det, adj.m34 / det,
+            adj.m41 / det, adj.m42 / det, adj.m43 / det, adj.m44 / det
+        );
+    }
+
     friend Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b)
     {
         return Matrix4x4(
@@ -168,6 +258,16 @@ public:
     Scalar m13, m23, m33, m43;
     Scalar m14, m24, m34, m44;
 };
+
+
+inline bool closeTo(const Matrix4x4 &a, const Matrix4x4 &b)
+{
+    return
+        closeTo(a.m11, b.m11) && closeTo(a.m12, b.m12) && closeTo(a.m13, b.m13) && closeTo(a.m14, b.m14) &&
+        closeTo(a.m21, b.m21) && closeTo(a.m22, b.m22) && closeTo(a.m23, b.m23) && closeTo(a.m24, b.m24) &&
+        closeTo(a.m31, b.m31) && closeTo(a.m32, b.m32) && closeTo(a.m33, b.m33) && closeTo(a.m34, b.m34) &&
+        closeTo(a.m41, b.m41) && closeTo(a.m42, b.m42) && closeTo(a.m43, b.m43) && closeTo(a.m44, b.m44);
+}
 
 }    
 }

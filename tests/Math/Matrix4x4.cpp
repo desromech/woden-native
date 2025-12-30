@@ -55,4 +55,15 @@ SUITE(Matrix4x4)
         CHECK_EQUAL(0, mat.m43);
         CHECK_EQUAL(2, mat.m44);
     }
+
+    TEST(Inverse)
+    {
+        auto projectionMatrix = Woden::Math::Matrix4x4::ReverseDepthPerspective(60, 1, 0.1, 1000);
+        auto inverseProjectionMatrix = projectionMatrix.inverse();
+        auto identity = projectionMatrix * inverseProjectionMatrix;
+        auto identity2 = inverseProjectionMatrix * projectionMatrix;
+
+        CHECK(Woden::Math::closeTo(identity,  Woden::Math::Matrix4x4::Identity()));
+        CHECK(Woden::Math::closeTo(identity2, Woden::Math::Matrix4x4::Identity()));
+    }
 }

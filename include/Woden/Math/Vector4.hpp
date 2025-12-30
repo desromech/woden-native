@@ -2,6 +2,8 @@
 #define WODEN_MATH_VECTOR4_HPP
 
 #include "Scalar.hpp"
+#include "Vector3.hpp"
+#include <stdlib.h>
 
 namespace Woden
 {
@@ -47,6 +49,18 @@ public:
         if(l <= 0)
             return Vector4(0);
         return Vector4(x / l, y / l, z / l, w/l);
+    }
+
+    Vector3 minorAt(int index) const
+    {
+        switch(index)
+        {
+        case 0: return Vector3(y, z, w);
+        case 1: return Vector3(x, z, w);
+        case 2: return Vector3(x, y, w);
+        case 3: return Vector3(x, y, z);
+        default: abort();
+        }
     }
 
     Vector4 operator+(const Vector4 &o) const
