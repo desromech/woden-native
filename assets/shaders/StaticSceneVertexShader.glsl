@@ -15,11 +15,11 @@ void main()
     outTexcoord = inTexcoord;
     outTangent4 = vec4(transformNormalToView(inTangent4.xyz), inTangent4.w);
 
-    vec4 worldPosition = SceneObjectStateList.list[PushConstants.objectStateIndex].transformation * vec4(inPosition, 1.0);
-    vec4 viewPosition = SceneCameraStateList.list[PushConstants.cameraStateIndex].inverseTransformation * worldPosition;
+    vec4 worldPosition = CurrentObjectState.transformation * vec4(inPosition, 1.0);
+    vec4 viewPosition = CurrentCameraState.inverseTransformation * worldPosition;
 
     outViewPosition = viewPosition.xyz;
     outNormal = transformNormalToView(inNormal);
-    gl_Position = SceneCameraStateList.list[PushConstants.cameraStateIndex].projectionMatrix * viewPosition;
+    gl_Position = CurrentCameraState.projectionMatrix * viewPosition;
 }
 

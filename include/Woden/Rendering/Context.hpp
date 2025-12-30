@@ -66,6 +66,8 @@ public:
     agpu_pipeline_state_ref depthOnlyScenePipelineState;
     agpu_pipeline_state_ref staticOpaqueScenePipelineState;
 
+    agpu_pipeline_state_ref transformLightsToViewPipeline;
+
     agpu_shader_signature_ref sceneShaderSignature;
 
 private:

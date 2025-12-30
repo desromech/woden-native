@@ -138,8 +138,11 @@ void SceneRenderer::uploadRenderingSceneStates()
             desc.mapping_flags = AGPU_MAP_DYNAMIC_STORAGE_BIT;
             desc.stride = 0;
 
-            sceneLightSourceStatesBuffer = context->device-> createBuffer(&desc, nullptr);
-            statesBinding->bindStorageBuffer(3, sceneLightSourceStatesBuffer);
+            sceneWorldLightSourceStatesBuffer = context->device-> createBuffer(&desc, nullptr);
+            statesBinding->bindStorageBuffer(3, sceneWorldLightSourceStatesBuffer);
+
+            sceneViewLightSourceStatesBuffer = context->device-> createBuffer(&desc, nullptr);
+            statesBinding->bindStorageBuffer(4, sceneViewLightSourceStatesBuffer);
         }
           
     }
@@ -149,7 +152,7 @@ void SceneRenderer::uploadRenderingSceneStates()
 
     globalLightingState.numberOfLights = sceneLightSourceStates.size();
     sceneGlobalLightingStateBuffer->uploadBufferData(0, sizeof(GlobalLightingState), &globalLightingState);
-    sceneLightSourceStatesBuffer->uploadBufferData(0, sizeof(LightSourceState)*sceneLightSourceStates.size(), sceneLightSourceStates.data());
+    sceneWorldLightSourceStatesBuffer->uploadBufferData(0, sizeof(LightSourceState)*sceneLightSourceStates.size(), sceneLightSourceStates.data());
 }
 
 void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene, const SceneGraph::SceneNodePtr &cameraNode)
@@ -167,14 +170,23 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
     gatherRenderingSceneStates();
     uploadRenderingSceneStates();
 
+    ScenePushConstants initialPushConstants = {};
+
+    // Transform lights to view.
+    {
+        commandList->setShaderSignature(context->sceneShaderSignature);
+        commandList->usePipelineState(context->transformLightsToViewPipeline);
+        commandList->useComputeShaderResources(statesBinding);
+        commandList->pushConstants(0, sizeof(initialPushConstants), &initialPushConstants);
+        commandList->dispatchCompute((sceneLightSourceStates.size() + 127)/128, 1, 1);
+    }
+
     // Depth-Stencil render pass.
     commandList->beginRenderPass(context->depthStencilRenderPass, screen->depthOnlyFramebuffer, false);
     commandList->setViewport(0, 0, screen->screenWidth, screen->screenHeight);
     commandList->setScissor(0, 0, screen->screenWidth, screen->screenHeight);
     commandList->setShaderSignature(context->sceneShaderSignature);
     commandList->useShaderResources(statesBinding);
-
-    ScenePushConstants initialPushConstants = {};
     commandList->pushConstants(0, sizeof(initialPushConstants), &initialPushConstants);
 
     performDepthOnlyPass();

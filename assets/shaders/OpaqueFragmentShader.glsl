@@ -14,7 +14,6 @@ void main()
     vec3 P = inViewPosition;
     vec3 V = normalize(-inViewPosition);
     vec3 N = normalize(inNormal);
-    float VdotN = max(dot(V, N), 0.0);
     vec3 lightedColor = GlobalLightingState.ambientLighting;
 
     SurfaceLightingParameters surfaceParameters;

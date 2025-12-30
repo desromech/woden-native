@@ -99,7 +99,7 @@ vec4 performLightingModelComputation(in SurfaceLightingParameters surfaceParamet
 
     for(uint lightIndex = 0; lightIndex < GlobalLightingState.numberOfLights; ++lightIndex)
     {
-#define currentLightSource LightSourceStateList.list[lightIndex]
+#define currentLightSource ViewLightSourceStateList.list[lightIndex]
 		vec4 lightSourcePosition = currentLightSource.positionOrDirection;
 		vec3 L = lightSourcePosition.xyz;
 		float lightDistance = 0.0;

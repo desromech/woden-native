@@ -13,7 +13,7 @@ void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lig
 void RenderingScene::addPointLightSource(const PointLightSource *lightSource)
 {
     RenderingLightSourceObject renderingLight = {};
-    renderingLight.positionOrDirection = currentViewMatrix * currentModelMatrix.fourthColumn();
+    renderingLight.positionOrDirection = currentModelMatrix.fourthColumn();
     renderingLight.intensityAndColor = lightSource->color*lightSource->intensity;
     renderingLight.influenceRadius = lightSource->influenceRadius;
     lightSources.push_back(renderingLight);

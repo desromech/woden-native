@@ -62,7 +62,8 @@ public:
     agpu_buffer_ref sceneObjectStatesBuffer;
     agpu_buffer_ref sceneCameraStatesBuffer;
     agpu_buffer_ref sceneGlobalLightingStateBuffer;
-    agpu_buffer_ref sceneLightSourceStatesBuffer;
+    agpu_buffer_ref sceneWorldLightSourceStatesBuffer;
+    agpu_buffer_ref sceneViewLightSourceStatesBuffer;
 
     std::vector<SceneObjectState> sceneObjectStates;
     std::vector<SceneCameraState> sceneCameraStates;

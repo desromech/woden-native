@@ -36,18 +36,25 @@ struct LightSourceState
     float influenceRadius;
 };
 
-layout(set=1, binding=3, std430) buffer LightSourceStateBlock
+layout(set=1, binding=3, std430) buffer WorldLightSourceStateBlock
 {
 	LightSourceState[] list;
-} LightSourceStateList;
+} WorldLightSourceStateList;
+
+layout(set=1, binding=4, std430) buffer ViewLightSourceStateBlock
+{
+	LightSourceState[] list;
+} ViewLightSourceStateList;
 
 
 layout( push_constant ) uniform constants
 {
     uint objectStateIndex;
     uint cameraStateIndex;
-    uint materialStateIndex;
 } PushConstants;
+
+#define CurrentObjectState SceneObjectStateList.list[PushConstants.objectStateIndex]
+#define CurrentCameraState SceneCameraStateList.list[PushConstants.cameraStateIndex]
 
 mat3 topLeft3x3FromMat4(mat4 mat)
 {

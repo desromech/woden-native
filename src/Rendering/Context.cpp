@@ -332,7 +332,8 @@ bool RenderingContext::createScenePipelineStates()
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Camera
 
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_UNIFORM_BUFFER, 1); // Global lighting state
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // All Lights
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // World space Lights
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // View space lights
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Tile Light Index List
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // Light grid Index List
 
@@ -459,6 +460,23 @@ bool RenderingContext::createScenePipelineStates()
         if(!depthOnlyScenePipelineState)
         {
             fprintf(stderr, "Failed to create depth only scene pipeline state.");
+            return false;
+        }
+    }
+
+    {
+        auto computeShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/TransformLightsToView.glsl", AGPU_COMPUTE_SHADER);
+        if(!computeShader)
+            return false;
+        
+        auto builder = device->createComputePipelineBuilder();
+        builder->setShaderSignature(sceneShaderSignature);
+        builder->attachShader(computeShader);
+
+        transformLightsToViewPipeline = builder->build();
+        if(!transformLightsToViewPipeline)
+        {
+            fprintf(stderr, "Failed to create transform lights to view compute state.");
             return false;
         }
     }
