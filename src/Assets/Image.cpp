@@ -135,8 +135,8 @@ ImagePtr Image::intoNormalMap()
     normalImage->pixels.resize(normalImage->pitch*normalImage->height);
 
     normalImage->renderPixels32([&](int x, int y, int width, int height){
-        auto dx = fetchHeight(x + 1, y) - fetchHeight(x - 1, y);
-        auto dy = fetchHeight(x, y + 1) - fetchHeight(x, y - 1);
+        auto dx = (fetchHeight(x + 1, y) - fetchHeight(x - 1, y)) *0.5f;
+        auto dy = (fetchHeight(x, y + 1) - fetchHeight(x, y - 1)) *0.5f;
 
         auto N = Math::Vector3(-dx, -dy, 1);
         auto normalizedN = N.normalized();
