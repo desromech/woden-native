@@ -218,7 +218,8 @@ void MeshBuilder::encodeBufferData()
 
     // Tangent4
     {
-        tangents4.resize(positions.size());
+        // TODO: Compute proper tangents4
+        tangents4.resize(positions.size(), Math::Vector4(1, 0, 0, 1));
 
         auto startOffset = buffer->data.size();
         buffer->addDataFromVector(tangents4);
