@@ -43,9 +43,10 @@ agpu_shader_resource_binding_ref MetallicRoughnessMaterial::getValidResourceBind
     if(materialResourceBinding && !hasChanged)
         return materialResourceBinding;
 
+    const auto &context = RenderingContext::getMainContext();
     if(!materialResourceBinding)
     {
-        materialResourceBinding = RenderingContext::getMainContext()->sceneShaderSignature->createShaderResourceBinding(2);
+        materialResourceBinding = context->sceneShaderSignature->createShaderResourceBinding(2);
         materialState = reinterpret_cast<SceneMetallicRoughnessMaterial*> (sceneRenderer->allocateMaterialStateBuffer(sizeof(SceneMetallicRoughnessMaterial), materialResourceBinding));
     }
 
@@ -59,6 +60,12 @@ agpu_shader_resource_binding_ref MetallicRoughnessMaterial::getValidResourceBind
     materialState->texcoordOffset = texcoordOffset;
     materialState->texcoordScale = texcoordScale;
     materialState->texcoordOffsetVelocity = texcoordOffsetVelocity;
+
+    materialResourceBinding->bindSampledTextureView(1, context->whiteTexture->getOrCreateFullView());
+    materialResourceBinding->bindSampledTextureView(2, context->whiteTexture->getOrCreateFullView());
+    materialResourceBinding->bindSampledTextureView(3, context->neutralNormalTexture->getOrCreateFullView());
+    materialResourceBinding->bindSampledTextureView(4, context->whiteTexture->getOrCreateFullView());
+    materialResourceBinding->bindSampledTextureView(5, context->whiteTexture->getOrCreateFullView());
 
     hasChanged = false;
     return materialResourceBinding;

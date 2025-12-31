@@ -50,6 +50,7 @@ public:
     agpu_shader_resource_binding_ref guiSamplerBindings;
 
     agpu_texture_ref whiteTexture;
+    agpu_texture_ref neutralNormalTexture;
     agpu_shader_resource_binding_ref guiEmptyTextureBinding;
 
     Assets::FontPtr defaultFont;

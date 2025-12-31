@@ -253,13 +253,40 @@ bool RenderingContext::createGuiPipelineStates()
         if(!whiteTexture)
         {
             fprintf(stderr, "Failed to load empty texture.\n");
-            return whiteTexture;
+            return false;
         }
         
         uint32_t color = 0xffffffff;
         whiteTexture->uploadTextureData(0, 0, 4, 4, &color);
 
         guiEmptyTextureBinding->bindSampledTextureView(0, whiteTexture->getOrCreateFullView());
+    }
+
+    // Neutral normal texture
+    {
+        agpu_texture_description desc = {};
+        desc.type = AGPU_TEXTURE_2D;
+        desc.width = 1;
+        desc.height = 1;
+        desc.depth = 1;
+        desc.layers = 1;
+        desc.miplevels = 1;
+        desc.format = AGPU_TEXTURE_FORMAT_B8G8R8A8_UNORM;
+        desc.usage_modes = agpu_texture_usage_mode_mask(AGPU_TEXTURE_USAGE_COPY_DESTINATION | AGPU_TEXTURE_USAGE_SAMPLED);
+        desc.main_usage_mode = AGPU_TEXTURE_USAGE_SAMPLED;
+        desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
+        desc.sample_count = 1;
+        desc.sample_quality = 0;
+
+        neutralNormalTexture = device->createTexture(&desc);
+        if(!neutralNormalTexture)
+        {
+            fprintf(stderr, "Failed to create neutral normal texture texture.\n");
+            return false;
+        }
+        
+        uint32_t color = 0xff8080ff;
+        neutralNormalTexture->uploadTextureData(0, 0, 4, 4, &color);
     }
 
     // Create the GUI pipeline state
