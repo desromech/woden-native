@@ -67,6 +67,11 @@ inline Scalar max(Scalar a, Scalar b)
     return a < b ? b : a;
 }
 
+inline Scalar floorFractionPart(Scalar x)
+{
+    return x - floor(x);
+}
+
 }    
 }
 

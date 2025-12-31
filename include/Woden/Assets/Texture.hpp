@@ -16,7 +16,7 @@ public:
 
     agpu_texture_ref getValidTextureHandle();
 
-    std::vector<Image> miplevels;
+    std::vector<ImagePtr> miplevels;
     agpu_texture_ref textureHandle;
 
 };

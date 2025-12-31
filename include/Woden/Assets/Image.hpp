@@ -37,6 +37,21 @@ public:
         }
     }
 
+    template<typename FT>
+    void renderNormalizedPixel32(FT &&renderFunction)
+    {
+        float iw = 1.0 / width;
+        float ih = 1.0 / height;
+        auto destinationRow = pixels.data();
+        for(uint32_t y = 0; y < height; ++y)
+        {
+            auto currentRow = reinterpret_cast<uint32_t*> (destinationRow);
+            for(uint32_t x = 0; x < width; ++x)
+                currentRow[x] = renderFunction(x*iw, y*ih);
+            destinationRow += pitch;
+        }
+    }
+
     bool saveToTGA(const std::string &filename);
 
     agpu_texture_ref getValidTextureHandle();
