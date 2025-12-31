@@ -3,6 +3,7 @@ set(WodenEngine_Sources
     Assets/Font.cpp
     Assets/Image.cpp
     Assets/PixelFormat.cpp
+    Assets/ResourceCache.cpp
     Assets/Texture.cpp
 
     Math/Vector3.cpp

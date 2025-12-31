@@ -1,4 +1,5 @@
 #include "Woden/Assets/Image.hpp"
+#include "Woden/Assets/Texture.hpp"
 #include "Woden/Rendering/Context.hpp"
 #include <stdio.h>
 
@@ -108,6 +109,13 @@ agpu_shader_resource_binding_ref Image::getValidGuiTextureBinding()
     guiTextureBinding = Rendering::RenderingContext::getMainContext()->guiShaderSignature->createShaderResourceBinding(2);
     guiTextureBinding->bindSampledTextureView(0, textureHandle->getOrCreateFullView());
     return guiTextureBinding;
+}
+
+TexturePtr Image::asTexture()
+{
+    auto texture = std::make_shared<Texture> ();
+    texture->miplevels.push_back(shared_from_this());
+    return texture;
 }
 
 

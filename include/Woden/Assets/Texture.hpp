@@ -13,7 +13,6 @@ typedef std::shared_ptr<class Texture> TexturePtr;
 class Texture
 {
 public:
-
     agpu_texture_ref getValidTextureHandle();
 
     std::vector<ImagePtr> miplevels;

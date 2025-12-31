@@ -9,11 +9,8 @@ using namespace Woden::Morphic;
 using namespace Woden::SceneGraph;
 using namespace Woden::Math;
 
-int main(int argc, const char *argv[])
+int woden_main(int argc, const char **argv)
 {
-    if(!Woden::Rendering::RenderingContext::getOrCreateMainContext(argc, argv))
-        return 1;
-
     auto scene = MakeScene();
     {
         auto builder = Woden::Rendering::MeshBuilder();
@@ -31,9 +28,5 @@ int main(int argc, const char *argv[])
 
     }
 
-    scene->openInSystemWindow();
-
-    int exitCode = Morph::runMainLoop();
-    Woden::Rendering::RenderingContext::releaseMainContext();
-    return exitCode;
+    return 0;
 }

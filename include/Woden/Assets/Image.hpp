@@ -13,8 +13,9 @@ namespace Assets
 {
 
 typedef std::shared_ptr<class Image> ImagePtr;
+typedef std::shared_ptr<class Texture> TexturePtr;
 
-class Image
+class Image : public std::enable_shared_from_this<Image>
 {
 public:
     uint32_t width = 0;
@@ -53,6 +54,8 @@ public:
     }
 
     bool saveToTGA(const std::string &filename);
+
+    TexturePtr asTexture();
 
     agpu_texture_ref getValidTextureHandle();
     agpu_shader_resource_binding_ref getValidGuiTextureBinding();
