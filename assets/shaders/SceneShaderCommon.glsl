@@ -84,6 +84,30 @@ layout(set=1, binding=7, std430) buffer LightClusterListsBlock
 	uvec2[] lists;
 } LightClusterLists;
 
+struct SceneSurfaceMaterial
+{
+    float alphaCutoff;
+    bool doubleSided;
+};
+
+struct SceneMetallicRoughnessMaterial
+{
+    float alphaCutoff;
+    bool doubleSided;
+
+    vec4 baseColorFactor;
+
+    vec3 emissiveFactor;
+    float occlusionFactor;
+
+    float roughnessFactor;
+    float metallicFactor;
+    vec2 texcoordOffset;
+
+    vec2 texcoordScale;
+    vec2 texcoordOffsetVelocity;
+};
+
 layout( push_constant ) uniform constants
 {
     uint objectStateIndex;

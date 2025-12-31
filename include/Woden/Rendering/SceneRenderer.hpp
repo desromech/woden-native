@@ -47,6 +47,7 @@ public:
     static const size_t MaxSceneObjectStateCapacity = 1024;
     static const size_t MaxSceneCameraStateCapacity = 32;
     static const size_t MaxSceneLightSourceCapacity = 1024;
+    static const size_t MaxMaterialCapacity = 1024;
 
     static const uint32_t LightGridWidth = 16;
     static const uint32_t LightGridHeight = 9;
@@ -59,6 +60,8 @@ public:
     void setupWithScreenSize(int newScreenWidth, int newScreenHeight);
 
     void useIndexBuffer(const Assets::BinaryBufferAccessorPtr &indices);
+
+    uint8_t *allocateMaterialStateBuffer(size_t allocationSize, const agpu_shader_resource_binding_ref &materialBinding);
 
     std::shared_ptr<SceneRendererScreen> screen;
     agpu_command_list_ref currentCommandList;
@@ -76,6 +79,10 @@ public:
     agpu_buffer_ref lightClusterBuffer;
     agpu_buffer_ref tileLightIndexListBuffer;
     agpu_buffer_ref lightGridBuffer;
+
+    agpu_buffer_ref materialStateBuffer;
+    size_t materialStateBufferSize = 0;
+    uint8_t *materialStateBufferPointer = nullptr;
 
     std::vector<SceneObjectState> sceneObjectStates;
     std::vector<SceneCameraState> sceneCameraStates;

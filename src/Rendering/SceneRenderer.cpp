@@ -503,5 +503,31 @@ void SceneRenderer::setupWithScreenSize(int newScreenWidth, int newScreenHeight)
 
 }
 
+uint8_t *SceneRenderer::allocateMaterialStateBuffer(size_t allocationSize, const agpu_shader_resource_binding_ref &materialBinding)
+{
+    size_t alignedAllocationSize = alignedTo(allocationSize, 256);
+
+    if(!materialStateBuffer)
+    {
+        agpu_buffer_description desc = {};
+        desc.size = 256*MaxMaterialCapacity;
+        desc.heap_type = AGPU_MEMORY_HEAP_TYPE_HOST_TO_DEVICE;
+        desc.usage_modes = desc.main_usage_mode = agpu_buffer_usage_mask(AGPU_UNIFORM_BUFFER);
+        desc.mapping_flags = AGPU_MAP_WRITE_BIT | AGPU_MAP_PERSISTENT_BIT | AGPU_MAP_COHERENT_BIT;
+        desc.stride = 0;
+
+        materialStateBuffer = Rendering::RenderingContext::getMainContext()->device->createBuffer(&desc, nullptr);
+        materialStateBufferPointer = (uint8_t*)materialStateBuffer->mapBuffer(AGPU_WRITE_ONLY);
+    }
+
+    auto bufferOffset = materialStateBufferSize;
+    auto resultPointer = materialStateBufferPointer + materialStateBufferSize;
+    materialStateBufferSize += alignedAllocationSize;
+
+    materialBinding->bindUniformBufferRange(0, materialStateBuffer, bufferOffset, alignedAllocationSize);
+
+    return resultPointer;
+}
+
 } // End of namespace Rendering
 } // End of namespace Woden

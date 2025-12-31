@@ -1,6 +1,7 @@
 #include "Woden/Rendering/MetallicRoughnessMaterial.hpp"
 #include "Woden/Rendering/Context.hpp"
 #include "Woden/Rendering/SceneRenderer.hpp"
+#include "Woden/Rendering/SceneShaderCommon.hpp"
 
 namespace Woden
 {
@@ -13,6 +14,7 @@ bool MetallicRoughnessMaterial::activateDepthOnlyWithRenderer(SceneRenderer *sce
 
     auto context = RenderingContext::getMainContext();
     sceneRenderer->currentCommandList->usePipelineState(context->depthOnlyScenePipelineState);
+    sceneRenderer->currentCommandList->useShaderResources(getValidResourceBinding(sceneRenderer));
     return true;
 }
 
@@ -23,6 +25,7 @@ bool MetallicRoughnessMaterial::activateOpaqueWithRenderer(SceneRenderer *sceneR
 
     auto context = RenderingContext::getMainContext();
     sceneRenderer->currentCommandList->usePipelineState(context->metallicRoughnessOpaqueScenePipelineState);
+    sceneRenderer->currentCommandList->useShaderResources(getValidResourceBinding(sceneRenderer));
     return true;
 }
 
@@ -33,6 +36,32 @@ bool MetallicRoughnessMaterial::activateTranslucentWithRenderer(SceneRenderer *s
 
     // TODO: use translucent metallic-roughness pipeline.
     return false;
+}
+
+agpu_shader_resource_binding_ref MetallicRoughnessMaterial::getValidResourceBinding(SceneRenderer *sceneRenderer)
+{
+    if(materialResourceBinding && !hasChanged)
+        return materialResourceBinding;
+
+    if(!materialResourceBinding)
+    {
+        materialResourceBinding = RenderingContext::getMainContext()->sceneShaderSignature->createShaderResourceBinding(2);
+        materialState = reinterpret_cast<SceneMetallicRoughnessMaterial*> (sceneRenderer->allocateMaterialStateBuffer(sizeof(SceneMetallicRoughnessMaterial), materialResourceBinding));
+    }
+
+    materialState->baseColorFactor = baseColorFactor;
+    materialState->emissiveFactor = Math::CompactVector3(emissiveFactor);
+    materialState->occlusionFactor = occlusionFactor;
+
+    materialState->roughnessFactor = roughnessFactor;
+    materialState->metallicFactor = metallicFactor;
+
+    materialState->texcoordOffset = texcoordOffset;
+    materialState->texcoordScale = texcoordScale;
+    materialState->texcoordOffsetVelocity = texcoordOffsetVelocity;
+
+    hasChanged = false;
+    return materialResourceBinding;
 }
 
 } // End of namespace Rendering

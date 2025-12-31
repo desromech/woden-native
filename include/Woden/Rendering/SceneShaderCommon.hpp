@@ -68,6 +68,7 @@ struct SceneSurfaceMaterial
 {
     float alphaCutoff = 0.5;
     uint32_t doubleSided = false;
+    Math::Vector2 padding;
 };
 
 struct SceneMetallicRoughnessMaterial : SceneSurfaceMaterial

@@ -5,6 +5,7 @@
 #include "Woden/Math/Vector2.hpp"
 #include "Woden/Math/Vector3.hpp"
 #include "Woden/Math/Vector4.hpp"
+
 namespace Woden
 {
 namespace Rendering
@@ -31,6 +32,16 @@ public:
     Math::Vector2 texcoordScale = Math::Vector2(1, 1);
     Math::Vector2 texcoordOffsetVelocity = Math::Vector2(0, 0);
 
+    bool hasChanged = false;
+
+    void changed()
+    {
+        hasChanged = true;
+    }
+
+private:
+    agpu_shader_resource_binding_ref getValidResourceBinding(SceneRenderer *sceneRenderer);
+    struct SceneMetallicRoughnessMaterial *materialState = nullptr;
 };
 
 } // End of namespace Rendering
