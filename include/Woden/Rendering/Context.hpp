@@ -60,6 +60,9 @@ public:
     Assets::FontFacePtr defaultMonospacedFontFace;
 
     // Scene Rendering.
+    agpu_sampler_ref linearMipmapLinearSampler;
+    agpu_shader_resource_binding_ref sceneSamplerBindings;
+
     agpu_renderpass_ref depthStencilRenderPass;
     agpu_renderpass_ref hdrOpaqueRenderPass;
 

@@ -286,6 +286,7 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
     commandList->setViewport(0, 0, screen->screenWidth, screen->screenHeight);
     commandList->setScissor(0, 0, screen->screenWidth, screen->screenHeight);
     commandList->setShaderSignature(context->sceneShaderSignature);
+    commandList->useShaderResources(context->sceneSamplerBindings);
     commandList->useShaderResources(statesBinding);
     commandList->pushConstants(0, sizeof(initialPushConstants), &initialPushConstants);
 
@@ -298,6 +299,7 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
     commandList->setViewport(0, 0, screen->screenWidth, screen->screenHeight);
     commandList->setScissor(0, 0, screen->screenWidth, screen->screenHeight);
     commandList->setShaderSignature(context->sceneShaderSignature);
+    commandList->useShaderResources(context->sceneSamplerBindings);
     commandList->useShaderResources(statesBinding);
     commandList->pushConstants(0, sizeof(initialPushConstants), &initialPushConstants);
 

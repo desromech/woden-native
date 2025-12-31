@@ -389,6 +389,29 @@ bool RenderingContext::createScenePipelineStates()
             return false;
     }
 
+        // GUI samplers
+    {
+        sceneSamplerBindings = sceneShaderSignature->createShaderResourceBinding(0);
+
+        {
+            agpu_sampler_description desc = {};
+            desc.address_u = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.address_v = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.address_w = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.filter = AGPU_FILTER_MIN_LINEAR_MAG_LINEAR_MIPMAP_LINEAR;
+            desc.max_lod = 32;
+
+            linearMipmapLinearSampler = device->createSampler(&desc);
+            if(!linearSampler)
+            {
+                fprintf(stderr, "Failed to create linear sampler.\n");
+                return false;
+            }
+
+            sceneSamplerBindings->bindSampler(0, linearMipmapLinearSampler);
+        }
+    }
+
     // Create the depth stencil render pass
     {
         agpu_renderpass_depth_stencil_description depthStencilAttachment = {};
