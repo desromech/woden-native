@@ -55,6 +55,9 @@ TexturePtr ResourceCache::getOrCreateCheckboardNormalTexture()
 {
     if(checkboardNormalTexture)
         return checkboardNormalTexture;
+    
+    auto normalImage = checkboardTexture->miplevels[0]->intoNormalMap();
+    checkboardNormalTexture = normalImage->asTexture();
     return checkboardNormalTexture;
 }
 

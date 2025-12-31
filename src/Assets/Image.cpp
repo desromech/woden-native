@@ -1,6 +1,7 @@
 #include "Woden/Assets/Image.hpp"
 #include "Woden/Assets/Texture.hpp"
 #include "Woden/Rendering/Context.hpp"
+#include "Woden/Math/Vector3.hpp"
 #include <stdio.h>
 
 namespace Woden
@@ -109,6 +110,45 @@ agpu_shader_resource_binding_ref Image::getValidGuiTextureBinding()
     guiTextureBinding = Rendering::RenderingContext::getMainContext()->guiShaderSignature->createShaderResourceBinding(2);
     guiTextureBinding->bindSampledTextureView(0, textureHandle->getOrCreateFullView());
     return guiTextureBinding;
+}
+
+float Image::fetchHeight(int x, int y)
+{
+    x %= width;
+    y %= height;
+
+    auto row = pixels.data() + pitch*y;
+    auto row32 = reinterpret_cast<uint32_t*> (row);
+    auto pixelValue = row32[x];
+
+    auto height = (pixelValue & 0xff) / 255.0f;
+    return height;
+}
+
+ImagePtr Image::intoNormalMap()
+{
+    auto normalImage = std::make_shared<Image> ();
+    normalImage->width = width;
+    normalImage->height = height;
+    normalImage->pitch = normalImage->width*4;
+    normalImage->format = PixelFormat::B8G8R8A8_UNorm;
+    normalImage->pixels.resize(normalImage->pitch*normalImage->height);
+
+    normalImage->renderPixels32([&](int x, int y, int width, int height){
+        auto dx = fetchHeight(x + 1, y) - fetchHeight(x - 1, y);
+        auto dy = fetchHeight(x, y + 1) - fetchHeight(x, y - 1);
+
+        auto N = Math::Vector3(-dx, -dy, 1);
+        auto normalizedN = N.normalized();
+        auto pixelValue = normalizedN*0.5 + 0.5;
+
+        auto cr = uint32_t(pixelValue.x *255);
+        auto cg = uint32_t(pixelValue.y *255);
+        auto cb = uint32_t(pixelValue.z *255);
+        return cb | (cg << 8) | (cr << 16) | 0xff000000;
+    });
+
+    return normalImage;
 }
 
 TexturePtr Image::asTexture()

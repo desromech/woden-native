@@ -53,6 +53,9 @@ public:
         }
     }
 
+    float fetchHeight(int x, int y);
+    ImagePtr intoNormalMap();
+
     bool saveToTGA(const std::string &filename);
 
     TexturePtr asTexture();

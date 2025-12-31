@@ -19,6 +19,7 @@ int woden_main(int argc, const char **argv)
         material->roughnessFactor = 0.4;
         material->metallicFactor = 0.0;
         material->baseColorTexture = Woden::Assets::ResourceCache::Get()->getOrCreateCheckboardTexture();
+        material->normalTexture = Woden::Assets::ResourceCache::Get()->getOrCreateCheckboardNormalTexture();
 
         auto builder = Woden::Rendering::MeshBuilder();
         builder.currentMaterial = material;
