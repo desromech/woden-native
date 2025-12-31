@@ -382,7 +382,8 @@ bool RenderingContext::createScenePipelineStates()
 
         shaderSignatureBuilder->addBindingConstant(); // Object index
         shaderSignatureBuilder->addBindingConstant(); // Camera index
-        shaderSignatureBuilder->addBindingConstant(); // Material index
+        shaderSignatureBuilder->addBindingConstant(); // Light state index
+        shaderSignatureBuilder->addBindingConstant(); // Light shadow component index
 
         sceneShaderSignature = shaderSignatureBuilder->build();
         if (!sceneShaderSignature)

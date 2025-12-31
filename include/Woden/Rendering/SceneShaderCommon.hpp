@@ -60,6 +60,20 @@ struct LightSourceState
 	float outerSpotCosCutoff = -1;
 	uint32_t castShadows = 0;
 	Math::Vector2 shadowMapViewportScale = Math::Vector2(1, 1);
+
+	float shadowMapNormalBiasFactor;
+    float padding[3];
+
+	Math::Vector4 shadowMapCascadeDistanceWorldTransform;
+	Math::Vector4 shadowMapCascadeOffsets;
+	
+	Math::Matrix4x4 modelMatrix[6];
+	Math::Matrix4x4 inverseModelMatrix[6];
+
+	Math::Matrix4x4 projectionMatrix[6];
+	Math::Matrix4x4 inverseProjectionMatrix[6];
+
+	Math::Vector2 shadowMapViewportOffsets[6];
 };
 
 struct LightCluster
@@ -98,6 +112,7 @@ struct ScenePushConstants
     uint32_t objectStateIndex = 0;
     uint32_t cameraStateIndex = 0;
     uint32_t lightStateIndex = 0;
+    uint32_t lightStateComponentIndex = 0;
 };
 
 } // End of namespace Rendering

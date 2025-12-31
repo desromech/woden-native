@@ -60,6 +60,20 @@ struct LightSourceState
 	bool castShadows;
 	vec2 shadowMapViewportScale;
 
+	float shadowMapNormalBiasFactor;
+    float padding[3];
+
+	vec4 shadowMapCascadeDistanceWorldTransform;
+	vec4 shadowMapCascadeOffsets;
+	
+	mat4 modelMatrix[6];
+	mat4 inverseModelMatrix[6];
+
+	mat4 projectionMatrix[6];
+	mat4 inverseProjectionMatrix[6];
+
+	vec2 shadowMapViewportOffsets[6];
+
 };
 
 layout(set=1, binding=3, std430) buffer WorldLightSourceStateBlock
@@ -124,6 +138,7 @@ layout( push_constant ) uniform constants
     uint objectStateIndex;
     uint cameraStateIndex;
     uint lightStateIndex;
+    uint lightStateComponentIndex;
 } PushConstants;
 
 #define CurrentObjectState SceneObjectStateList.list[PushConstants.objectStateIndex]
