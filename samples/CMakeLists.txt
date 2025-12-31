@@ -15,3 +15,6 @@ target_link_libraries(SceneSample03-TexturedCube WodenEngine)
 
 add_executable(SceneSample04-TexturedCube2 SampleCommon.cpp SceneSample04-TexturedCube2.cpp)
 target_link_libraries(SceneSample04-TexturedCube2 WodenEngine)
+
+add_executable(SceneSample05-ShadowCastingSpotLight SampleCommon.cpp SceneSample05-ShadowCastingSpotLight.cpp)
+target_link_libraries(SceneSample05-ShadowCastingSpotLight WodenEngine)

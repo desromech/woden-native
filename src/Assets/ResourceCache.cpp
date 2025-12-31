@@ -1,5 +1,6 @@
 #include "Woden/Assets/ResourceCache.hpp"
 #include "Woden/Math/Scalar.hpp"
+#include "Woden/Rendering/MetallicRoughnessMaterial.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -59,6 +60,21 @@ TexturePtr ResourceCache::getOrCreateCheckboardNormalTexture()
     auto normalImage = checkboardTexture->miplevels[0]->intoNormalMap();
     checkboardNormalTexture = normalImage->asTexture();
     return checkboardNormalTexture;
+}
+
+Rendering::MaterialPtr ResourceCache::getOrCreateCheckboardMaterial()
+{
+    if(!checkboardMaterial)
+    {
+        auto material = std::make_shared<Woden::Rendering::MetallicRoughnessMaterial> ();
+        material->roughnessFactor = 0.4;
+        material->metallicFactor = 0.0;
+        material->baseColorTexture = getOrCreateCheckboardTexture();
+        material->normalTexture = getOrCreateCheckboardNormalTexture();
+        checkboardMaterial = material;
+    }
+
+    return checkboardMaterial;
 }
 
 

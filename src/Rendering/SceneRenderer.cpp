@@ -57,8 +57,16 @@ void SceneRenderer::addRenderingLightSourceObject(class RenderingLightSourceObje
 {
     LightSourceState state = {};
     state.positionOrDirection = lightSource.positionOrDirection;
+    
     state.intensity = Math::CompactVector3(lightSource.intensityAndColor);
     state.influenceRadius = lightSource.influenceRadius;
+
+    state.spotDirection = lightSource.spotDirection;
+    state.innerSpotCosCutoff = lightSource.innerSpotCosCutoff;
+
+    state.outerSpotCosCutoff = lightSource.outerSpotCosCutoff;
+    state.castShadows = lightSource.castShadows ? 1 : 0;
+
     sceneLightSourceStates.push_back(state);
 }
 

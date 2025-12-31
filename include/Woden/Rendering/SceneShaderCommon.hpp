@@ -53,6 +53,13 @@ struct LightSourceState
 
     Math::CompactVector3 intensity = Math::CompactVector3(0, 0, 0);
     float influenceRadius = 0.0;
+
+    Math::CompactVector3 spotDirection = Math::CompactVector3(0, 0, 0);
+    float innerSpotCosCutoff = -1;
+
+	float outerSpotCosCutoff = -1;
+	uint32_t castShadows = 0;
+	Math::Vector2 shadowMapViewportScale = Math::Vector2(1, 1);
 };
 
 struct LightCluster

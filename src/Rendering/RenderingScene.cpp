@@ -13,6 +13,7 @@ void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lig
 void RenderingScene::addPointLightSource(const PointLightSource *lightSource)
 {
     RenderingLightSourceObject renderingLight = {};
+    renderingLight.castShadows = lightSource->castShadows;
     renderingLight.positionOrDirection = currentModelMatrix.fourthColumn();
     renderingLight.intensityAndColor = lightSource->color*lightSource->intensity;
     renderingLight.influenceRadius = lightSource->influenceRadius;
@@ -24,6 +25,15 @@ void RenderingScene::addPointLightSource(const PointLightSource *lightSource)
 
 void RenderingScene::addSpotLightSource(const SpotLightSource *lightSource)
 {
+    RenderingLightSourceObject renderingLight = {};
+    renderingLight.castShadows = lightSource->castShadows;
+    renderingLight.positionOrDirection = currentModelMatrix.fourthColumn();
+    renderingLight.spotDirection = currentModelMatrix.topLeftMatrix3x3().thirdColumn();
+    renderingLight.intensityAndColor = lightSource->color*lightSource->intensity;
+    renderingLight.influenceRadius = lightSource->influenceRadius;
+    renderingLight.innerSpotCosCutoff = cos(lightSource->innerCutoff * (M_PI / 180.0));
+    renderingLight.outerSpotCosCutoff = cos(lightSource->outerCutoff * (M_PI / 180.0));
+    lightSources.push_back(renderingLight);
 }
 
 void RenderingScene::addObjectWithRenderable(const RenderablePtr &renderable)

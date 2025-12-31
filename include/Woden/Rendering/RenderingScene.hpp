@@ -27,8 +27,12 @@ class RenderingLightSourceObject
 {
 public:
     Math::Vector4 positionOrDirection;
+    Math::Vector3 spotDirection;
     Math::Vector3 intensityAndColor;
-    Math::Scalar influenceRadius = 0;
+    Math::Scalar influenceRadius = 1;
+    Math::Scalar innerSpotCosCutoff = -1;
+    Math::Scalar outerSpotCosCutoff = -1;
+    bool castShadows = false;
 };
 
 class RenderingScene

@@ -21,12 +21,13 @@ int woden_main(int argc, const char **argv)
         material->baseColorTexture = Woden::Assets::ResourceCache::Get()->getOrCreateCheckboardTexture();
         material->normalTexture = Woden::Assets::ResourceCache::Get()->getOrCreateCheckboardNormalTexture();
 
-        auto builder = Woden::Rendering::MeshBuilder();
-        builder.currentMaterial = material;
-        builder.addCubeWithExtent(Vector3(1, 1, 1));
-        builder.generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1));
-        builder.generateTangentSpaceFrame();
-        scene->normalLayer->addChild(builder.finishMesh()->asSceneNode());
+        scene->normalLayer->addChild(Woden::Rendering::MeshBuilder()
+            .setMaterial(material)
+            .addCubeWithExtent(Vector3(1, 1, 1))
+            .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
+            .generateTangentSpaceFrame()
+            .finishMesh()->asSceneNode()
+        );
     }
 
     {

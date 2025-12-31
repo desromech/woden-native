@@ -27,9 +27,10 @@ public:
     SceneGraph::SceneNodePtr asSceneNodeWithPosition(const Math::Vector3 &position);
     SceneGraph::SceneNodePtr asSceneNode();
 
+    bool castShadows = false;
+
     Math::Vector3 color;
     Math::Scalar intensity;
-    
 };
 
 class DirectionalLightSource : public LightSource
@@ -50,6 +51,9 @@ class SpotLightSource : public PointLightSource
 {
 public:
     virtual void addIntoRenderingScene(const RenderingScenePtr &renderingScene) override;
+
+    Math::Scalar innerCutoff = 45;
+    Math::Scalar outerCutoff = 60;
 };
 
 } // End of namespace Rendering

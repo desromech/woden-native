@@ -49,8 +49,17 @@ layout(set=1, binding=2, std140) uniform GlobalLightingStateBlock
 struct LightSourceState
 {
     vec4 positionOrDirection;
+
     vec3 intensity;
     float influenceRadius;
+
+	vec3 spotDirection;
+	float innerSpotCosCutoff;
+
+	float outerSpotCosCutoff;
+	bool castShadows;
+	vec2 shadowMapViewportScale;
+
 };
 
 layout(set=1, binding=3, std430) buffer WorldLightSourceStateBlock

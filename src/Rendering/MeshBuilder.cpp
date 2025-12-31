@@ -9,17 +9,17 @@ namespace Woden
 namespace Rendering
 {
 
-void MeshBuilder::addCubeWithExtent(const Math::Vector3 &extent)
+MeshBuilder &MeshBuilder::addCubeWithExtent(const Math::Vector3 &extent)
 {
-    addCubeWithHalfExtent(extent * 0.5);
+    return addCubeWithHalfExtent(extent * 0.5);
 }
 
-void MeshBuilder::addCubeWithHalfExtent(const Math::Vector3 &halfExtent)
+MeshBuilder &MeshBuilder::addCubeWithHalfExtent(const Math::Vector3 &halfExtent)
 {
-    addCubeWithBox(Math::AABox(-halfExtent, halfExtent));
+    return addCubeWithBox(Math::AABox(-halfExtent, halfExtent));
 }
 
-void MeshBuilder::addCubeWithBox(const Math::AABox &box)
+MeshBuilder &MeshBuilder::addCubeWithBox(const Math::AABox &box)
 {
     auto minX = box.minCorner.x;
     auto minY = box.minCorner.y;
@@ -82,6 +82,8 @@ void MeshBuilder::addCubeWithBox(const Math::AABox &box)
     addPxyz(minX, maxY, maxZ); addNxyz(0.0, 0.0, 1.0);
     addTriangleI012(0, 1, 2);
     addTriangleI012(2, 3, 0);
+
+    return *this;
 }
 
 void MeshBuilder::beginTriangles()
@@ -128,8 +130,10 @@ void MeshBuilder::finishLastPrimitive()
 
 void MeshBuilder::addPxyz(Scalar x, Scalar y, Scalar z)
 {
-    positions.push_back(Woden::Math::CompactVector3(x, y, z));
+    auto transformedPosition = currentTransform.transformPosition(Math::Vector3(x, y, z));
+    positions.push_back(Woden::Math::CompactVector3(transformedPosition));
 }
+
 void MeshBuilder::addNxyz(Scalar x, Scalar y, Scalar z)
 {
     normals.push_back(Woden::Math::CompactVector3(x, y, z));
@@ -169,12 +173,12 @@ std::vector<MeshPrimitivePtr> MeshBuilder::encodePrimitives()
     return encodedPrimitives;
 }
 
-void MeshBuilder::generateTexcoordsWithFacePlanarTransformWithScale(const Math::Vector2 &scale)
+MeshBuilder & MeshBuilder::generateTexcoordsWithFacePlanarTransformWithScale(const Math::Vector2 &scale)
 {
-    generateTexcoordsWithFacePlanarTransform(Math::Matrix3x3::TextureScaleAndOffset(scale, Math::Vector2(0, 0)));
+    return generateTexcoordsWithFacePlanarTransform(Math::Matrix3x3::TextureScaleAndOffset(scale, Math::Vector2(0, 0)));
 }
 
-void MeshBuilder::generateTexcoordsWithFacePlanarTransform(const Math::Matrix3x3 &transformMatrix)
+MeshBuilder & MeshBuilder::generateTexcoordsWithFacePlanarTransform(const Math::Matrix3x3 &transformMatrix)
 {
     assert(positions.size() == normals.size());
 
@@ -194,9 +198,10 @@ void MeshBuilder::generateTexcoordsWithFacePlanarTransform(const Math::Matrix3x3
 
         texcoords[i] = transformedUV;
     }
+    return *this;
 }
 
-void MeshBuilder::generateTangentSpaceFrame()
+MeshBuilder &MeshBuilder::generateTangentSpaceFrame()
 {
     assert(positions.size() == normals.size());
     assert(normals.size() == texcoords.size());
@@ -269,6 +274,8 @@ void MeshBuilder::generateTangentSpaceFrame()
 
         tangents4[pi] = Math::Vector4(t.x, t.y, t.z, s);
     }
+
+    return *this;
 }
 
 void MeshBuilder::encodeBufferData()

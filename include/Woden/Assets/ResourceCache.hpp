@@ -2,6 +2,7 @@
 #define WODEN_ASSETS_RESOURCE_CACHE_HPP
 
 #include "Texture.hpp"
+#include "Woden/Rendering/Material.hpp"
 
 namespace Woden
 {
@@ -19,10 +20,12 @@ public:
 
     TexturePtr getOrCreateCheckboardTexture();
     TexturePtr getOrCreateCheckboardNormalTexture();
+    Rendering::MaterialPtr getOrCreateCheckboardMaterial();
 
 private:
     TexturePtr checkboardTexture;
     TexturePtr checkboardNormalTexture;
+    Rendering::MaterialPtr checkboardMaterial;
 };
 
 } // End of namespace Assets

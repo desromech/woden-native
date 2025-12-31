@@ -9,4 +9,5 @@ int woden_main(int argc, const char **argv)
 {
     auto scene = MakeScene();
     scene->openInSystemWindow();
+    return 0;
 }

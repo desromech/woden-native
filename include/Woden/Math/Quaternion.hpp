@@ -50,6 +50,21 @@ struct Quaternion
         return Quaternion(0, 0, s, c);
     }
 
+    static Quaternion XRotationDegrees(Scalar angle)
+    {
+        return XRotation(angle * M_PI / 180.0);
+    }
+    
+    static Quaternion YRotationDegrees(Scalar angle)
+    {
+        return YRotation(angle * M_PI / 180.0);
+    }
+    
+    static Quaternion ZRotationDegrees(Scalar angle)
+    {
+        return ZRotation(angle * M_PI / 180.0);
+    }
+
     Quaternion conjugated() const
     {
         return Quaternion(-x, -y, -z, w);

@@ -116,6 +116,15 @@ public:
         return Vector4(m14, m24, m34, m44);
     }
 
+    Matrix3x3 topLeftMatrix3x3() const
+    {
+        return Matrix3x3(
+            m11, m12, m13,
+            m21, m22, m23,
+            m31, m32, m33
+        );
+    }
+
     Matrix3x3 minorMatrixAt(int row, int column) const
     {
 

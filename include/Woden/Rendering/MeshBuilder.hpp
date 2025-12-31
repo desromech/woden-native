@@ -6,6 +6,7 @@
 #include "Woden/Math/Vector3.hpp"
 #include "Woden/Math/Vector4.hpp"
 #include "Woden/Math/Matrix3x3.hpp"
+#include "Woden/Math/TRSTransform3D.hpp"
 #include "Woden/Rendering/Renderable.hpp"
 #include "Woden/Rendering/MeshPrimitive.hpp"
 #include "AGPU/agpu.hpp"
@@ -39,9 +40,9 @@ struct MeshBuilderPrimitive
 class MeshBuilder
 {
 public:
-    void addCubeWithExtent(const Math::Vector3 &extent);
-    void addCubeWithHalfExtent(const Math::Vector3 &halfExtent);
-    void addCubeWithBox(const Math::AABox &box);
+    MeshBuilder &addCubeWithExtent(const Math::Vector3 &extent);
+    MeshBuilder &addCubeWithHalfExtent(const Math::Vector3 &halfExtent);
+    MeshBuilder &addCubeWithBox(const Math::AABox &box);
 
     void beginTriangles();
     void beginWithTopology(agpu_primitive_topology topology);
@@ -52,9 +53,21 @@ public:
     void addNxyz(Scalar x, Scalar y, Scalar z);
     void addTriangleI012(uint32_t i0, uint32_t i1, uint32_t i2);
 
-    void generateTexcoordsWithFacePlanarTransformWithScale(const Math::Vector2 &scale);
-    void generateTexcoordsWithFacePlanarTransform(const Math::Matrix3x3 &transform);
-    void generateTangentSpaceFrame();
+    MeshBuilder &generateTexcoordsWithFacePlanarTransformWithScale(const Math::Vector2 &scale);
+    MeshBuilder &generateTexcoordsWithFacePlanarTransform(const Math::Matrix3x3 &transform);
+    MeshBuilder &generateTangentSpaceFrame();
+
+    MeshBuilder &translateTo(const Math::Vector3 &translation)
+    {
+        currentTransform.translation = translation;
+        return *this;
+    }
+
+    MeshBuilder &setMaterial(const MaterialPtr &newMaterial)
+    {
+        currentMaterial = newMaterial;
+        return *this;
+    }
 
     void encodeBufferData();
     std::vector<MeshPrimitivePtr> encodePrimitives();
@@ -73,6 +86,8 @@ public:
     std::vector<Math::Vector4> tangents4;
     std::vector<uint32_t> indices;
     std::vector<MeshBuilderPrimitive> primitives;
+
+    Math::TRSTransform3D currentTransform;
 };
 
 } // End of namespace Rendering
