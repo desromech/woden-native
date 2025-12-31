@@ -8,6 +8,11 @@ namespace Rendering
 
 void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lightSource)
 {
+    RenderingLightSourceObject renderingLight = {};
+    renderingLight.castShadows = lightSource->castShadows;
+    renderingLight.positionOrDirection = Math::Vector4(currentModelMatrix.topLeftMatrix3x3().thirdColumn(), 0.0);
+    renderingLight.intensityAndColor = lightSource->color*lightSource->intensity;
+    lightSources.push_back(renderingLight);
 }
 
 void RenderingScene::addPointLightSource(const PointLightSource *lightSource)

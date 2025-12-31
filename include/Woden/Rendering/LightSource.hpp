@@ -29,8 +29,8 @@ public:
 
     bool castShadows = false;
 
-    Math::Vector3 color;
-    Math::Scalar intensity;
+    Math::Vector3 color = Math::Vector3(1, 1, 1);
+    Math::Scalar intensity = 1;
 };
 
 class DirectionalLightSource : public LightSource

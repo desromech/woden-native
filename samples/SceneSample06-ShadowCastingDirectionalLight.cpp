@@ -1,0 +1,61 @@
+#include "Woden/Rendering/Context.hpp"
+#include "Woden/Rendering/LightSource.hpp"
+#include "Woden/Rendering/MeshBuilder.hpp"
+#include "Woden/Rendering/MetallicRoughnessMaterial.hpp"
+#include "Woden/Rendering/Renderable.hpp"
+#include "Woden/Assets/ResourceCache.hpp"
+#include "Woden/Morphic/Morph.hpp"
+#include "Woden/SceneGraph/Scene.hpp"
+
+using namespace Woden::Morphic;
+using namespace Woden::SceneGraph;
+using namespace Woden::Math;
+
+int woden_main(int argc, const char **argv)
+{
+    auto scene = MakeScene();
+    {
+        scene->normalLayer->addChild(Woden::Rendering::MeshBuilder()
+            .setMaterial(Woden::Assets::ResourceCache::Get()->getOrCreateCheckboardMaterial())
+		    .translateTo(Vector3(0, -0.125, 0))
+		    .addCubeWithExtent(Vector3(10.0, 0.25, 10.0))
+
+		    .translateTo(Vector3(0, 0.5, 0))
+		    .addCubeWithExtent(Vector3(1.0, 1.0, 1.0))
+
+		    .translateTo(Vector3(2, 0.25, 2))
+		    .addCubeWithExtent(Vector3(0.5, 0.5, 0.5))
+
+		    .translateTo(Vector3(1, 0.25, 2))
+		    .addCubeWithExtent(Vector3(0.5, 0.5, 0.5))
+
+		    .translateTo(Vector3(0, 0.25, 2))
+		    .addCubeWithExtent(Vector3(0.5, 0.5, 0.5))
+
+		    .translateTo(Vector3(-1, 0.25, 2))
+		    .addCubeWithExtent(Vector3(0.5, 0.5, 0.5))
+
+		    .translateTo(Vector3(-2, 0.25, 2))
+		    .addCubeWithExtent(Vector3(0.5, 0.5, 0.5))
+
+            .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
+            .generateTangentSpaceFrame()
+            .finishMesh()->asSceneNode()
+        );
+    }
+
+    {
+        auto directionalLightSource = std::make_shared<Woden::Rendering::DirectionalLightSource> ();
+        directionalLightSource->color = Vector3(0.8, 0.8, 0.7);
+        directionalLightSource->castShadows = true;
+
+        auto lightNode = directionalLightSource->asSceneNode();
+        lightNode->transform.rotation = Quaternion::YRotationDegrees(-135)*Quaternion::XRotationDegrees(-45);
+        lightNode->transform.translation = Vector3(-1.0, 2.0, -2.0);
+
+        scene->normalLayer->addChild(lightNode);
+    }
+
+    scene->openInSystemWindow();
+    return 0;
+}

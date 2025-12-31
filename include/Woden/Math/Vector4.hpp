@@ -23,6 +23,10 @@ public:
     {
     }
 
+    Vector4(const Vector3 &v, Scalar cw) : x(v.x), y(v.y), z(v.z), w(cw)
+    {
+    }
+
     Vector4 abs() const
     {
         return Vector4(Woden::Math::abs(x), Woden::Math::abs(y), Woden::Math::abs(z), Woden::Math::abs(w));
