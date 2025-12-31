@@ -54,6 +54,7 @@ public:
 
     void generateTexcoordsWithFacePlanarTransformWithScale(const Math::Vector2 &scale);
     void generateTexcoordsWithFacePlanarTransform(const Math::Matrix3x3 &transform);
+    void generateTangentSpaceFrame();
 
     void encodeBufferData();
     std::vector<MeshPrimitivePtr> encodePrimitives();

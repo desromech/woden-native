@@ -167,6 +167,11 @@ public:
     CompactVector3(Scalar cx, Scalar cy, Scalar cz)
         : x(cx), y(cy), z(cz)
     {}
+
+    Vector3 asVector3() const
+    {
+        return Vector3(x, y, z);
+    }
     
     Scalar x, y, z;
 };

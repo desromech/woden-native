@@ -196,6 +196,80 @@ void MeshBuilder::generateTexcoordsWithFacePlanarTransform(const Math::Matrix3x3
     }
 }
 
+void MeshBuilder::generateTangentSpaceFrame()
+{
+    assert(positions.size() == normals.size());
+    assert(normals.size() == texcoords.size());
+    finishLastPrimitive();
+
+    std::vector<Math::Vector3> tangents;
+    tangents.resize(positions.size(), Math::Vector3(0));
+
+    std::vector<Math::Vector3> bitangents;
+    bitangents.resize(positions.size(), Math::Vector3(0));
+
+    for(auto &primitive : primitives)
+    {
+        if(primitive.topology == AGPU_TRIANGLES)
+        {
+            for(size_t i = 0; i < primitive.indexCount; i+=3)
+            {
+                auto i0 = indices[primitive.firstIndex + i + 0];
+                auto i1 = indices[primitive.firstIndex + i + 1];
+                auto i2 = indices[primitive.firstIndex + i + 2];
+
+                auto p0 = positions[i0].asVector3();
+                auto p1 = positions[i1].asVector3();
+                auto p2 = positions[i2].asVector3();
+
+                auto tc0 = texcoords[i0];
+                auto tc1 = texcoords[i1];
+                auto tc2 = texcoords[i2];
+
+                auto u = p1 - p0;
+                auto v = p2 - p0;
+
+                auto du0 = tc1.x - tc0.x;
+                auto dv0 = tc1.y - tc0.y;
+                
+                auto du1 = tc2.x - tc0.x;
+                auto dv1 = tc2.y - tc0.y;
+                
+                auto det = (du0*dv1) - (du1*dv0);
+                if(det != 0)
+                {
+                    auto tangent = (u * (dv1/det))  - (v * (dv0/det));
+                    auto bitangent = (v * (du0/det)) - (u * (du1/det));
+
+                    tangents[i0] += tangent;
+                    tangents[i1] += tangent;
+                    tangents[i2] += tangent;
+
+                    bitangents[i0] += bitangent;
+                    bitangents[i1] += bitangent;
+                    bitangents[i2] += bitangent;
+                }
+            }
+        }
+    }
+
+    tangents4.resize(positions.size());
+    for(size_t pi = 0; pi < positions.size(); ++pi)
+    {
+        auto t = tangents[pi];
+        auto b = bitangents[pi];
+        auto n = normals[pi].asVector3();
+
+        // Gram schmidth orthogonalization
+        t = (t - (n * n.dot(t))).normalized();
+        b = (b - (n * n.dot(b)) - (t * t.dot(b))).normalized();
+        auto s = n.cross(t).dot(b);
+        
+        //printf("pi %d | t: %f %f %f s: %f\n", (int)pi, t.x, t.y, t.z, s);
+
+        tangents4[pi] = Math::Vector4(t.x, t.y, t.z, s);
+    }
+}
 
 void MeshBuilder::encodeBufferData()
 {
@@ -234,7 +308,8 @@ void MeshBuilder::encodeBufferData()
 
     // Texcoords
     {
-        texcoords.resize(positions.size());
+        if(texcoords.size() != positions.size())
+            texcoords.resize(positions.size());
 
         auto startOffset = buffer->data.size();
         buffer->addDataFromVector(texcoords);
@@ -247,8 +322,8 @@ void MeshBuilder::encodeBufferData()
 
     // Tangent4
     {
-        // TODO: Compute proper tangents4
-        tangents4.resize(positions.size(), Math::Vector4(1, 0, 0, 1));
+        if(tangents4.empty() && !positions.empty())
+            generateTangentSpaceFrame();
 
         auto startOffset = buffer->data.size();
         buffer->addDataFromVector(tangents4);

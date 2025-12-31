@@ -25,6 +25,7 @@ int woden_main(int argc, const char **argv)
         builder.currentMaterial = material;
         builder.addCubeWithExtent(Vector3(1, 1, 1));
         builder.generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1));
+        builder.generateTangentSpaceFrame();
         scene->normalLayer->addChild(builder.finishMesh()->asSceneNode());
     }
 
