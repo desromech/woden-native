@@ -50,6 +50,9 @@ agpu_shader_resource_binding_ref MetallicRoughnessMaterial::getValidResourceBind
         materialState = reinterpret_cast<SceneMetallicRoughnessMaterial*> (sceneRenderer->allocateMaterialStateBuffer(sizeof(SceneMetallicRoughnessMaterial), materialResourceBinding));
     }
 
+    materialState->doubleSided = doubleSided ? 1 : 0;
+    materialState->alphaCutoff = alphaMode == SurfaceAlphaMode::Mask ? alphaCutoff : 0; 
+
     materialState->baseColorFactor = baseColorFactor;
     materialState->emissiveFactor = Math::CompactVector3(emissiveFactor);
     materialState->occlusionFactor = occlusionFactor;

@@ -22,7 +22,17 @@ layout(set=2, binding=5) uniform texture2D MetallicRoughnessTexture;
 
 void main()
 {
+    // Discard back side.
+    if(!MaterialState.doubleSided && !gl_FrontFacing)
+        discard;
+
+    // Tex coord.
     vec2 texcoord = inTexcoord*MaterialState.texcoordScale + MaterialState.texcoordOffset;
+
+    // Discard alpha masking.
+    vec4 baseColor = MaterialState.baseColorFactor * texture(sampler2D(BaseColorTexture, LinearMipmapLinearTextureSampler), texcoord);
+    if(baseColor.a < MaterialState.alphaCutoff)
+        discard;
 
     vec3 P = inViewPosition;
     vec3 V = normalize(-inViewPosition);
@@ -39,7 +49,7 @@ void main()
     vec4 mrSample = texture(sampler2D(MetallicRoughnessTexture, LinearMipmapLinearTextureSampler), texcoord);
 
     SurfaceLightingParameters surfaceParameters;
-    surfaceParameters.baseColor = MaterialState.baseColorFactor * texture(sampler2D(BaseColorTexture, LinearMipmapLinearTextureSampler), texcoord);
+    surfaceParameters.baseColor = baseColor;
     surfaceParameters.emissiveFactor = MaterialState.emissiveFactor * texture(sampler2D(EmissiveTexture, LinearMipmapLinearTextureSampler), texcoord).rgb;
     surfaceParameters.occlusionFactor = MaterialState.occlusionFactor * texture(sampler2D(OcclusionTexture, LinearMipmapLinearTextureSampler), texcoord).r;
     surfaceParameters.N = N;
@@ -49,6 +59,12 @@ void main()
     surfaceParameters.roughnessFactor = MaterialState.roughnessFactor*mrSample.g;
 
     surfaceParameters.P = inViewPosition;
+
+    if(!gl_FrontFacing)
+	{
+		surfaceParameters.N = -surfaceParameters.N;
+		surfaceParameters.worldSurfaceN = -surfaceParameters.worldSurfaceN;
+	}
 
     outColor = performLightingModelComputation(surfaceParameters, outNormalGBuffer, outSpecularityGBuffer);
 }
