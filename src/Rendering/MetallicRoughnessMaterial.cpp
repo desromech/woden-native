@@ -13,7 +13,7 @@ bool MetallicRoughnessMaterial::activateDepthOnlyWithRenderer(SceneRenderer *sce
         return false;
 
     auto context = RenderingContext::getMainContext();
-    sceneRenderer->currentCommandList->usePipelineState(context->depthOnlyScenePipelineState);
+    sceneRenderer->currentCommandList->usePipelineState(doubleSided ? context->depthOnlyScenePipelineState : context->depthOnlySceneCulledPipelineState);
     sceneRenderer->currentCommandList->useShaderResources(getValidResourceBinding(sceneRenderer));
     return true;
 }

@@ -495,6 +495,7 @@ bool RenderingContext::createScenePipelineStates()
         if(!vertexShader)
             return false;
         
+        
         auto builder = device->createPipelineBuilder();
         builder->setRenderTargetCount(0);
         builder->setDepthStencilFormat(DepthStencilBufferViewFormat);
@@ -510,6 +511,14 @@ bool RenderingContext::createScenePipelineStates()
         if(!depthOnlyScenePipelineState)
         {
             fprintf(stderr, "Failed to create depth only scene pipeline state.");
+            return false;
+        }
+
+        builder->setCullMode(AGPU_CULL_MODE_BACK);
+        depthOnlySceneCulledPipelineState = builder->build();
+        if(!depthOnlySceneCulledPipelineState)
+        {
+            fprintf(stderr, "Failed to create depth only culled scene pipeline state.");
             return false;
         }
     }
