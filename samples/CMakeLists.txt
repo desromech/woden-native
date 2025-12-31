@@ -10,5 +10,8 @@ target_link_libraries(SceneSample01-Empty WodenEngine)
 add_executable(SceneSample02-Cube SampleCommon.cpp SceneSample02-Cube.cpp)
 target_link_libraries(SceneSample02-Cube WodenEngine)
 
-add_executable(SceneSample03-TexturedCube SampleCommon.cpp SceneSample03-TexturedCube)
+add_executable(SceneSample03-TexturedCube SampleCommon.cpp SceneSample03-TexturedCube.cpp)
 target_link_libraries(SceneSample03-TexturedCube WodenEngine)
+
+add_executable(SceneSample04-TexturedCube2 SampleCommon.cpp SceneSample04-TexturedCube2.cpp)
+target_link_libraries(SceneSample04-TexturedCube2 WodenEngine)

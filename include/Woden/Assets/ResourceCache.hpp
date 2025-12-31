@@ -18,9 +18,11 @@ public:
     bool initialize();
 
     TexturePtr getOrCreateCheckboardTexture();
+    TexturePtr getOrCreateCheckboardNormalTexture();
 
 private:
     TexturePtr checkboardTexture;
+    TexturePtr checkboardNormalTexture;
 };
 
 } // End of namespace Assets

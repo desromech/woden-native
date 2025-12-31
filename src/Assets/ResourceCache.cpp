@@ -49,8 +49,15 @@ TexturePtr ResourceCache::getOrCreateCheckboardTexture()
 
     checkboardTexture = image->asTexture();
     return checkboardTexture;
-
 }
+
+TexturePtr ResourceCache::getOrCreateCheckboardNormalTexture()
+{
+    if(checkboardNormalTexture)
+        return checkboardNormalTexture;
+    return checkboardNormalTexture;
+}
+
 
 } // End of namespace Assets
 } // End of namespace Woden
