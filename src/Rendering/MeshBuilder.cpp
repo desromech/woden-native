@@ -2,6 +2,7 @@
 #include "Woden/Rendering/StaticMeshRenderable.hpp"
 #include "Woden/Rendering/VertexBinding.hpp"
 #include "Woden/Assets/BinaryBuffer.hpp"
+#include <assert.h>
 
 namespace Woden
 {
@@ -167,6 +168,34 @@ std::vector<MeshPrimitivePtr> MeshBuilder::encodePrimitives()
 
     return encodedPrimitives;
 }
+
+void MeshBuilder::generateTexcoordsWithFacePlanarTransformWithScale(const Math::Vector2 &scale)
+{
+    generateTexcoordsWithFacePlanarTransform(Math::Matrix3x3::TextureScaleAndOffset(scale, Math::Vector2(0, 0)));
+}
+
+void MeshBuilder::generateTexcoordsWithFacePlanarTransform(const Math::Matrix3x3 &transformMatrix)
+{
+    assert(positions.size() == normals.size());
+
+    texcoords.resize(positions.size());
+    for(size_t i = 0; i < positions.size(); ++i)
+    {
+        const auto &position = positions[i];
+        const auto &normal = normals[i];
+
+        auto normalAxis = Math::Vector3(normal.x, normal.y, normal.z).computeNormalAxis();
+        auto tangent = Math::Vector3::TangentForAxis(normalAxis);
+        auto bitangent = Math::Vector3::BitangentForAxis(normalAxis);
+
+        auto positionVector = Math::Vector3(position.x, position.y, position.z);
+        auto uv = Math::Vector2(tangent.dot(positionVector), bitangent.dot(positionVector));
+        auto transformedUV = transformMatrix * uv;
+
+        texcoords[i] = transformedUV;
+    }
+}
+
 
 void MeshBuilder::encodeBufferData()
 {

@@ -5,6 +5,7 @@
 #include "Woden/Math/Vector2.hpp"
 #include "Woden/Math/Vector3.hpp"
 #include "Woden/Math/Vector4.hpp"
+#include "Woden/Math/Matrix3x3.hpp"
 #include "Woden/Rendering/Renderable.hpp"
 #include "Woden/Rendering/MeshPrimitive.hpp"
 #include "AGPU/agpu.hpp"
@@ -50,6 +51,9 @@ public:
     void addPxyz(Scalar x, Scalar y, Scalar z);
     void addNxyz(Scalar x, Scalar y, Scalar z);
     void addTriangleI012(uint32_t i0, uint32_t i1, uint32_t i2);
+
+    void generateTexcoordsWithFacePlanarTransformWithScale(const Math::Vector2 &scale);
+    void generateTexcoordsWithFacePlanarTransform(const Math::Matrix3x3 &transform);
 
     void encodeBufferData();
     std::vector<MeshPrimitivePtr> encodePrimitives();

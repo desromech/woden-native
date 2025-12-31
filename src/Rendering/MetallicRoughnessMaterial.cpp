@@ -61,11 +61,11 @@ agpu_shader_resource_binding_ref MetallicRoughnessMaterial::getValidResourceBind
     materialState->texcoordScale = texcoordScale;
     materialState->texcoordOffsetVelocity = texcoordOffsetVelocity;
 
-    materialResourceBinding->bindSampledTextureView(1, context->whiteTexture->getOrCreateFullView());
-    materialResourceBinding->bindSampledTextureView(2, context->whiteTexture->getOrCreateFullView());
-    materialResourceBinding->bindSampledTextureView(3, context->neutralNormalTexture->getOrCreateFullView());
-    materialResourceBinding->bindSampledTextureView(4, context->whiteTexture->getOrCreateFullView());
-    materialResourceBinding->bindSampledTextureView(5, context->whiteTexture->getOrCreateFullView());
+    materialResourceBinding->bindSampledTextureView(1, (baseColorTexture ? baseColorTexture->getValidTextureHandle() : context->whiteTexture)->getOrCreateFullView());
+    materialResourceBinding->bindSampledTextureView(2, (emissiveTexture ? emissiveTexture->getValidTextureHandle() : context->whiteTexture)->getOrCreateFullView());
+    materialResourceBinding->bindSampledTextureView(3, (normalTexture ? normalTexture->getValidTextureHandle() : context->neutralNormalTexture)->getOrCreateFullView());
+    materialResourceBinding->bindSampledTextureView(4, (occlusionTexture ? occlusionTexture->getValidTextureHandle() : context->whiteTexture)->getOrCreateFullView());
+    materialResourceBinding->bindSampledTextureView(5, (metallicRoughnessTexture ? metallicRoughnessTexture->getValidTextureHandle() : context->whiteTexture)->getOrCreateFullView());
 
     hasChanged = false;
     return materialResourceBinding;

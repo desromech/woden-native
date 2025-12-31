@@ -1,6 +1,7 @@
 #ifndef WODEN_MATH_MATRIX3x3_HPP
 #define WODEN_MATH_MATRIX3x3_HPP
 
+#include "Vector2.hpp"
 #include "Vector3.hpp"
 
 namespace Woden
@@ -134,6 +135,16 @@ public:
         );
     }
 
+    static Matrix3x3 TextureScaleAndOffset(const Vector2 &scale, const Vector2 &offset)
+    {
+        return Matrix3x3(
+            scale.x, 0,       offset.x,
+            0,       scale.y, offset.y,
+            0,       0,       1
+        );
+    }
+
+
     Scalar determinant() const
     {
 	    // | m11 m12 m13 | m11 m12
@@ -244,6 +255,14 @@ public:
             a.m31*b.m11 + a.m32*b.m21 + a.m33*b.m31,
             a.m31*b.m12 + a.m32*b.m22 + a.m33*b.m32,
             a.m31*b.m13 + a.m32*b.m23 + a.m33*b.m33
+        );
+    }
+
+    friend Vector2 operator*(const Matrix3x3 &m, const Vector2 &v)
+    {
+        return Vector2(
+            m.m11*v.x + m.m12*v.y + m.m13,
+            m.m21*v.x + m.m22*v.y + m.m23
         );
     }
 

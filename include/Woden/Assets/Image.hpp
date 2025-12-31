@@ -2,7 +2,6 @@
 #define WODEN_ASSETS_IMAGE_HPP
 
 #include "PixelFormat.hpp"
-#include "AGPU/agpu.hpp"
 #include <stdint.h>
 #include <string>
 #include <memory>

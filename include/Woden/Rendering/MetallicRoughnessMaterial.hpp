@@ -2,6 +2,7 @@
 #define WODEN_RENDERING_METALLIC_ROUGHNESS_MATERIAL_HPP
 
 #include "SurfaceMaterial.hpp"
+#include "Woden/Assets/Texture.hpp"
 #include "Woden/Math/Vector2.hpp"
 #include "Woden/Math/Vector3.hpp"
 #include "Woden/Math/Vector4.hpp"
@@ -31,6 +32,12 @@ public:
     Math::Vector2 texcoordOffset = Math::Vector2(0, 0);
     Math::Vector2 texcoordScale = Math::Vector2(1, 1);
     Math::Vector2 texcoordOffsetVelocity = Math::Vector2(0, 0);
+
+    Assets::TexturePtr baseColorTexture;
+    Assets::TexturePtr emissiveTexture;
+    Assets::TexturePtr normalTexture;
+    Assets::TexturePtr occlusionTexture;
+    Assets::TexturePtr metallicRoughnessTexture;
 
     bool hasChanged = false;
 

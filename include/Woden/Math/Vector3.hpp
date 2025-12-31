@@ -130,6 +130,20 @@ public:
         return out;
     }
 
+    uint32_t computeNormalAxis();
+
+    static Vector3 TangentForAxis(uint32_t axis)
+    {
+        return NormalAxis[axis + 2];
+    }
+
+    static Vector3 BitangentForAxis(uint32_t axis)
+    {
+        return NormalAxis[axis + 4];
+    }
+
+    static const Vector3 NormalAxis[12];
+
     Scalar x, y, z;
 };
 
