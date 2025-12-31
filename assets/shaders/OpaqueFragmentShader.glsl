@@ -8,6 +8,8 @@ layout(location = 0) in vec2 inTexcoord;
 layout(location = 1) in vec3 inViewNormal;
 layout(location = 2) in vec4 inViewTangent4;
 layout(location = 3) in vec3 inViewPosition;
+layout(location = 4) in vec3 inWorldPosition;
+layout(location = 5) in vec3 inWorldSurfaceN;
 
 layout(set=2, binding=0, std140) uniform MaterialStateBlock
 {
@@ -59,6 +61,9 @@ void main()
     surfaceParameters.roughnessFactor = MaterialState.roughnessFactor*mrSample.g;
 
     surfaceParameters.P = inViewPosition;
+
+    surfaceParameters.worldP = inWorldPosition;
+    surfaceParameters.worldSurfaceN = normalize(inWorldSurfaceN);
 
     if(!gl_FrontFacing)
 	{

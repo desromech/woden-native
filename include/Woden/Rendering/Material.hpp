@@ -20,6 +20,7 @@ public:
     static MaterialPtr getDefaultMaterial();
 
     virtual bool activateDepthOnlyWithRenderer(SceneRenderer *sceneRenderer) = 0;
+    virtual bool activateShadowMapWithRenderer(SceneRenderer *sceneRenderer) = 0;
     virtual bool activateOpaqueWithRenderer(SceneRenderer *sceneRenderer) = 0;
     virtual bool activateTranslucentWithRenderer(SceneRenderer *sceneRenderer) = 0;
 

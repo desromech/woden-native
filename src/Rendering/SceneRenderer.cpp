@@ -232,6 +232,50 @@ void SceneRenderer::uploadRenderingSceneStates()
             lightGridBuffer = context->device->createBuffer(&desc, nullptr);
             statesBinding->bindStorageBuffer(7, lightGridBuffer);
         }
+
+        // Shadow map atlas
+        {   
+            agpu_texture_description desc = {};
+            desc.type = AGPU_TEXTURE_2D;
+            desc.width = ShadowMapAtlasSize;
+            desc.height = ShadowMapAtlasSize;
+            desc.depth = 1;
+            desc.layers = 1;
+            desc.miplevels = 1;
+            desc.format = RenderingContext::ShadowMapAtlasFormat;
+            desc.usage_modes = agpu_texture_usage_mode_mask(AGPU_TEXTURE_USAGE_DEPTH_ATTACHMENT | AGPU_TEXTURE_USAGE_SAMPLED);
+            desc.main_usage_mode = AGPU_TEXTURE_USAGE_SAMPLED;
+            desc.sample_count = 1;
+            desc.clear_value.depth_stencil.depth = 0;
+            shadowMapAtlas = context->device->createTexture(&desc);
+            if(!shadowMapAtlas)
+            {
+                fprintf(stderr, "Failed to create the shadow map atlas texture\n");
+                abort();
+            }
+
+            {
+                agpu_texture_view_description viewDesc = {};
+                shadowMapAtlas->getFullViewDescription(&viewDesc);
+                viewDesc.format = RenderingContext::ShadowMapAtlasSampledFormat;
+                auto sampledView = screen->depthStencilBuffer->createView(&viewDesc);
+                statesBinding->bindSampledTextureView(8, sampledView);
+            }
+        }
+/*
+    {
+        agpu_texture_view_description viewDesc = {};
+        screen->depthStencilBuffer->getFullViewDescription(&viewDesc);
+        viewDesc.format = RenderingContext::DepthStencilBufferViewFormat;
+
+        screen->depthStencilAttachmentView = screen->depthStencilBuffer->createView(&viewDesc);
+        if(!screen->depthStencilAttachmentView)
+        {
+            fprintf(stderr, "Failed to create depth stencil buffer view\n");
+            abort();
+        }
+    }
+*/
     }
     
     sceneObjectStatesBuffer->uploadBufferData(0, sizeof(SceneObjectState)*sceneObjectStates.size(), sceneObjectStates.data());

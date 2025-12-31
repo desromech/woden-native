@@ -18,6 +18,17 @@ bool MetallicRoughnessMaterial::activateDepthOnlyWithRenderer(SceneRenderer *sce
     return true;
 }
 
+bool MetallicRoughnessMaterial::activateShadowMapWithRenderer(SceneRenderer *sceneRenderer)
+{
+    if(alphaMode == SurfaceAlphaMode::Blend)
+        return false;
+
+    auto context = RenderingContext::getMainContext();
+    sceneRenderer->currentCommandList->usePipelineState(doubleSided ? context->shadowScenePipelineState : context->shadowSceneCulledPipelineState);
+    sceneRenderer->currentCommandList->useShaderResources(getValidResourceBinding(sceneRenderer));
+    return true;
+}
+
 bool MetallicRoughnessMaterial::activateOpaqueWithRenderer(SceneRenderer *sceneRenderer)
 {
     if(alphaMode == SurfaceAlphaMode::Blend)

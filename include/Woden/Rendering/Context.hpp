@@ -27,6 +27,10 @@ public:
     static const agpu_texture_format DepthStencilBufferViewFormat = AGPU_TEXTURE_FORMAT_D32_FLOAT_S8X24_UINT;
     static const agpu_texture_format DepthStencilBufferSampledFormat = AGPU_TEXTURE_FORMAT_R32_FLOAT_S8X24_TYPELESS;
 
+    static const agpu_texture_format ShadowMapAtlasFormat = AGPU_TEXTURE_FORMAT_R32_TYPELESS;
+    static const agpu_texture_format ShadowMapAtlasViewFormat = AGPU_TEXTURE_FORMAT_D32_FLOAT;
+    static const agpu_texture_format ShadowMapAtlasSampledFormat = AGPU_TEXTURE_FORMAT_R32_FLOAT;
+
     static RenderingContextPtr getMainContext();
     static RenderingContextPtr getOrCreateMainContext(int argc, const char *argv[]);
     static void releaseMainContext();
@@ -69,7 +73,10 @@ public:
     agpu_vertex_layout_ref staticVertexLayout;
     agpu_pipeline_state_ref depthOnlyScenePipelineState;
     agpu_pipeline_state_ref depthOnlySceneCulledPipelineState;
-    
+
+    agpu_pipeline_state_ref shadowScenePipelineState;
+    agpu_pipeline_state_ref shadowSceneCulledPipelineState;
+
     agpu_pipeline_state_ref metallicRoughnessOpaqueScenePipelineState;
 
     agpu_pipeline_state_ref transformLightsToViewPipeline;

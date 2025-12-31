@@ -365,10 +365,10 @@ bool RenderingContext::createScenePipelineStates()
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // 6: Tile Light Index List
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_STORAGE_BUFFER, 1); // 7: Light grid Index List
 
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // Shadow Map atlas texture
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // BRDF LUT
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // IBL Diffuse Light Probe
-        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // IBL Specular Light Probe
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); //  8: Shadow Map atlas texture
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); //  9: BRDF LUT
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // 10: IBL Diffuse Light Probe
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLED_IMAGE, 1); // 11: IBL Specular Light Probe
 
         // Material state
         shaderSignatureBuilder->beginBindingBank(1024);
@@ -519,6 +519,39 @@ bool RenderingContext::createScenePipelineStates()
         if(!depthOnlySceneCulledPipelineState)
         {
             fprintf(stderr, "Failed to create depth only culled scene pipeline state.");
+            return false;
+        }
+    }
+
+    // Create the shadow pipeline state
+    {
+        auto vertexShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/ShadowMapVertexShader.glsl", AGPU_VERTEX_SHADER);
+        if(!vertexShader)
+            return false;
+        
+        auto builder = device->createPipelineBuilder();
+        builder->setRenderTargetCount(0);
+        builder->setDepthStencilFormat(ShadowMapAtlasViewFormat);
+        builder->setDepthState(true, true, AGPU_GREATER_EQUAL);
+
+        builder->setShaderSignature(sceneShaderSignature);
+        builder->attachShader(vertexShader);
+
+        builder->setPrimitiveType(AGPU_TRIANGLES);
+        builder->setVertexLayout(staticVertexLayout);
+
+        shadowScenePipelineState = builder->build();
+        if(!shadowScenePipelineState)
+        {
+            fprintf(stderr, "Failed to create shadow scene pipeline state.");
+            return false;
+        }
+
+        builder->setCullMode(AGPU_CULL_MODE_BACK);
+        shadowSceneCulledPipelineState = builder->build();
+        if(!shadowSceneCulledPipelineState)
+        {
+            fprintf(stderr, "Failed to create shadow only culled scene pipeline state.");
             return false;
         }
     }

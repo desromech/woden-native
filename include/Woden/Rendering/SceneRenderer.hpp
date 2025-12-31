@@ -56,6 +56,8 @@ public:
     static const uint32_t LightGridCellCount = LightGridWidth*LightGridHeight*LightGridDepth;
     static const uint32_t MaxLightClusterCapacity = 100;
 
+    static const uint32_t ShadowMapAtlasSize = 4096;
+
     void renderScene(const agpu_command_list_ref &commandList, const SceneGraph::ScenePtr &scene, const SceneGraph::SceneNodePtr &cameraNode);
     void setupWithScreenSize(int newScreenWidth, int newScreenHeight);
 
@@ -79,6 +81,8 @@ public:
     agpu_buffer_ref lightClusterBuffer;
     agpu_buffer_ref tileLightIndexListBuffer;
     agpu_buffer_ref lightGridBuffer;
+
+    agpu_texture_ref shadowMapAtlas;
 
     agpu_buffer_ref materialStateBuffer;
     size_t materialStateBufferSize = 0;

@@ -19,6 +19,7 @@ class MetallicRoughnessMaterial : public SurfaceMaterial
 {
 public:
     virtual bool activateDepthOnlyWithRenderer(SceneRenderer *sceneRenderer) override;
+    virtual bool activateShadowMapWithRenderer(SceneRenderer *sceneRenderer) override;
     virtual bool activateOpaqueWithRenderer(SceneRenderer *sceneRenderer) override;
     virtual bool activateTranslucentWithRenderer(SceneRenderer *sceneRenderer) override;
 

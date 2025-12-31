@@ -97,7 +97,7 @@ struct ScenePushConstants
 {
     uint32_t objectStateIndex = 0;
     uint32_t cameraStateIndex = 0;
-    uint32_t materialStateIndex = 0;
+    uint32_t lightStateIndex = 0;
 };
 
 } // End of namespace Rendering

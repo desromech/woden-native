@@ -123,6 +123,7 @@ layout( push_constant ) uniform constants
 {
     uint objectStateIndex;
     uint cameraStateIndex;
+    uint lightStateIndex;
 } PushConstants;
 
 #define CurrentObjectState SceneObjectStateList.list[PushConstants.objectStateIndex]
