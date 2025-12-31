@@ -430,6 +430,22 @@ bool RenderingContext::createScenePipelineStates()
         if(!depthStencilRenderPass)
             return false;
     }
+    // Create the shadow map render pass
+    {
+        agpu_renderpass_depth_stencil_description depthStencilAttachment = {};
+        depthStencilAttachment.format = ShadowMapAtlasViewFormat;
+        depthStencilAttachment.begin_action = AGPU_ATTACHMENT_KEEP;
+        depthStencilAttachment.end_action = AGPU_ATTACHMENT_KEEP;
+
+        depthStencilAttachment.sample_count = 1;
+
+        agpu_renderpass_description description = {};
+        description.depth_stencil_attachment = &depthStencilAttachment;
+
+        shadowMapRenderPass = device->createRenderPass(&description);
+        if(!shadowMapRenderPass)
+            return false;
+    }
     {
         agpu_renderpass_depth_stencil_description depthStencilAttachment = {};
         depthStencilAttachment.format = DepthStencilBufferViewFormat;

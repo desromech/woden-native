@@ -68,6 +68,7 @@ public:
     agpu_shader_resource_binding_ref sceneSamplerBindings;
 
     agpu_renderpass_ref depthStencilRenderPass;
+    agpu_renderpass_ref shadowMapRenderPass;
     agpu_renderpass_ref hdrOpaqueRenderPass;
 
     agpu_vertex_layout_ref staticVertexLayout;

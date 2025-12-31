@@ -83,6 +83,7 @@ public:
     agpu_buffer_ref lightGridBuffer;
 
     agpu_texture_ref shadowMapAtlas;
+    agpu_framebuffer_ref shadowMapFramebuffer;
 
     agpu_buffer_ref materialStateBuffer;
     size_t materialStateBufferSize = 0;
@@ -99,6 +100,9 @@ private:
     void addRenderingLightSourceObject(class RenderingLightSourceObject &lightSource);
     void gatherRenderingSceneStates();
     void uploadRenderingSceneStates();
+
+    void allocateShadowMaps();
+    void renderShadowMaps();
 
     void performDepthOnlyPass();
     void performHDROpaquePass();

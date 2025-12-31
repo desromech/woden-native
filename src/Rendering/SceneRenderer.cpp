@@ -258,24 +258,20 @@ void SceneRenderer::uploadRenderingSceneStates()
                 agpu_texture_view_description viewDesc = {};
                 shadowMapAtlas->getFullViewDescription(&viewDesc);
                 viewDesc.format = RenderingContext::ShadowMapAtlasSampledFormat;
-                auto sampledView = screen->depthStencilBuffer->createView(&viewDesc);
+                auto sampledView = shadowMapAtlas->createView(&viewDesc);
                 statesBinding->bindSampledTextureView(8, sampledView);
             }
-        }
-/*
-    {
-        agpu_texture_view_description viewDesc = {};
-        screen->depthStencilBuffer->getFullViewDescription(&viewDesc);
-        viewDesc.format = RenderingContext::DepthStencilBufferViewFormat;
 
-        screen->depthStencilAttachmentView = screen->depthStencilBuffer->createView(&viewDesc);
-        if(!screen->depthStencilAttachmentView)
-        {
-            fprintf(stderr, "Failed to create depth stencil buffer view\n");
-            abort();
+            {
+                agpu_texture_view_description viewDesc = {};
+                shadowMapAtlas->getFullViewDescription(&viewDesc);
+                viewDesc.format = RenderingContext::ShadowMapAtlasViewFormat;
+                viewDesc.usage_mode = AGPU_TEXTURE_USAGE_DEPTH_ATTACHMENT;
+                auto depthView = shadowMapAtlas->createView(&viewDesc);
+                
+                shadowMapFramebuffer = context->device->createFrameBuffer(ShadowMapAtlasSize, ShadowMapAtlasSize, 0, nullptr, depthView);
+            }
         }
-    }
-*/
     }
     
     sceneObjectStatesBuffer->uploadBufferData(0, sizeof(SceneObjectState)*sceneObjectStates.size(), sceneObjectStates.data());
@@ -300,6 +296,7 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
     // Gather and rendering scene states.
     gatherRenderingSceneStates();
     uploadRenderingSceneStates();
+    renderShadowMaps();
 
     ScenePushConstants initialPushConstants = {};
 
@@ -361,6 +358,17 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
     currentCommandList.reset();
 }
 
+void SceneRenderer::allocateShadowMaps()
+{
+}
+
+void SceneRenderer::renderShadowMaps()
+{
+    auto context = RenderingContext::getMainContext();
+    currentCommandList->beginRenderPass(context->shadowMapRenderPass, shadowMapFramebuffer, false);
+
+    currentCommandList->endRenderPass();
+}
 
 void SceneRenderer::performDepthOnlyPass()
 {
