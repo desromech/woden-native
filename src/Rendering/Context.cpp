@@ -352,6 +352,7 @@ bool RenderingContext::createScenePipelineStates()
         shaderSignatureBuilder->beginBindingBank(1);
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLER, 1); // Linear
         shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLER, 1); // Nearest
+        shaderSignatureBuilder->addBindingBankElement(AGPU_SHADER_BINDING_TYPE_SAMPLER, 1); // Shadow
 
         // Rendering states.
         shaderSignatureBuilder->beginBindingBank(128);
@@ -390,7 +391,7 @@ bool RenderingContext::createScenePipelineStates()
             return false;
     }
 
-        // GUI samplers
+        // Scene samplers
     {
         sceneSamplerBindings = sceneShaderSignature->createShaderResourceBinding(0);
 
@@ -410,6 +411,44 @@ bool RenderingContext::createScenePipelineStates()
             }
 
             sceneSamplerBindings->bindSampler(0, linearMipmapLinearSampler);
+        }
+
+        {
+            agpu_sampler_description desc = {};
+            desc.address_u = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.address_v = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.address_w = AGPU_TEXTURE_ADDRESS_MODE_WRAP;
+            desc.filter = AGPU_FILTER_MIN_NEAREST_MAG_NEAREST_MIPMAP_NEAREST;
+            desc.max_lod = 32;
+
+            nearestSceneSampler = device->createSampler(&desc);
+            if(!linearSampler)
+            {
+                fprintf(stderr, "Failed to create nearest sampler.\n");
+                return false;
+            }
+
+            sceneSamplerBindings->bindSampler(1, nearestSceneSampler);
+        }
+
+        {
+            agpu_sampler_description desc = {};
+            desc.address_u = AGPU_TEXTURE_ADDRESS_MODE_CLAMP;
+            desc.address_v = AGPU_TEXTURE_ADDRESS_MODE_CLAMP;
+            desc.address_w = AGPU_TEXTURE_ADDRESS_MODE_CLAMP;
+            desc.comparison_enabled = true;
+            desc.comparison_function = AGPU_GREATER_EQUAL;
+            desc.filter = AGPU_FILTER_MIN_LINEAR_MAG_LINEAR_MIPMAP_NEAREST;
+            desc.max_lod = 0;
+
+            shadowSampler = device->createSampler(&desc);
+            if(!linearSampler)
+            {
+                fprintf(stderr, "Failed to create shadow sampler.\n");
+                return false;
+            }
+
+            sceneSamplerBindings->bindSampler(2, shadowSampler);
         }
     }
 

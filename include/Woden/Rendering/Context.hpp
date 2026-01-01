@@ -65,6 +65,8 @@ public:
 
     // Scene Rendering.
     agpu_sampler_ref linearMipmapLinearSampler;
+    agpu_sampler_ref nearestSceneSampler;
+    agpu_sampler_ref shadowSampler;
     agpu_shader_resource_binding_ref sceneSamplerBindings;
 
     agpu_renderpass_ref depthStencilRenderPass;

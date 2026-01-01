@@ -1,4 +1,6 @@
 layout(set=0, binding=0) uniform sampler LinearMipmapLinearTextureSampler;
+layout(set=0, binding=1) uniform sampler NearestTextureSampler;
+layout(set=0, binding=2) uniform sampler ShadowMapSampler;
 
 struct SceneObjectState
 {
@@ -108,6 +110,8 @@ layout(set=1, binding=7, std430) buffer LightClusterListsBlock
     uint padding;
 	uvec2[] lists;
 } LightClusterLists;
+
+layout(set=1, binding=8) uniform texture2D ShadowMapAtlasTexture;
 
 struct SceneSurfaceMaterial
 {
