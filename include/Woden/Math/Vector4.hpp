@@ -87,6 +87,11 @@ public:
         return Vector4(x / o.x, y / o.y, z / o.z, w / o.w);
     }
 
+    Vector3 xyz()
+    {
+        return Vector3(x, y, z);
+    }
+
     Scalar x, y, z, w;
 };
 

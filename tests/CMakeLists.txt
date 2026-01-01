@@ -1,6 +1,7 @@
 set(WodenTests_Sources
     Main.cpp
     Math/AABox.cpp
+    Math/Frustum.cpp
     Math/Matrix2x2.cpp
     Math/Matrix3x3.cpp
     Math/Matrix4x4.cpp

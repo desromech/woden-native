@@ -9,10 +9,18 @@ namespace Rendering
 
 void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lightSource)
 {
+    auto direction = currentModelMatrix.topLeftMatrix3x3().thirdColumn();
+
     RenderingLightSourceObject renderingLight = {};
     renderingLight.castShadows = lightSource->castShadows;
-    renderingLight.positionOrDirection = Math::Vector4(currentModelMatrix.topLeftMatrix3x3().thirdColumn(), 0.0);
+    renderingLight.positionOrDirection = Math::Vector4(direction, 0.0);
     renderingLight.intensityAndColor = lightSource->color*lightSource->intensity;
+
+    if(lightSource->castShadows)
+    {
+        //renderingLight.shadowMapPartCount = 4;
+    }
+
     lightSources.push_back(renderingLight);
 }
 

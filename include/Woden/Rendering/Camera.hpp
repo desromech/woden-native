@@ -2,6 +2,7 @@
 #define WODEN_RENDERING_CAMERA_HPP
 
 #include "Woden/Math/Matrix4x4.hpp"
+#include "Woden/Math/Frustum.hpp"
 
 #include <memory.h>
 
@@ -17,6 +18,11 @@ public:
     Math::Matrix4x4 computeProjectionMatrix(Math::Scalar aspect)
     {
         return Math::Matrix4x4::ReverseDepthPerspective(fovY, aspect, nearDistance, farDistance);
+    }
+
+    Math::Frustum computeViewFrustum(Math::Scalar aspect)
+    {
+        return Math::Frustum::MakePerspective(fovY, aspect, nearDistance, farDistance);
     }
 
     Math::Scalar nearDistance = 0.1;

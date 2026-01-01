@@ -4,6 +4,7 @@
 #include "Renderable.hpp"
 #include "Woden/Math/TRSTransform3D.hpp"
 #include "Woden/Math/Vector4.hpp"
+#include "Woden/Math/Frustum.hpp"
 #include <vector>
 
 namespace Woden
@@ -103,6 +104,9 @@ public:
 
     Math::Matrix4x4 currentViewMatrix;
     Math::Matrix4x4 currentInverseViewMatrix;
+
+    Math::Frustum currentViewFrustum;
+    Math::Frustum currentWorldFrustum;
 
     std::vector<RenderingSceneObject> backgroundObjects;
     std::vector<RenderingSceneObject> opaqueObjects;

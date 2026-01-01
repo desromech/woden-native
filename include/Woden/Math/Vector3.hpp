@@ -32,6 +32,16 @@ public:
         return Vector3(ScalarNegativeInfinity);
     }
 
+    static Vector3 Zeros()
+    {
+        return Vector3(0, 0, 0);
+    }
+
+    static Vector3 Ones()
+    {
+        return Vector3(1, 1, 1);
+    }
+
     Vector3 abs() const
     {
         return Vector3(Woden::Math::abs(x), Woden::Math::abs(y), Woden::Math::abs(z));

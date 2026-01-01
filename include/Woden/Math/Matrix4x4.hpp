@@ -246,6 +246,11 @@ public:
     }
 
 
+    Vector3 transformPosition(const Vector3 &p) const
+    {
+        return ((*this) * Vector4(p, 1)).xyz();
+    }
+
     friend Vector4 operator*(const Matrix4x4 &m, const Vector4 &v)
     {
         return m.firstColumn()*v.x + m.secondColumn()*v.y + m.thirdColumn()*v.z + m.fourthColumn()*v.w;

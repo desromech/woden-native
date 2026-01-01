@@ -385,6 +385,15 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
     currentCameraNode = cameraNode;
     currentRenderingScene->currentInverseViewMatrix = currentCameraNode->transform.asMatrix();
     currentRenderingScene->currentViewMatrix = currentCameraNode->transform.asInverseMatrix();
+
+    if(!currentCameraNode->cameras.empty())
+    {
+        auto &camera = currentCameraNode->cameras.front();
+        auto aspect = Math::Scalar(screen->screenWidth) / Math::Scalar(screen->screenHeight);
+        currentRenderingScene->currentViewFrustum = camera->computeViewFrustum(aspect);
+        currentRenderingScene->currentWorldFrustum = currentRenderingScene->currentViewFrustum.transformedWithMatrix(currentRenderingScene->currentInverseViewMatrix);
+    }
+
     scene->addIntoRenderingScene(currentRenderingScene);
 
     // Reset the shadow map atlas4
