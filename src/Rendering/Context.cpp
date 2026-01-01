@@ -583,7 +583,8 @@ bool RenderingContext::createScenePipelineStates()
         builder->setRenderTargetCount(0);
         builder->setDepthStencilFormat(ShadowMapAtlasViewFormat);
         builder->setDepthState(true, true, AGPU_GREATER_EQUAL);
-
+        builder->setDepthBias(-2, 0, -1);
+        
         builder->setShaderSignature(sceneShaderSignature);
         builder->attachShader(vertexShader);
 
