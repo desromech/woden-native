@@ -126,6 +126,26 @@ public:
         return Vector4(m14, m24, m34, m44);
     }
 
+    Vector4 firstRow() const
+    {
+        return Vector4(m11, m12, m13, m14);
+    }
+
+    Vector4 secondRow() const
+    {
+        return Vector4(m21, m22, m23, m24);
+    }
+
+    Vector4 thirdRow() const
+    {
+        return Vector4(m31, m32, m33, m34);
+    }
+
+    Vector4 fourthRow() const
+    {
+        return Vector4(m41, m42, m43, m44);
+    }
+
     Matrix3x3 topLeftMatrix3x3() const
     {
         return Matrix3x3(

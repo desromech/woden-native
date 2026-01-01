@@ -27,6 +27,24 @@ T mix(const T&a, const T&b, Scalar alpha)
     return a*(1 - alpha) + b*alpha;
 }
 
+template<typename T>
+T min(const T &a, const T &b)
+{
+    return a <= b ? a : b;
+}
+
+template<typename T>
+T max(const T &a, const T &b)
+{
+    return a >= b ? a : b;
+}
+
+template<typename T>
+T clamp(const T &x, const T &min, const T &max)
+{
+    return Math::max(Math::min(x, max), min);
+}
+
 inline bool closeTo(Scalar a, Scalar b)
 {
     float delta = a - b;

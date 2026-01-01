@@ -25,9 +25,12 @@ public:
         return Math::Frustum::MakePerspective(fovY, aspect, nearDistance, farDistance);
     }
 
+    bool isPerspective = true;
     Math::Scalar nearDistance = 0.1;
     Math::Scalar farDistance = 1000.0;
     Math::Scalar fovY = 60.0;
+
+    Math::Scalar cascadeSplitDistributionLambda = 0.99;
 };
 
 } // End of namespace Rendering

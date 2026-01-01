@@ -41,6 +41,8 @@ class DirectionalLightSource : public LightSource
 {
 public:
     virtual void addIntoRenderingScene(const RenderingScenePtr &renderingScene) override;
+	
+    Math::Scalar shadowCastingRadius = 1000.0;
 };
 
 class PointLightSource : public LightSource

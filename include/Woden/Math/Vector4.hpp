@@ -67,6 +67,17 @@ public:
         }
     }
 
+
+    Vector4 operator+() const
+    {
+        return *this;
+    }
+
+    Vector4 operator-() const
+    {
+        return Vector4(-x, -y, -z, -w);
+    }
+
     Vector4 operator+(const Vector4 &o) const
     {
         return Vector4(x + o.x, y + o.y, z + o.z, w + o.w);

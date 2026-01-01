@@ -1,6 +1,7 @@
 #include "Woden/Rendering/RenderingScene.hpp"
 #include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Rendering/Context.hpp"
+#include "Woden/Math/AABox.hpp"
 
 namespace Woden
 {
@@ -16,9 +17,59 @@ void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lig
     renderingLight.positionOrDirection = Math::Vector4(direction, 0.0);
     renderingLight.intensityAndColor = lightSource->color*lightSource->intensity;
 
-    if(lightSource->castShadows)
+    if(lightSource->castShadows && currentCamera)
     {
-        //renderingLight.shadowMapPartCount = 4;
+        auto nearDistance = currentCamera->nearDistance;
+        auto farDistance = currentCamera->farDistance;
+        auto cascadeSplitDistributionLambda = currentCamera->cascadeSplitDistributionLambda;
+
+        auto numSlices = 4;
+
+        Math::Scalar splitDistributionDistances[5];
+
+        // Use a different slice distribution for perspective vs orthographic
+        if(currentCamera->isPerspective)
+        {
+            for(int i = 0; i < 5; ++i)
+            {
+                Math::Scalar uniformSlice = (farDistance - nearDistance) / numSlices * i + nearDistance;
+                Math::Scalar exponentialSlice = nearDistance * (pow(farDistance / nearDistance, i / numSlices));
+                splitDistributionDistances[i] = Math::mix(uniformSlice, exponentialSlice, cascadeSplitDistributionLambda);
+            }
+        }
+        else
+        {
+            // Use the uniform slices for non-perspective camers.
+            for(int i = 0; i < 5; ++i)
+                splitDistributionDistances[i] = (farDistance - nearDistance) / numSlices * i + nearDistance;
+        }
+
+        Math::Scalar splitDistributionLambdas[5];
+        for(int i = 0; i < 5; ++i)
+        {
+            splitDistributionLambdas[i] = Math::clamp((splitDistributionDistances[i] - nearDistance) / (farDistance - nearDistance), Math::Scalar(0), Math::Scalar(1));
+        }
+
+	    renderingLight.shadowMapCascadeDistanceWorldTransform = -currentViewMatrix.thirdRow();
+	    renderingLight.shadowMapCascadeOffsets = Math::Vector4(splitDistributionDistances[1], splitDistributionDistances[2], splitDistributionDistances[3], splitDistributionDistances[4]);
+
+        for(int sliceIndex = 0; sliceIndex < numSlices; ++sliceIndex)
+        {
+            auto sliceFrustum = currentWorldFrustum.splitAtLambdas(splitDistributionLambdas[sliceIndex], splitDistributionLambdas[sliceIndex + 1]);
+
+            std::vector<Math::Vector3> shadowVolume;
+            sliceFrustum.cornersDo([&](const Math::Vector3 &corner){
+                shadowVolume.push_back(corner);
+                shadowVolume.push_back(corner + direction*lightSource->shadowCastingRadius);
+            });
+
+
+            auto shadowVolumeWorldBoundingBox = Math::AABox::Encompassing(shadowVolume);
+            printf("slice %d\n", sliceIndex);
+        }
+
+        
+        renderingLight.shadowMapPartCount = numSlices;
     }
 
     lightSources.push_back(renderingLight);

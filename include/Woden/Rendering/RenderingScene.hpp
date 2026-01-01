@@ -2,9 +2,9 @@
 #define WODEN_RENDERING_SCENE_HPP
 
 #include "Renderable.hpp"
+#include "Camera.hpp"
 #include "Woden/Math/TRSTransform3D.hpp"
 #include "Woden/Math/Vector4.hpp"
-#include "Woden/Math/Frustum.hpp"
 #include <vector>
 
 namespace Woden
@@ -107,6 +107,8 @@ public:
 
     Math::Frustum currentViewFrustum;
     Math::Frustum currentWorldFrustum;
+
+    CameraPtr currentCamera;
 
     std::vector<RenderingSceneObject> backgroundObjects;
     std::vector<RenderingSceneObject> opaqueObjects;

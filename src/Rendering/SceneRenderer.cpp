@@ -392,6 +392,7 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
         auto aspect = Math::Scalar(screen->screenWidth) / Math::Scalar(screen->screenHeight);
         currentRenderingScene->currentViewFrustum = camera->computeViewFrustum(aspect);
         currentRenderingScene->currentWorldFrustum = currentRenderingScene->currentViewFrustum.transformedWithMatrix(currentRenderingScene->currentInverseViewMatrix);
+        currentRenderingScene->currentCamera = camera;
     }
 
     scene->addIntoRenderingScene(currentRenderingScene);

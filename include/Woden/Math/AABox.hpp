@@ -23,9 +23,24 @@ public:
     {
     }
 
+    static AABox Empty()
+    {
+        return AABox();
+    }
+
+
     static AABox WithHalfExtent(const Vector3 &halfExtent)
     {
         return AABox(-halfExtent, halfExtent);
+    }
+
+    template<typename C>
+    static AABox Encompassing(const C &collection)
+    {
+        auto result = Empty();
+        for(auto &point : collection)
+            result.insertPoint(point);
+        return result;
     }
 
     bool isEmpty() const

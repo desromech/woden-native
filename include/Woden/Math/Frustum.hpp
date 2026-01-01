@@ -99,6 +99,22 @@ struct Frustum
         result.computePlanes();
         return result;
     }
+
+    Frustum splitAtLambdas(Scalar nearLambda, Scalar farLambda)
+    {
+        Frustum result;
+        result.leftBottomNear  = mix(leftBottomNear,  leftBottomFar,  nearLambda);
+        result.rightBottomNear = mix(rightBottomNear, rightBottomFar, nearLambda);
+        result.leftTopNear     = mix(leftTopNear,     leftTopFar,     nearLambda);
+        result.rightTopNear    = mix(rightTopNear,    rightTopFar,    nearLambda);
+
+        result.leftBottomFar  = mix(leftBottomNear,  leftBottomFar,  farLambda);
+        result.rightBottomFar = mix(rightBottomNear, rightBottomFar, farLambda);
+        result.leftTopFar     = mix(leftTopNear,     leftTopFar,     farLambda);
+        result.rightTopFar    = mix(rightTopNear,    rightTopFar,    farLambda);
+        result.computePlanes();
+        return result;
+    }
 };
 
 } // End of namespace Math
