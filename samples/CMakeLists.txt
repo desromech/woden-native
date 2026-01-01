@@ -24,3 +24,6 @@ target_link_libraries(SceneSample06-ShadowCastingDirectionalLight WodenEngine)
 
 add_executable(SceneSample07-ShadowCastingPointLight SampleCommon.cpp SceneSample07-ShadowCastingPointLight.cpp)
 target_link_libraries(SceneSample07-ShadowCastingPointLight WodenEngine)
+
+add_executable(SceneSample08-ShadowCastingMultipleLights SampleCommon.cpp SceneSample08-ShadowCastingMultipleLights.cpp)
+target_link_libraries(SceneSample08-ShadowCastingMultipleLights WodenEngine)
