@@ -11,6 +11,11 @@ void Renderable::addIntoRenderingScene(const RenderingScenePtr &renderingScene)
     (void)renderingScene;
 }
 
+void Renderable::renderShadowWith(SceneRenderer *renderer)
+{
+    (void)renderer;
+}
+
 void Renderable::renderDepthOnlyWith(SceneRenderer *renderer)
 {
     (void)renderer;

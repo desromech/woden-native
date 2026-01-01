@@ -18,6 +18,7 @@ class MeshPrimitive : public Renderable
 public:
     virtual void addIntoRenderingScene(const RenderingScenePtr &renderingScene) override;
 
+    virtual void renderShadowWith(SceneRenderer *renderer) override;
     virtual void renderDepthOnlyWith(SceneRenderer *renderer) override;
     virtual void renderOpaqueWith(SceneRenderer *renderer) override;
 

@@ -22,6 +22,7 @@ class Renderable : public std::enable_shared_from_this<Renderable>
 {
 public:
     virtual void addIntoRenderingScene(const RenderingScenePtr &renderingScene);
+    virtual void renderShadowWith(SceneRenderer *renderer);
     virtual void renderDepthOnlyWith(SceneRenderer *renderer);
     virtual void renderOpaqueWith(SceneRenderer *renderer);
     virtual void renderTranslucentWith(SceneRenderer *renderer);

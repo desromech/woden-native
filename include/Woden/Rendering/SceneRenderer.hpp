@@ -4,6 +4,7 @@
 #include "Woden/SceneGraph/Scene.hpp"
 #include "Woden/Assets/BinaryBuffer.hpp"
 #include "Woden/Rendering/SceneShaderCommon.hpp"
+#include "Woden/Rendering/RenderingScene.hpp"
 
 #include "AGPU/agpu.hpp"
 
@@ -39,30 +40,6 @@ public:
 
     int screenWidth = -1;
     int screenHeight = -1;
-};
-
-struct ShadowMapAtlasAllocation
-{
-    Math::Vector2 offset;
-    Math::Vector2 shadowMapExtent;
-    Math::Vector2 shadowMapAtlasExtent;
-};
-
-class ShadowMapAtlasAllocator
-{
-public:
-    void initializeWithExtent(uint32_t atlasWidth, uint32_t atlasHeight);
-    void reset();
-    bool allocate(ShadowMapAtlasAllocation *outAllocation);
-    
-    uint32_t atlasWidth;
-    uint32_t atlasHeight;
-
-    uint32_t columns;
-    uint32_t rows;
-    uint32_t capacity;
-    uint32_t size;
-    Math::Vector2 shadowMapExtent;
 };
 
 /**
@@ -131,6 +108,7 @@ private:
 
     void renderShadowMaps();
 
+    void performShadowPass();
     void performDepthOnlyPass();
     void performHDROpaquePass();
 

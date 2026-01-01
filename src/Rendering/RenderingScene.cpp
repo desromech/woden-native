@@ -1,5 +1,6 @@
 #include "Woden/Rendering/RenderingScene.hpp"
 #include "Woden/Rendering/LightSource.hpp"
+#include "Woden/Rendering/Context.hpp"
 
 namespace Woden
 {
@@ -38,6 +39,28 @@ void RenderingScene::addSpotLightSource(const SpotLightSource *lightSource)
     renderingLight.influenceRadius = lightSource->influenceRadius;
     renderingLight.innerSpotCosCutoff = cos(lightSource->innerCutoff * (M_PI / 180.0));
     renderingLight.outerSpotCosCutoff = cos(lightSource->outerCutoff * (M_PI / 180.0));
+
+    if(lightSource->castShadows)
+    {
+        renderingLight.shadowMapPartCount = 1;
+
+        auto fovy = lightSource->outerCutoff*2;
+        auto aspect = 1.0;
+        auto projectionMatrix = Math::Matrix4x4::ReverseDepthPerspective(fovy, aspect, 0.01, lightSource->influenceRadius);
+
+        auto device = RenderingContext::getMainContext()->device;
+        bool flipProjectionVertically = device->hasTopLeftNdcOrigin();
+        if(flipProjectionVertically)
+            projectionMatrix = Math::Matrix4x4::ProjectionInvertYMatrix() * projectionMatrix;
+
+        renderingLight.modelMatrix[0] = currentModelMatrix;
+        renderingLight.inverseModelMatrix[0] = currentInverseModelMatrix;
+
+        renderingLight.projectionMatrix[0] = projectionMatrix;
+        renderingLight.inverseProjectionMatrix[0] = projectionMatrix.inverse();
+    }
+
+
     lightSources.push_back(renderingLight);
 }
 

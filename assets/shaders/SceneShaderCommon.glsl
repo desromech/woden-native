@@ -143,6 +143,7 @@ layout( push_constant ) uniform constants
 
 #define CurrentObjectState SceneObjectStateList.list[PushConstants.objectStateIndex]
 #define CurrentCameraState SceneCameraStateList.list[PushConstants.cameraStateIndex]
+#define CurrentWorldLightSource WorldLightSourceStateList.list[PushConstants.lightStateIndex]
 
 mat3 topLeft3x3FromMat4(mat4 mat)
 {

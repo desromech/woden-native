@@ -20,6 +20,17 @@ MaterialPtr MeshPrimitive::getValidMaterial() const
     return material ? material : Material::getDefaultMaterial();
 }
 
+void MeshPrimitive::renderShadowWith(SceneRenderer *renderer)
+{
+    if(!getValidMaterial()->activateShadowMapWithRenderer(renderer))
+        return;
+
+    auto &commandList = renderer->currentCommandList;
+    vertexBinding->useWithRenderer(renderer);
+    renderer->useIndexBuffer(indices);
+    commandList->drawElements(indices->count, 1, 0, 0, 0);
+}
+
 void MeshPrimitive::renderDepthOnlyWith(SceneRenderer *renderer) 
 {
     if(!getValidMaterial()->activateDepthOnlyWithRenderer(renderer))

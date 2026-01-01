@@ -100,6 +100,9 @@ void SceneRenderer::addRenderingSceneObjectStateFor(RenderingSceneObject &sceneO
 
 void SceneRenderer::addRenderingLightSourceObject(class RenderingLightSourceObject &lightSource)
 {
+    auto device = RenderingContext::getMainContext()->device;
+    bool flipTextureVertically = device->hasTopLeftNdcOrigin() == device->hasBottomLeftTextureCoordinates();
+
     LightSourceState state = {};
     state.positionOrDirection = lightSource.positionOrDirection;
     
@@ -112,11 +115,50 @@ void SceneRenderer::addRenderingLightSourceObject(class RenderingLightSourceObje
     state.outerSpotCosCutoff = lightSource.outerSpotCosCutoff;
     state.castShadows = lightSource.castShadows ? 1 : 0;
 
-    bool isDirectional = state.positionOrDirection.w == 0;
-    bool isPoint = lightSource.innerSpotCosCutoff == -1 || lightSource.outerSpotCosCutoff == -1;
-    bool isSpot = !isDirectional && !isPoint;
-    if(state.castShadows)
+    if (lightSource.shadowMapPartCount == 0)
     {
+        state.castShadows = false;
+    }
+    else if(state.castShadows)
+    {
+        bool hasAllocatedAllParts = true;
+        for(uint32_t partIndex = 0; partIndex < lightSource.shadowMapPartCount; ++partIndex)
+        {
+            ShadowMapAtlasAllocation allocation = {};
+            if(!shadowMapAtlasAllocator.allocate(&allocation))
+            {
+                hasAllocatedAllParts = false;
+                break;
+            }
+
+            Math::Vector2 viewportScale = Math::Vector2(0.5, 0.5);
+            if(flipTextureVertically)
+                viewportScale.y = -viewportScale.y;
+            Math::Vector2 viewportOffset = Math::Vector2(0.5, 0.5); 
+
+            Math::Vector2 atlasExtent =  allocation.shadowMapAtlasExtent;
+            Math::Vector2 viewportExtent = allocation.shadowMapExtent;
+            Math::Vector2 viewportExtentScale = Math::Vector2(viewportExtent.x / atlasExtent.x, viewportExtent.y / atlasExtent.y);
+
+            Math::Vector2 shadowMapViewportScale = Math::Vector2(viewportScale.x *viewportExtentScale.x, viewportScale.y *viewportExtentScale.y);
+            state.shadowMapViewportScale = shadowMapViewportScale;
+            state.shadowMapViewportOffsets[partIndex] = viewportOffset*viewportExtentScale + allocation.offset/allocation.shadowMapAtlasExtent;
+
+            state.modelMatrix[partIndex] = lightSource.modelMatrix[partIndex];
+            state.inverseModelMatrix[partIndex] = lightSource.inverseModelMatrix[partIndex];
+
+            state.projectionMatrix[partIndex] = lightSource.projectionMatrix[partIndex];
+            state.inverseProjectionMatrix[partIndex] = lightSource.inverseProjectionMatrix[partIndex];
+
+            lightSource.atlasAllocations[partIndex] = allocation;
+        }
+
+        // Disable shadows from a light source that does not have it allocated.
+        if(!hasAllocatedAllParts)
+        {
+            state.castShadows = false;
+            lightSource.castShadows = false;
+        }
     }
 
     sceneLightSourceStates.push_back(state);
@@ -418,7 +460,48 @@ void SceneRenderer::renderShadowMaps()
     auto context = RenderingContext::getMainContext();
     currentCommandList->beginRenderPass(context->shadowMapRenderPass, shadowMapFramebuffer, false);
 
+    assert(currentRenderingScene->lightSources.size() == sceneLightSourceStates.size());
+
+    for(size_t lightIndex = 0; lightIndex < sceneLightSourceStates.size(); ++lightIndex)
+    {
+        auto &lightState = sceneLightSourceStates[lightIndex];
+        if(!lightState.castShadows)
+            continue;
+
+        auto &renderingLight = currentRenderingScene->lightSources[lightIndex];
+     
+        for(uint32_t shadowPartIndex = 0; shadowPartIndex < renderingLight.shadowMapPartCount; ++shadowPartIndex)
+        {
+            auto &allocation = renderingLight.atlasAllocations[shadowPartIndex];
+
+            currentCommandList->setViewport(allocation.offset.x, allocation.offset.y, allocation.shadowMapExtent.x, allocation.shadowMapExtent.y);
+            currentCommandList->setScissor(allocation.offset.x, allocation.offset.y, allocation.shadowMapExtent.x, allocation.shadowMapExtent.y);
+            currentCommandList->setShaderSignature(context->sceneShaderSignature);
+            currentCommandList->useShaderResources(context->sceneSamplerBindings);
+            currentCommandList->useShaderResources(statesBinding);
+
+            ScenePushConstants shadowPushConstants = {};
+            shadowPushConstants.lightStateIndex = lightIndex;
+            shadowPushConstants.lightStateComponentIndex = shadowPartIndex;
+            currentCommandList->pushConstants(0, sizeof(shadowPushConstants), &shadowPushConstants);
+
+            // Clear the shadow map.
+            currentCommandList->usePipelineState(context->clearDepthPipelineState);
+            currentCommandList->drawArrays(4, 1, 0, 0);
+
+            performShadowPass();
+        }
+    }
+
     currentCommandList->endRenderPass();
+}
+void SceneRenderer::performShadowPass()
+{
+    for(auto &object : currentRenderingScene->opaqueObjects)
+    {
+        currentCommandList->pushConstants(0, 4, &object.sceneObjectStateIndex);
+        object.renderable->renderShadowWith(this);
+    }
 }
 
 void SceneRenderer::performDepthOnlyPass()

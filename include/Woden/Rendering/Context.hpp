@@ -71,6 +71,8 @@ public:
     agpu_renderpass_ref shadowMapRenderPass;
     agpu_renderpass_ref hdrOpaqueRenderPass;
 
+    agpu_pipeline_state_ref clearDepthPipelineState;
+
     agpu_vertex_layout_ref staticVertexLayout;
     agpu_pipeline_state_ref depthOnlyScenePipelineState;
     agpu_pipeline_state_ref depthOnlySceneCulledPipelineState;

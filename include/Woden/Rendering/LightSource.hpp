@@ -27,10 +27,14 @@ public:
     SceneGraph::SceneNodePtr asSceneNodeWithPosition(const Math::Vector3 &position);
     SceneGraph::SceneNodePtr asSceneNode();
 
-    bool castShadows = false;
-
     Math::Vector3 color = Math::Vector3(1, 1, 1);
     Math::Scalar intensity = 1;
+
+    bool castShadows = false;
+
+	Math::Scalar shadowMapDepthBiasConstant = 2.0;
+	Math::Scalar shadowMapDepthBiasSlope = 1.0;
+	Math::Scalar shadowMapNormalBiasFactor = 0.005;
 };
 
 class DirectionalLightSource : public LightSource

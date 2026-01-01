@@ -9,7 +9,7 @@ void main()
 
     LightSourceState lightSource = WorldLightSourceStateList.list[invocationIndex];
     lightSource.positionOrDirection = CurrentCameraState.inverseTransformation * lightSource.positionOrDirection;
-    //lightSource.spotDirection = (CurrentCameraState.viewMatrix * vec4(lightSource.spotDirection, 0.0)).xyz;
+    lightSource.spotDirection = (CurrentCameraState.inverseTransformation * vec4(lightSource.spotDirection, 0.0)).xyz;
 
     ViewLightSourceStateList.list[invocationIndex] = lightSource;
 }

@@ -505,6 +505,39 @@ bool RenderingContext::createScenePipelineStates()
             sizeof(vertexAttributes)/sizeof(vertexAttributes[0]), vertexAttributes
         );
     }
+    
+    bool hasTextureInvertedProjectionY = device->hasTopLeftNdcOrigin() == device->hasBottomLeftTextureCoordinates();
+
+    agpu_shader_ref screenQuadShader;
+    if (hasTextureInvertedProjectionY)
+        screenQuadShader = compileShader("", "assets/shaders/ScreenQuadFlipped.glsl", AGPU_VERTEX_SHADER);
+    else
+        screenQuadShader = compileShader("", "assets/shaders/ScreenQuad.glsl", AGPU_VERTEX_SHADER);
+
+    // Clear depth pipeline
+    {
+        auto fragmentShader = compileShader("", "assets/shaders/ClearDepth.glsl", AGPU_FRAGMENT_SHADER);
+        if(!fragmentShader)
+            return false;
+        
+        auto builder = device->createPipelineBuilder();
+        builder->setRenderTargetCount(0);
+        builder->setDepthStencilFormat(ShadowMapAtlasViewFormat);
+        builder->setDepthState(true, true, AGPU_ALWAYS);
+
+        builder->setShaderSignature(sceneShaderSignature);
+        builder->attachShader(screenQuadShader);
+        builder->attachShader(fragmentShader);
+
+        builder->setPrimitiveType(AGPU_TRIANGLE_STRIP);
+
+        clearDepthPipelineState = builder->build();
+        if(!clearDepthPipelineState)
+        {
+            fprintf(stderr, "Failed to create the clear depth pipeline state.");
+            return false;
+        }
+    }
 
     // Create the depth only pipeline state
     {
