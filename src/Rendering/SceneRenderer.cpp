@@ -122,9 +122,10 @@ void SceneRenderer::addRenderingLightSourceObject(class RenderingLightSourceObje
     else if(state.castShadows)
     {
         bool hasAllocatedAllParts = true;
+        state.shadowMapNormalBiasFactor = lightSource.shadowMapNormalBiasFactor;
         state.shadowMapCascadeDistanceWorldTransform = lightSource.shadowMapCascadeDistanceWorldTransform;
         state.shadowMapCascadeOffsets = lightSource.shadowMapCascadeOffsets;
-        
+
         for(uint32_t partIndex = 0; partIndex < lightSource.shadowMapPartCount; ++partIndex)
         {
             ShadowMapAtlasAllocation allocation = {};

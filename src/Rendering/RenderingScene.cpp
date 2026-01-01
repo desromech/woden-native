@@ -16,6 +16,7 @@ void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lig
     renderingLight.castShadows = lightSource->castShadows;
     renderingLight.positionOrDirection = Math::Vector4(direction, 0.0);
     renderingLight.intensityAndColor = lightSource->color*lightSource->intensity;
+    renderingLight.shadowMapNormalBiasFactor = lightSource->shadowMapNormalBiasFactor;
 
     if(lightSource->castShadows && currentCamera)
     {
@@ -53,15 +54,17 @@ void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lig
 	    renderingLight.shadowMapCascadeDistanceWorldTransform = -currentViewMatrix.thirdRow();
 	    renderingLight.shadowMapCascadeOffsets = Math::Vector4(splitDistributionDistances[1], splitDistributionDistances[2], splitDistributionDistances[3], splitDistributionDistances[4]);
 
+        auto device = RenderingContext::getMainContext()->device;
+        bool flipProjectionVertically = device->hasTopLeftNdcOrigin();
+
         for(int sliceIndex = 0; sliceIndex < numSlices; ++sliceIndex)
         {
             auto sliceFrustum = currentWorldFrustum.splitAtLambdas(splitDistributionLambdas[sliceIndex], splitDistributionLambdas[sliceIndex + 1]);
 
             std::vector<Math::Vector3> shadowVolume;
-            shadowVolume.reserve(8*2);
+            shadowVolume.reserve(8);
             sliceFrustum.cornersDo([&](const Math::Vector3 &corner){
                 shadowVolume.push_back(corner);
-                shadowVolume.push_back(corner + direction*lightSource->shadowCastingRadius);
             });
 
 
@@ -78,11 +81,18 @@ void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lig
             for(auto &point : shadowVolume)
                 localVolume.insertPoint(inverseShadowModel.transformPosition(point));
 
+            localVolume.minCorner.z -= lightSource->shadowCastingRadius;
+            localVolume.maxCorner.z += lightSource->shadowCastingRadius;
+
             auto projectionMatrix = Math::Matrix4x4::ReverseDepthOrtho(
                 localVolume.minCorner.x, localVolume.maxCorner.x,
                 localVolume.minCorner.y, localVolume.maxCorner.y,
-                -localVolume.maxCorner.z, -localVolume.minCorner.z
+                localVolume.minCorner.z, localVolume.maxCorner.z
             );
+
+            if(flipProjectionVertically)
+                projectionMatrix = Math::Matrix4x4::ProjectionInvertYMatrix() * projectionMatrix;
+
             renderingLight.projectionMatrix[sliceIndex] = projectionMatrix;
             renderingLight.inverseProjectionMatrix[sliceIndex] = projectionMatrix.inverse();
         }
@@ -100,6 +110,7 @@ void RenderingScene::addPointLightSource(const PointLightSource *lightSource)
     renderingLight.positionOrDirection = currentModelMatrix.fourthColumn();
     renderingLight.intensityAndColor = lightSource->color*lightSource->intensity;
     renderingLight.influenceRadius = lightSource->influenceRadius;
+    renderingLight.shadowMapNormalBiasFactor = lightSource->shadowMapNormalBiasFactor;
 
     if(lightSource->castShadows)
     {
@@ -142,6 +153,7 @@ void RenderingScene::addSpotLightSource(const SpotLightSource *lightSource)
     renderingLight.influenceRadius = lightSource->influenceRadius;
     renderingLight.innerSpotCosCutoff = cos(lightSource->innerCutoff * (M_PI / 180.0));
     renderingLight.outerSpotCosCutoff = cos(lightSource->outerCutoff * (M_PI / 180.0));
+    renderingLight.shadowMapNormalBiasFactor = lightSource->shadowMapNormalBiasFactor;
 
     if(lightSource->castShadows)
     {

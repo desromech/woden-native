@@ -32,8 +32,6 @@ public:
 
     bool castShadows = false;
 
-	Math::Scalar shadowMapDepthBiasConstant = 2.0;
-	Math::Scalar shadowMapDepthBiasSlope = 1.0;
 	Math::Scalar shadowMapNormalBiasFactor = 0.005;
 };
 
@@ -42,7 +40,7 @@ class DirectionalLightSource : public LightSource
 public:
     virtual void addIntoRenderingScene(const RenderingScenePtr &renderingScene) override;
 	
-    Math::Scalar shadowCastingRadius = 1000.0;
+    Math::Scalar shadowCastingRadius = 100.0;
 };
 
 class PointLightSource : public LightSource
