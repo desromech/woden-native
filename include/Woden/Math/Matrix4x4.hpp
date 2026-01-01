@@ -53,6 +53,16 @@ public:
         );
     }
 
+    static Matrix4x4 WithMatrix3x3(const Matrix3x3 &m)
+    {
+        return Matrix4x4(
+            m.m11, m.m12, m.m13, 0,
+            m.m21, m.m22, m.m23, 0,
+            m.m31, m.m32, m.m33, 0,
+            0,     0,     0,     1
+        );
+    }
+
     static Matrix4x4 WithTranslation(const Vector3 &t)
     {
         return Matrix4x4(

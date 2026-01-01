@@ -290,6 +290,8 @@ public:
         return out;
     }
 
+    static const Matrix3x3 CubeMapFaceRotations[6];
+
     Scalar m11, m12, m13;
     Scalar m21, m22, m23;
     Scalar m31, m32, m33;

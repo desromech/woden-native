@@ -23,11 +23,37 @@ void RenderingScene::addPointLightSource(const PointLightSource *lightSource)
     renderingLight.positionOrDirection = currentModelMatrix.fourthColumn();
     renderingLight.intensityAndColor = lightSource->color*lightSource->intensity;
     renderingLight.influenceRadius = lightSource->influenceRadius;
+
+    if(lightSource->castShadows)
+    {
+        renderingLight.shadowMapPartCount = 6;
+
+        auto fovy = 90;
+        auto aspect = 1.0;
+        auto projectionMatrix = Math::Matrix4x4::ReverseDepthPerspective(fovy, aspect, 0.01, lightSource->influenceRadius);
+
+        auto device = RenderingContext::getMainContext()->device;
+        bool flipProjectionVertically = device->hasTopLeftNdcOrigin();
+        if(flipProjectionVertically)
+            projectionMatrix = Math::Matrix4x4::ProjectionInvertYMatrix() * projectionMatrix;
+        auto inverseProjectionMatrix = projectionMatrix.inverse();
+
+        for(uint32_t partIndex = 0; partIndex < renderingLight.shadowMapPartCount; ++partIndex)
+        {
+            auto cubeFaceMatrix = Math::Matrix3x3::CubeMapFaceRotations[partIndex];
+
+            renderingLight.modelMatrix[partIndex] = currentModelMatrix * Math::Matrix4x4::WithMatrix3x3(cubeFaceMatrix);
+            renderingLight.inverseModelMatrix[partIndex] = Math::Matrix4x4::WithMatrix3x3(cubeFaceMatrix.transpose()) * currentInverseModelMatrix;
+
+            renderingLight.projectionMatrix[partIndex] = projectionMatrix;
+            renderingLight.inverseProjectionMatrix[partIndex] = inverseProjectionMatrix;
+        }
+    }
+
     lightSources.push_back(renderingLight);
-    //printf("renderingLight.positionOrDirection %f %f %f %f\n",
-    //    renderingLight.positionOrDirection.x, renderingLight.positionOrDirection.y, renderingLight.positionOrDirection.z, renderingLight.positionOrDirection.w
-    //);
 }
+
+
 
 void RenderingScene::addSpotLightSource(const SpotLightSource *lightSource)
 {
@@ -59,7 +85,6 @@ void RenderingScene::addSpotLightSource(const SpotLightSource *lightSource)
         renderingLight.projectionMatrix[0] = projectionMatrix;
         renderingLight.inverseProjectionMatrix[0] = projectionMatrix.inverse();
     }
-
 
     lightSources.push_back(renderingLight);
 }
