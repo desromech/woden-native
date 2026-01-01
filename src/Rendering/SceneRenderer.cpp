@@ -352,8 +352,8 @@ void SceneRenderer::uploadRenderingSceneStates()
                 agpu_texture_view_description viewDesc = {};
                 shadowMapAtlas->getFullViewDescription(&viewDesc);
                 viewDesc.format = RenderingContext::ShadowMapAtlasSampledFormat;
-                auto sampledView = shadowMapAtlas->createView(&viewDesc);
-                statesBinding->bindSampledTextureView(8, sampledView);
+                shadowMapAtlasSampledView = shadowMapAtlas->createView(&viewDesc);
+                statesBinding->bindSampledTextureView(8, shadowMapAtlasSampledView);
             }
 
             {

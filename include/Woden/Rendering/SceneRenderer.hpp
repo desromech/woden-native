@@ -87,6 +87,7 @@ public:
     agpu_buffer_ref lightGridBuffer;
 
     agpu_texture_ref shadowMapAtlas;
+    agpu_texture_view_ref shadowMapAtlasSampledView;
     agpu_framebuffer_ref shadowMapFramebuffer;
     ShadowMapAtlasAllocator shadowMapAtlasAllocator;
 
