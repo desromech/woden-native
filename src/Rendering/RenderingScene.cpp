@@ -25,15 +25,15 @@ void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lig
 
         auto numSlices = 4;
 
-        Math::Scalar splitDistributionDistances[5];
+        Math::Scalar splitDistributionDistances[5] = {};
 
         // Use a different slice distribution for perspective vs orthographic
         if(currentCamera->isPerspective)
         {
             for(int i = 0; i < 5; ++i)
             {
-                Math::Scalar uniformSlice = (farDistance - nearDistance) / numSlices * i + nearDistance;
-                Math::Scalar exponentialSlice = nearDistance * (pow(farDistance / nearDistance, i / numSlices));
+                Math::Scalar uniformSlice = (farDistance - nearDistance) / Math::Scalar(numSlices) * i + nearDistance;
+                Math::Scalar exponentialSlice = nearDistance * pow(farDistance / nearDistance, i / Math::Scalar(numSlices));
                 splitDistributionDistances[i] = Math::mix(uniformSlice, exponentialSlice, cascadeSplitDistributionLambda);
             }
         }
@@ -41,10 +41,10 @@ void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lig
         {
             // Use the uniform slices for non-perspective camers.
             for(int i = 0; i < 5; ++i)
-                splitDistributionDistances[i] = (farDistance - nearDistance) / numSlices * i + nearDistance;
+                splitDistributionDistances[i] = (farDistance - nearDistance) / Math::Scalar(numSlices) * i + nearDistance;
         }
 
-        Math::Scalar splitDistributionLambdas[5];
+        Math::Scalar splitDistributionLambdas[5] = {};
         for(int i = 0; i < 5; ++i)
         {
             splitDistributionLambdas[i] = Math::clamp((splitDistributionDistances[i] - nearDistance) / (farDistance - nearDistance), Math::Scalar(0), Math::Scalar(1));
@@ -58,16 +58,34 @@ void RenderingScene::addDirectionalLightSource(const DirectionalLightSource *lig
             auto sliceFrustum = currentWorldFrustum.splitAtLambdas(splitDistributionLambdas[sliceIndex], splitDistributionLambdas[sliceIndex + 1]);
 
             std::vector<Math::Vector3> shadowVolume;
+            shadowVolume.reserve(8*2);
             sliceFrustum.cornersDo([&](const Math::Vector3 &corner){
                 shadowVolume.push_back(corner);
                 shadowVolume.push_back(corner + direction*lightSource->shadowCastingRadius);
             });
 
 
-            auto shadowVolumeWorldBoundingBox = Math::AABox::Encompassing(shadowVolume);
-            printf("slice %d\n", sliceIndex);
-        }
+            auto shadowCastingVolumeWorldBoundingBox = Math::AABox::Encompassing(shadowVolume);
+            auto shadowCastingVolumeWorldCenter = shadowCastingVolumeWorldBoundingBox.center();
 
+            auto shadowModelMatrix = Math::Matrix4x4::WithMatrix3x3AndTranslation(currentModelMatrix.topLeftMatrix3x3(), shadowCastingVolumeWorldCenter);
+            auto inverseShadowModel = shadowModelMatrix.inverse();
+
+            renderingLight.modelMatrix[sliceIndex] = shadowModelMatrix;
+            renderingLight.inverseModelMatrix[sliceIndex] = inverseShadowModel;
+
+            auto localVolume = Math::AABox::Empty();
+            for(auto &point : shadowVolume)
+                localVolume.insertPoint(inverseShadowModel.transformPosition(point));
+
+            auto projectionMatrix = Math::Matrix4x4::ReverseDepthOrtho(
+                localVolume.minCorner.x, localVolume.maxCorner.x,
+                localVolume.minCorner.y, localVolume.maxCorner.y,
+                -localVolume.maxCorner.z, -localVolume.minCorner.z
+            );
+            renderingLight.projectionMatrix[sliceIndex] = projectionMatrix;
+            renderingLight.inverseProjectionMatrix[sliceIndex] = projectionMatrix.inverse();
+        }
         
         renderingLight.shadowMapPartCount = numSlices;
     }

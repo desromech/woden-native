@@ -43,7 +43,7 @@ public:
         return Matrix4x4(1);
     }
 
-    static Matrix4x4 WithMatrix3AndTranslation(const Matrix3x3 &m, const Vector3 &t)
+    static Matrix4x4 WithMatrix3x3AndTranslation(const Matrix3x3 &m, const Vector3 &t)
     {
         return Matrix4x4(
             m.m11, m.m12, m.m13, t.x,
@@ -90,6 +90,16 @@ public:
             0, 2*near /(top - bottom), (top + bottom) / (top - bottom), 0,
             0, 0, near / (far - near), near*far / (far - near),
             0, 0, -1, 0
+        );
+    }
+
+    static Matrix4x4 ReverseDepthOrtho(Scalar left, Scalar right, Scalar bottom, Scalar top, Scalar near, Scalar far)
+    {
+        return Matrix4x4(
+    		2 /(right - left), 0, 0, -((right + left) / (right - left)),
+    		0, 2 /(top - bottom), 0, -((top + bottom) / (top - bottom)),
+    		0, 0, 1 / (far - near), far / (far - near),
+    		0, 0, 0, 1
         );
     }
 

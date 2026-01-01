@@ -33,7 +33,7 @@ struct TRSTransform3D
 
     Matrix4x4 asMatrix() const
     {
-        return Matrix4x4::WithMatrix3AndTranslation(asMatrix3x3(), translation);
+        return Matrix4x4::WithMatrix3x3AndTranslation(asMatrix3x3(), translation);
     }
 
     Matrix3x3 asInverseMatrix3x3() const
@@ -48,7 +48,7 @@ struct TRSTransform3D
 
     Matrix4x4 asInverseMatrix() const
     {
-        return Matrix4x4::WithMatrix3AndTranslation(asInverseMatrix3x3(), inverseTranslation());
+        return Matrix4x4::WithMatrix3x3AndTranslation(asInverseMatrix3x3(), inverseTranslation());
     }
 
     Vector3 scale = Vector3(1, 1, 1);
