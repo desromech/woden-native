@@ -9,6 +9,51 @@ namespace Woden
 namespace Rendering
 {
 
+
+void ShadowMapAtlasAllocator::initializeWithExtent(uint32_t atlasWidth, uint32_t atlasHeight)
+{
+    this->atlasWidth = atlasWidth;
+    this->atlasHeight = atlasHeight;
+
+    columns = 4;
+    rows = 4;
+
+    shadowMapExtent.x = atlasWidth / columns;
+    shadowMapExtent.y = atlasHeight / rows;
+
+    capacity = columns*rows;
+    size = 0;
+}
+
+void ShadowMapAtlasAllocator::reset()
+{
+    size = 0;
+}
+
+bool ShadowMapAtlasAllocator::allocate(ShadowMapAtlasAllocation *outAllocation)
+{
+    if(size >= capacity)
+        return false;
+
+    ShadowMapAtlasAllocation empty = {};
+    *outAllocation = empty;
+
+    int row = size / columns;
+    int column = size % columns;
+    
+    outAllocation->offset.x = column*shadowMapExtent.x;
+    outAllocation->offset.y = row*shadowMapExtent.y;
+    
+    outAllocation->shadowMapExtent = shadowMapExtent;
+
+    outAllocation->shadowMapAtlasExtent.x = atlasWidth;
+    outAllocation->shadowMapAtlasExtent.y = atlasHeight;
+
+    ++size;
+
+    return true;
+}
+
 static Math::Scalar computeLightGridDepthSliceScale(Math::Scalar lightGridDepth, Math::Scalar nearDistance, Math::Scalar farDistance)
 {
     return lightGridDepth / log(farDistance / nearDistance);
@@ -66,6 +111,13 @@ void SceneRenderer::addRenderingLightSourceObject(class RenderingLightSourceObje
 
     state.outerSpotCosCutoff = lightSource.outerSpotCosCutoff;
     state.castShadows = lightSource.castShadows ? 1 : 0;
+
+    bool isDirectional = state.positionOrDirection.w == 0;
+    bool isPoint = lightSource.innerSpotCosCutoff == -1 || lightSource.outerSpotCosCutoff == -1;
+    bool isSpot = !isDirectional && !isPoint;
+    if(state.castShadows)
+    {
+    }
 
     sceneLightSourceStates.push_back(state);
 }
@@ -293,6 +345,9 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
     currentRenderingScene->currentViewMatrix = currentCameraNode->transform.asInverseMatrix();
     scene->addIntoRenderingScene(currentRenderingScene);
 
+    // Reset the shadow map atlas4
+    shadowMapAtlasAllocator.initializeWithExtent(ShadowMapAtlasSize, ShadowMapAtlasSize);
+
     // Gather and rendering scene states.
     gatherRenderingSceneStates();
     uploadRenderingSceneStates();
@@ -356,10 +411,6 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
 
     commandList->endRenderPass();
     currentCommandList.reset();
-}
-
-void SceneRenderer::allocateShadowMaps()
-{
 }
 
 void SceneRenderer::renderShadowMaps()

@@ -12,6 +12,9 @@ namespace Woden
 namespace Rendering
 {
 
+/**
+ * Per-screen rendering state.
+ */
 class SceneRendererScreen
 {
 public:
@@ -36,6 +39,30 @@ public:
 
     int screenWidth = -1;
     int screenHeight = -1;
+};
+
+struct ShadowMapAtlasAllocation
+{
+    Math::Vector2 offset;
+    Math::Vector2 shadowMapExtent;
+    Math::Vector2 shadowMapAtlasExtent;
+};
+
+class ShadowMapAtlasAllocator
+{
+public:
+    void initializeWithExtent(uint32_t atlasWidth, uint32_t atlasHeight);
+    void reset();
+    bool allocate(ShadowMapAtlasAllocation *outAllocation);
+    
+    uint32_t atlasWidth;
+    uint32_t atlasHeight;
+
+    uint32_t columns;
+    uint32_t rows;
+    uint32_t capacity;
+    uint32_t size;
+    Math::Vector2 shadowMapExtent;
 };
 
 /**
@@ -84,6 +111,7 @@ public:
 
     agpu_texture_ref shadowMapAtlas;
     agpu_framebuffer_ref shadowMapFramebuffer;
+    ShadowMapAtlasAllocator shadowMapAtlasAllocator;
 
     agpu_buffer_ref materialStateBuffer;
     size_t materialStateBufferSize = 0;
@@ -101,7 +129,6 @@ private:
     void gatherRenderingSceneStates();
     void uploadRenderingSceneStates();
 
-    void allocateShadowMaps();
     void renderShadowMaps();
 
     void performDepthOnlyPass();
