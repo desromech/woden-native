@@ -70,6 +70,11 @@ public:
         return Vector2(1/x, 1/y);
     }
 
+    Vector2 floor() const
+    {
+        return Vector2(::floor(x), ::floor(y));
+    }
+
     bool operator==(const Vector2 &o) const
     {
         return x == o.x && y == o.y;

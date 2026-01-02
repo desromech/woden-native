@@ -49,6 +49,7 @@ TexturePtr ResourceCache::getOrCreateCheckboardTexture()
     });
 
     checkboardTexture = image->asTexture();
+    checkboardTexture->generateColorMipmaps();
     return checkboardTexture;
 }
 
@@ -59,6 +60,7 @@ TexturePtr ResourceCache::getOrCreateCheckboardNormalTexture()
     
     auto normalImage = checkboardTexture->miplevels[0]->intoNormalMap();
     checkboardNormalTexture = normalImage->asTexture();
+    checkboardNormalTexture->generateDataMipmaps();
     return checkboardNormalTexture;
 }
 

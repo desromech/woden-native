@@ -5,6 +5,21 @@ namespace Woden
 {
 namespace Assets
 {
+
+void Texture::generateColorMipmaps()
+{
+    generateDataMipmaps();
+}
+
+void Texture::generateDataMipmaps()
+{
+    while(miplevels.back()->width > 1 || miplevels.back()->height > 1)
+    {
+        auto nextLevel = miplevels.back()->computeNextDataMipLevel();
+        miplevels.push_back(nextLevel);
+    }
+}
+
 agpu_texture_ref Texture::getValidTextureHandle()
 {
     if(textureHandle)

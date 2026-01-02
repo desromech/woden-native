@@ -2,6 +2,8 @@
 #define WODEN_ASSETS_IMAGE_HPP
 
 #include "PixelFormat.hpp"
+#include "Woden/Math/Vector2.hpp"
+#include "Woden/Math/Vector4.hpp"
 #include <stdint.h>
 #include <string>
 #include <memory>
@@ -54,7 +56,12 @@ public:
     }
 
     float fetchHeight(int x, int y);
+    Math::Vector4 fetchData(int x, int y);
+    Math::Vector4 sampleDataAtTexcoord(Math::Vector2 texcoord);
+
     ImagePtr intoNormalMap();
+
+    ImagePtr computeNextDataMipLevel();
 
     bool saveToTGA(const std::string &filename);
 

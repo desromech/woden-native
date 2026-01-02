@@ -39,6 +39,16 @@ struct PACKED TGAHeader
 #pragma pack(pop)
 #endif
 
+inline uint32_t encodeDataPixel32(const Math::Vector4 &data)
+{
+    auto r = uint8_t(data.x*255);
+    auto g = uint8_t(data.y*255);
+    auto b = uint8_t(data.z*255);
+    auto a = uint8_t(data.w*255);
+
+    return b | (g << 8) | (r << 16) | (a << 24);
+}
+
 bool Image::saveToTGA(const std::string &filename)
 {
     FILE *file = fopen(filename.c_str(), "wb");
@@ -125,6 +135,50 @@ float Image::fetchHeight(int x, int y)
     return height;
 }
 
+Math::Vector4 Image::fetchData(int x, int y)
+{
+    x %= width;
+    y %= height;
+
+    auto row = pixels.data() + pitch*y;
+    auto row32 = reinterpret_cast<uint32_t*> (row);
+    auto pixelValue = row32[x];
+
+    auto b = pixelValue & 0xFF;
+    auto g = (pixelValue >> 8) & 0xFF;
+    auto r = (pixelValue >> 16) & 0xFF;
+    auto a = (pixelValue >> 24) & 0xFF;
+
+    auto nr = r/255.0f;
+    auto ng = g/255.0f;
+    auto nb = b/255.0f;
+    auto na = a/255.0f;
+    
+    return Math::Vector4(nr, ng, nb, na);
+}
+
+Math::Vector4 Image::sampleDataAtTexcoord(Math::Vector2 texcoord)
+{
+    Math::Vector2 position = texcoord*Math::Vector2(width, height);
+
+    Math::Vector2 leftTopCoord     = position.floor();
+    Math::Vector2 leftBottomCoord  = leftTopCoord + Math::Vector2(0, 1);
+    Math::Vector2 rightTopCoord    = leftTopCoord + Math::Vector2(1, 0);
+    Math::Vector2 rightBottomCoord = leftTopCoord + Math::Vector2(1, 1);
+
+    Math::Vector2 fractCoord = position - leftTopCoord;
+
+    Math::Vector4 leftTopValue     = fetchData(leftTopCoord.x,     leftTopCoord.y);
+    Math::Vector4 leftBottomValue  = fetchData(leftBottomCoord.x,  leftBottomCoord.y);
+    Math::Vector4 rightTopValue    = fetchData(rightTopCoord.x,    rightTopCoord.y);
+    Math::Vector4 rightBottomValue = fetchData(rightBottomCoord.x, rightBottomCoord.y);
+
+    auto topValue = Math::mix(leftTopValue, rightTopValue, fractCoord.x);
+    auto bottomValue = Math::mix(leftBottomValue, rightBottomValue, fractCoord.x);
+    auto value = Math::mix(topValue, bottomValue, fractCoord.y);
+    return value;
+}
+
 ImagePtr Image::intoNormalMap()
 {
     auto normalImage = std::make_shared<Image> ();
@@ -151,6 +205,25 @@ ImagePtr Image::intoNormalMap()
     return normalImage;
 }
 
+ImagePtr Image::computeNextDataMipLevel()
+{
+    auto nextLevel = std::make_shared<Image> ();
+    nextLevel->width = std::max(uint32_t(1), width/2);
+    nextLevel->height = std::max(uint32_t(1), height/2);
+    nextLevel->pitch = nextLevel->width*4;
+    nextLevel->format = PixelFormat::B8G8R8A8_UNorm;
+    nextLevel->pixels.resize(nextLevel->pitch*nextLevel->height);
+
+    nextLevel->renderPixels32([&](uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
+        auto texcoord = Math::Vector2(x*2 + 0.5, y*2 + 0.5);
+        texcoord = texcoord / Math::Vector2(width, height);
+        auto mipData = sampleDataAtTexcoord(texcoord);
+        return encodeDataPixel32(mipData);
+    });
+
+    return nextLevel;
+}
+
 TexturePtr Image::asTexture()
 {
     auto texture = std::make_shared<Texture> ();
@@ -161,3 +234,4 @@ TexturePtr Image::asTexture()
 
 }// End of namespace Assets
 }// End of namespace Woden
+
