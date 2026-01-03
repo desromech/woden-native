@@ -15,6 +15,7 @@ class Texture
 public:
     agpu_texture_ref getValidTextureHandle();
     void generateColorMipmaps();
+    void generateNormalMipmaps();
     void generateDataMipmaps();
     
     std::vector<ImagePtr> miplevels;

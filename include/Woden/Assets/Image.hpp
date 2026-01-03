@@ -61,6 +61,7 @@ public:
 
     ImagePtr intoNormalMap();
 
+    ImagePtr computeNextNormalMipLevel();
     ImagePtr computeNextDataMipLevel();
 
     bool saveToTGA(const std::string &filename);

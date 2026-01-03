@@ -11,6 +11,15 @@ void Texture::generateColorMipmaps()
     generateDataMipmaps();
 }
 
+void Texture::generateNormalMipmaps()
+{
+    while(miplevels.back()->width > 1 || miplevels.back()->height > 1)
+    {
+        auto nextLevel = miplevels.back()->computeNextNormalMipLevel();
+        miplevels.push_back(nextLevel);
+    }
+}
+
 void Texture::generateDataMipmaps()
 {
     while(miplevels.back()->width > 1 || miplevels.back()->height > 1)

@@ -205,6 +205,28 @@ ImagePtr Image::intoNormalMap()
     return normalImage;
 }
 
+ImagePtr Image::computeNextNormalMipLevel()
+{
+    auto nextLevel = std::make_shared<Image> ();
+    nextLevel->width = std::max(uint32_t(1), width/2);
+    nextLevel->height = std::max(uint32_t(1), height/2);
+    nextLevel->pitch = nextLevel->width*4;
+    nextLevel->format = PixelFormat::B8G8R8A8_UNorm;
+    nextLevel->pixels.resize(nextLevel->pitch*nextLevel->height);
+
+    nextLevel->renderPixels32([&](uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
+        auto texcoord = Math::Vector2(x*2 + 0.5, y*2 + 0.5);
+        texcoord = texcoord / Math::Vector2(width, height);
+        auto mipData = sampleDataAtTexcoord(texcoord);
+        
+        auto N = (mipData.xyz() * 2 - 1).normalized();
+        auto normalizedMipData = Math::Vector4(N*0.5 + 0.5, mipData.w);
+        return encodeDataPixel32(normalizedMipData);
+    });
+
+    return nextLevel;
+}
+
 ImagePtr Image::computeNextDataMipLevel()
 {
     auto nextLevel = std::make_shared<Image> ();
