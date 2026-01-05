@@ -1,4 +1,4 @@
-#line 2
+#include "SceneShaderCommon.glsl"
 
 //Clustered forward rendering list shader is heavily based in the one from http://www.aortiz.me/2018/12/21/CG.html by Ángel Ortiz"
 layout(local_size_x = 64, local_size_y = 1, local_size_z = 1) in;

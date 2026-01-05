@@ -1,4 +1,5 @@
-#line 2
+#include "SceneShaderCommon.glsl"
+
 layout(local_size_x = 128) in;
 
 void main()

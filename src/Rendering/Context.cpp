@@ -155,43 +155,6 @@ agpu_shader_ref RenderingContext::compileShader(const std::string &shaderFileNam
 
 }
 
-agpu_shader_ref RenderingContext::compileShader(const std::string &sharedCommon, const std::string &shaderFileName, agpu_shader_type type)
-{
-    return compileShader(sharedCommon, std::string(), shaderFileName, type);
-}
-
-agpu_shader_ref RenderingContext::compileShader(const std::string &sharedCommon, const std::string &sharedCommon2, const std::string &shaderFileName, agpu_shader_type type)
-{
-    std::string shaderSource;
-    if(!sharedCommon.empty())
-        shaderSource += Woden::Utility::readWholeTextFile(sharedCommon);
-    if(!sharedCommon2.empty())
-        shaderSource += Woden::Utility::readWholeTextFile(sharedCommon2);
-    if(!shaderFileName.empty())
-        shaderSource += Woden::Utility::readWholeTextFile(shaderFileName);
-   if(shaderSource.empty())
-        return nullptr;
-
-    // Create the shader compiler.
-    agpu_offline_shader_compiler_ref shaderCompiler = device->createOfflineShaderCompiler();
-    shaderCompiler->setShaderSource(AGPU_SHADER_LANGUAGE_VGLSL, type, shaderSource.c_str(), (agpu_string_length)shaderSource.size());
-    try
-    {
-        shaderCompiler->compileShader(AGPU_SHADER_LANGUAGE_DEVICE_SHADER, nullptr);
-    }
-    catch(agpu_exception &e)
-    {
-        auto logLength = shaderCompiler->getCompilationLogLength();
-        std::unique_ptr<char[]> logBuffer(new char[logLength+1]);
-        shaderCompiler->getCompilationLog(logLength+1, logBuffer.get());
-        fprintf(stderr, "Compilation error of '%s':%s\n", shaderFileName.c_str(), logBuffer.get());
-        return nullptr;
-    }
-
-    // Create the shader and compile it.
-    return shaderCompiler->getResultAsShader();
-}
-
 bool RenderingContext::createGuiPipelineStates()
 {
     // Create the GUI shader signature.
@@ -577,13 +540,13 @@ bool RenderingContext::createScenePipelineStates()
 
     agpu_shader_ref screenQuadShader;
     if (hasTextureInvertedProjectionY)
-        screenQuadShader = compileShader("", "assets/shaders/ScreenQuadFlipped.glsl", AGPU_VERTEX_SHADER);
+        screenQuadShader = compileShader("assets/shaders/ScreenQuadFlipped.glsl", AGPU_VERTEX_SHADER);
     else
-        screenQuadShader = compileShader("", "assets/shaders/ScreenQuad.glsl", AGPU_VERTEX_SHADER);
+        screenQuadShader = compileShader("assets/shaders/ScreenQuad.glsl", AGPU_VERTEX_SHADER);
 
     // Clear depth pipeline
     {
-        auto fragmentShader = compileShader("", "assets/shaders/ClearDepth.glsl", AGPU_FRAGMENT_SHADER);
+        auto fragmentShader = compileShader("assets/shaders/ClearDepth.glsl", AGPU_FRAGMENT_SHADER);
         if(!fragmentShader)
             return false;
         
@@ -608,7 +571,7 @@ bool RenderingContext::createScenePipelineStates()
 
     // Create the depth only pipeline state
     {
-        auto vertexShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/DepthOnlySceneVertexShader.glsl", AGPU_VERTEX_SHADER);
+        auto vertexShader = compileShader("assets/shaders/DepthOnlySceneVertexShader.glsl", AGPU_VERTEX_SHADER);
         if(!vertexShader)
             return false;
         
@@ -642,7 +605,7 @@ bool RenderingContext::createScenePipelineStates()
 
     // Create the shadow pipeline state
     {
-        auto vertexShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/ShadowMapVertexShader.glsl", AGPU_VERTEX_SHADER);
+        auto vertexShader = compileShader("assets/shaders/ShadowMapVertexShader.glsl", AGPU_VERTEX_SHADER);
         if(!vertexShader)
             return false;
         
@@ -676,7 +639,7 @@ bool RenderingContext::createScenePipelineStates()
     }
 
     {
-        auto computeShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/TransformLightsToView.glsl", AGPU_COMPUTE_SHADER);
+        auto computeShader = compileShader("assets/shaders/TransformLightsToView.glsl", AGPU_COMPUTE_SHADER);
         if(!computeShader)
             return false;
         
@@ -693,7 +656,7 @@ bool RenderingContext::createScenePipelineStates()
     }
 
     {
-        auto computeShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/LightGridComputation.glsl", AGPU_COMPUTE_SHADER);
+        auto computeShader = compileShader("assets/shaders/LightGridComputation.glsl", AGPU_COMPUTE_SHADER);
         if(!computeShader)
             return false;
         
@@ -710,7 +673,7 @@ bool RenderingContext::createScenePipelineStates()
     }
 
     {
-        auto computeShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/LightClusterBeginComputation.glsl", AGPU_COMPUTE_SHADER);
+        auto computeShader = compileShader("assets/shaders/LightClusterBeginComputation.glsl", AGPU_COMPUTE_SHADER);
         if(!computeShader)
             return false;
         
@@ -727,7 +690,7 @@ bool RenderingContext::createScenePipelineStates()
     }
 
     {
-        auto computeShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/LightClusterListComputation.glsl", AGPU_COMPUTE_SHADER);
+        auto computeShader = compileShader("assets/shaders/LightClusterListComputation.glsl", AGPU_COMPUTE_SHADER);
         if(!computeShader)
             return false;
         
@@ -745,8 +708,8 @@ bool RenderingContext::createScenePipelineStates()
 
     // Create the static opaque pipeline state
     {
-        auto vertexShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/StaticSceneVertexShader.glsl", AGPU_VERTEX_SHADER);
-        auto fragmentShader = compileShader("assets/shaders/SceneShaderCommon.glsl", "assets/shaders/SceneFragmentShaderCommon.glsl", "assets/shaders/OpaqueFragmentShader.glsl", AGPU_FRAGMENT_SHADER);
+        auto vertexShader = compileShader("assets/shaders/StaticSceneVertexShader.glsl", AGPU_VERTEX_SHADER);
+        auto fragmentShader = compileShader("assets/shaders/OpaqueFragmentShader.glsl", AGPU_FRAGMENT_SHADER);
         if(!vertexShader || !fragmentShader)
             return false;
         

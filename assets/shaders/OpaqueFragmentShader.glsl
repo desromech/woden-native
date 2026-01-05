@@ -1,4 +1,5 @@
-#line 2
+#include "SceneShaderCommon.glsl"
+#include "SceneFragmentShaderCommon.glsl"
 
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec2 outNormalGBuffer;

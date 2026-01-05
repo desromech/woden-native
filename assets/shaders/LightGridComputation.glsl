@@ -1,4 +1,5 @@
-#line 2
+#include "SceneShaderCommon.glsl"
+
 layout(local_size_x = 4, local_size_y = 4, local_size_z = 4) in;
 
 vec3 ndcToView(vec4 ndc)
