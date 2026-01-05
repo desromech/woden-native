@@ -1,4 +1,4 @@
-#line 2
+#include "GuiShaderCommon.glsl"
 
 layout(location = 0) in vec2 inTexcoord;
 layout(location = 1) flat in int inGuiElementIndex;

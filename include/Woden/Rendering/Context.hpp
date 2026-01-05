@@ -36,6 +36,7 @@ public:
     static void releaseMainContext();
 
     bool initialize(int argc, const char *argv[]);
+    agpu_shader_ref compileShader(const std::string &shaderFileName, agpu_shader_type type);
     agpu_shader_ref compileShader(const std::string &sharedCommon, const std::string &shaderFileName, agpu_shader_type type);
     agpu_shader_ref compileShader(const std::string &sharedCommon, const std::string &sharedCommon2, const std::string &shaderFileName, agpu_shader_type type);
 

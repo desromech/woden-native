@@ -34,6 +34,7 @@ set(WodenEngine_Sources
 
     Utility/FileSystem.cpp
     Utility/ReadWholeFile.cpp
+    Utility/ShaderPreprocessor.cpp
 )
 
 add_library(WodenEngine ${WodenEngine_Sources})

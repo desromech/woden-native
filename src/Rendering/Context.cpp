@@ -1,6 +1,7 @@
 #include "Woden/Rendering/Context.hpp"
 #include "Woden/Rendering/VertexBinding.hpp"
 #include "Woden/Utility/ReadWholeFile.hpp"
+#include "Woden/Utility/ShaderPreprocessor.hpp"
 #include <vector>
 #include <stdio.h>
 
@@ -125,6 +126,33 @@ bool RenderingContext::initialize(int argc, const char *argv[])
         return false;
 
     return true;
+}
+
+agpu_shader_ref RenderingContext::compileShader(const std::string &shaderFileName, agpu_shader_type type)
+{
+    auto preprocessedShaderSource = Woden::Utility::ShaderPreprocessor().preprocessFileNamed(shaderFileName);
+    if(preprocessedShaderSource.empty())
+        return nullptr;
+
+    // Create the shader compiler.
+    agpu_offline_shader_compiler_ref shaderCompiler = device->createOfflineShaderCompiler();
+    shaderCompiler->setShaderSource(AGPU_SHADER_LANGUAGE_VGLSL, type, preprocessedShaderSource.c_str(), (agpu_string_length)preprocessedShaderSource.size());
+    try
+    {
+        shaderCompiler->compileShader(AGPU_SHADER_LANGUAGE_DEVICE_SHADER, nullptr);
+    }
+    catch(agpu_exception &e)
+    {
+        auto logLength = shaderCompiler->getCompilationLogLength();
+        std::unique_ptr<char[]> logBuffer(new char[logLength+1]);
+        shaderCompiler->getCompilationLog(logLength+1, logBuffer.get());
+        fprintf(stderr, "Compilation error of '%s':%s\n", shaderFileName.c_str(), logBuffer.get());
+        return nullptr;
+    }
+
+    // Create the shader and compile it.
+    return shaderCompiler->getResultAsShader();
+
 }
 
 agpu_shader_ref RenderingContext::compileShader(const std::string &sharedCommon, const std::string &shaderFileName, agpu_shader_type type)
@@ -291,8 +319,8 @@ bool RenderingContext::createGuiPipelineStates()
 
     // Create the GUI pipeline state
     {
-        auto vertexShader = compileShader("assets/shaders/GuiShaderCommon.glsl", "assets/shaders/GuiVertexShader.glsl", AGPU_VERTEX_SHADER);
-        auto fragmentShader = compileShader("assets/shaders/GuiShaderCommon.glsl", "assets/shaders/GuiFragmentShader.glsl", AGPU_FRAGMENT_SHADER);
+        auto vertexShader = compileShader("assets/shaders/GuiVertexShader.glsl", AGPU_VERTEX_SHADER);
+        auto fragmentShader = compileShader("assets/shaders/GuiFragmentShader.glsl", AGPU_FRAGMENT_SHADER);
         if(!vertexShader || !fragmentShader)
             return false;
         
