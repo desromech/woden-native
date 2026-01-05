@@ -13,9 +13,11 @@ int woden_main(int argc, const char **argv)
 {
     auto scene = MakeScene();
     {
-        auto builder = Woden::Rendering::MeshBuilder();
-        builder.addCubeWithExtent(Vector3(1, 1, 1));
-        scene->normalLayer->addChild(builder.finishMesh()->asSceneNode());
+        scene->normalLayer->addChild(Woden::Rendering::MeshBuilder()
+            .addCubeWithExtent(Vector3(1, 1, 1))
+            .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
+            .finishMesh()->asSceneNode()
+        );
     }
 
     {
@@ -28,5 +30,6 @@ int woden_main(int argc, const char **argv)
 
     }
 
+    scene->openInSystemWindow();
     return 0;
 }
