@@ -15,9 +15,9 @@ bool GUIRenderer::initialize()
     {
         agpu_buffer_description desc = {};
         desc.size = agpu_uint(MaxSupportedGUIElements * sizeof(GuiElement));
-        desc.heap_type = AGPU_MEMORY_HEAP_TYPE_HOST_TO_DEVICE;
+        desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
         desc.usage_modes = desc.main_usage_mode = AGPU_STORAGE_BUFFER;
-        desc.mapping_flags = AGPU_MAP_DYNAMIC_STORAGE_BIT | AGPU_MAP_WRITE_BIT;
+        desc.mapping_flags = AGPU_MAP_DYNAMIC_STORAGE_BIT;
         desc.stride = 0;
         
         guiElementsBuffer = renderingContext->device->createBuffer(&desc, nullptr);
