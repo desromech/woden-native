@@ -32,6 +32,7 @@ set(WodenEngine_Sources
 
     SceneGraph/Scene.cpp
 
+    Utility/FileSystem.cpp
     Utility/ReadWholeFile.cpp
 )
 
