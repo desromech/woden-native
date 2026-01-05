@@ -11,7 +11,7 @@ namespace Rendering
 
 MeshBuilder &MeshBuilder::addCubeWithExtent(const Math::Vector3 &extent)
 {
-    return addCubeWithHalfExtent(extent * 0.5);
+    return addCubeWithHalfExtent(extent * Math::Vector3(0.5));
 }
 
 MeshBuilder &MeshBuilder::addCubeWithHalfExtent(const Math::Vector3 &halfExtent)
@@ -243,8 +243,8 @@ MeshBuilder &MeshBuilder::generateTangentSpaceFrame()
                 auto det = (du0*dv1) - (du1*dv0);
                 if(det != 0)
                 {
-                    auto tangent = (u * (dv1/det))  - (v * (dv0/det));
-                    auto bitangent = (v * (du0/det)) - (u * (du1/det));
+                    auto tangent = (u * Math::Vector3(dv1/det))  - (v * Math::Vector3(dv0/det));
+                    auto bitangent = (v * Math::Vector3(du0/det)) - (u * Math::Vector3(du1/det));
 
                     tangents[i0] += tangent;
                     tangents[i1] += tangent;
@@ -266,8 +266,8 @@ MeshBuilder &MeshBuilder::generateTangentSpaceFrame()
         auto n = normals[pi].asVector3();
 
         // Gram schmidth orthogonalization
-        t = (t - (n * n.dot(t))).normalized();
-        b = (b - (n * n.dot(b)) - (t * t.dot(b))).normalized();
+        t = (t - (n * Math::Vector3(n.dot(t)))).normalized();
+        b = (b - (n * Math::Vector3(n.dot(b))) - (t * Math::Vector3(t.dot(b)))).normalized();
         auto s = n.cross(t).dot(b);
         
         //printf("pi %d | t: %f %f %f s: %f\n", (int)pi, t.x, t.y, t.z, s);
