@@ -1,5 +1,3 @@
-#line 2
-
 const float DistanceEpsilon = 0.00001;
 const float Pi = 3.141592653589793;
 const float PiReciprocal = 0.3183098861837907;
