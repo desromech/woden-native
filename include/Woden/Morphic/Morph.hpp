@@ -67,6 +67,10 @@ public:
         submorphs.push_back(morph);
     }
 
+    virtual void fullUpdate(Math::Scalar deltaTime);
+    virtual void updateChildren(Math::Scalar deltaTime);
+    virtual void update(Math::Scalar deltaTime);
+
     virtual void fullDrawWith(const Rendering::GUIRendererPtr &renderer);
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer);
     virtual void drawChildrenWith(const Rendering::GUIRendererPtr &renderer);

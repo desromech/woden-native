@@ -14,6 +14,24 @@ Morph::~Morph()
 {
 }
 
+void Morph::fullUpdate(Math::Scalar deltaTime)
+{
+    updateChildren(deltaTime);
+    update(deltaTime);
+}
+
+void Morph::updateChildren(Math::Scalar deltaTime)
+{
+    for(auto &child : submorphs)
+        child->fullUpdate(deltaTime);
+}
+
+void Morph::update(Math::Scalar deltaTime)
+{
+    (void)deltaTime;
+}
+
+
 void Morph::fullDrawWith(const Rendering::GUIRendererPtr &renderer)
 {
     drawWith(renderer);

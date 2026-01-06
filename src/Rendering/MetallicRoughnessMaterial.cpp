@@ -42,6 +42,7 @@ bool MetallicRoughnessMaterial::activateOpaqueWithRenderer(SceneRenderer *sceneR
 
 bool MetallicRoughnessMaterial::activateTranslucentWithRenderer(SceneRenderer *sceneRenderer)
 {
+    (void)sceneRenderer;
     if(alphaMode != SurfaceAlphaMode::Blend)
         return false;
 

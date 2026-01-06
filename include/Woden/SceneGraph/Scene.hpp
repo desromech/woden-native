@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <functional>
 
 namespace Woden
 {
@@ -65,6 +66,8 @@ public:
     SceneLayerPtr backgroundLayer;
     SceneLayerPtr normalLayer;
     SceneLayerPtr foregroundLayer;
+
+    std::function<void (Math::Scalar delta)> updateFunction;
 };
 
 inline ScenePtr MakeScene()

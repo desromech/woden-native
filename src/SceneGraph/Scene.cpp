@@ -12,6 +12,7 @@ namespace SceneGraph
 // Scene element
 void SceneElement::addedToSceneElement(const SceneElementPtr &newParent)
 {
+    (void)newParent;
     assert(0 && "Element does not support having a parent.");
 }
 

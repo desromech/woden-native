@@ -126,7 +126,9 @@ int Morph::runMainLoop()
         processEvents();
 
         for(auto &handleAndWindow : sdlWindowMap)
+        {
             handleAndWindow.second->updateAndRender();
+        }
     }
     return 0;
 }
@@ -247,6 +249,9 @@ void SystemWindow::fullDrawWith(const Rendering::GUIRendererPtr &renderer)
 
 void SystemWindow::updateAndRender()
 {
+    // GUI updating
+
+    // Rendering
     auto renderingContext = Woden::Rendering::RenderingContext::getMainContext();
     commandAllocator->reset();
     commandList->reset(commandAllocator, nullptr);

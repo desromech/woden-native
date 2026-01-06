@@ -19,7 +19,7 @@ int woden_main(int argc, const char **argv)
 
         auto rigidBody = std::make_shared<RigidBody> ();
         rigidBody->shape = shape;
-        rigidBody->mass = 1;
+        rigidBody->setMass(1);
         rigidBody->computeMassDistribution();
         rigidBody->setPosition(Vector3(0, 1, 0));
 

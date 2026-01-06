@@ -13,10 +13,29 @@ namespace Physics
 class RigidBody : public CollisionObject
 {
 public:
-    Math::Scalar mass = 0;
-    Math::Matrix3x3 inertiaTensor = Math::Matrix3x3::Zeros();
+
+    Math::Scalar getMass() const
+    {
+        return mass;
+    }
+
+    Math::Scalar getInverseMass() const
+    {
+        return inverseMass;
+    }
+
+    void setMass(Math::Scalar newMass)
+    {
+        mass = newMass;
+        inverseMass = mass == 0 ? 0 : (1/newMass);
+    }
 
     void computeMassDistribution();
+
+protected:
+    Math::Scalar mass = 0;
+    Math::Scalar inverseMass = 0;
+    Math::Matrix3x3 inertiaTensor = Math::Matrix3x3::Zeros();
 };
 
 } // End of namespace Physics
