@@ -6,6 +6,7 @@ set(WodenEngine_Sources
     Assets/ResourceCache.cpp
     Assets/Texture.cpp
 
+    Math/GJK.cpp
     Math/Matrix3x3.cpp
     Math/Vector3.cpp
 

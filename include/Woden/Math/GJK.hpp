@@ -23,6 +23,8 @@ public:
         return size == 0;
     }
 
+    void reduce();
+
     size_t size = 0;
     std::array<Vector3, Capacity> points;
     std::array<Vector3, Capacity> firstPoints;
