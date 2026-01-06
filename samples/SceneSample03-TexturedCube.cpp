@@ -13,6 +13,8 @@ using namespace Woden::Math;
 
 int woden_main(int argc, const char **argv)
 {
+    (void)argc;
+    (void)argv;
     auto scene = MakeScene();
     {
         auto material = std::make_shared<Woden::Rendering::MetallicRoughnessMaterial> ();
