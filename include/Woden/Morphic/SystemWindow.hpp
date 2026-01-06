@@ -22,7 +22,7 @@ public:
 
     void open();
     void close();
-    void updateAndRender();
+    void updateAndRender(Scalar deltaTime);
     void swapBuffers();
     void recreateSwapChain();
 

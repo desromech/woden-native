@@ -29,6 +29,7 @@ class SceneMorph : public Morph
 public:
     SceneMorph();
 
+    virtual void update(Math::Scalar deltaTime) override;
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
 
     virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event);

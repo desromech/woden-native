@@ -1,6 +1,7 @@
 #include "Woden/Morphic/SystemWindow.hpp"
 #include "Woden/Rendering/Context.hpp"
 #include "Woden/Rendering/GuiRenderer.hpp"
+#include "Woden/Utility/Time.hpp"
 #include "SDL_syswm.h"
 #include <assert.h>
 #include <map>
@@ -121,14 +122,19 @@ void processEvents()
 int Morph::runMainLoop()
 {
     ensureSDLInitialization();
+    auto lastTime = Utility::getCurrentMilliseconds();
     while(sdlWindowMap.size() > 0 && !isQuitting)
     {
         processEvents();
 
+        auto newTime = Utility::getCurrentMilliseconds();
+        auto deltaTime = newTime - lastTime;
         for(auto &handleAndWindow : sdlWindowMap)
         {
-            handleAndWindow.second->updateAndRender();
+            handleAndWindow.second->updateAndRender(deltaTime);
         }
+
+        lastTime = newTime;
     }
     return 0;
 }
@@ -247,9 +253,10 @@ void SystemWindow::fullDrawWith(const Rendering::GUIRendererPtr &renderer)
     drawChildrenWith(renderer);
 }
 
-void SystemWindow::updateAndRender()
+void SystemWindow::updateAndRender(Scalar deltaTime)
 {
     // GUI updating
+    fullUpdate(deltaTime);
 
     // Rendering
     auto renderingContext = Woden::Rendering::RenderingContext::getMainContext();

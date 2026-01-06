@@ -6,6 +6,8 @@ namespace Woden
 namespace Utility
 {
 
+double getCurrentMilliseconds();
+
 } // End of namespace Utility
 } // End of namespace Woden
 #endif //WODEN_UTILITY_TIME_HPP

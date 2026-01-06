@@ -21,6 +21,14 @@ SceneMorph::SceneMorph()
     sceneRenderer = std::make_shared<Rendering::SceneRenderer> ();
 }
 
+void SceneMorph::update(Math::Scalar deltaTime)
+{
+    Morph::update(deltaTime);
+
+    if(scene && scene->updateFunction)
+        scene->updateFunction(deltaTime);
+}
+
 void SceneMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
 {
     Morph::drawWith(renderer);
