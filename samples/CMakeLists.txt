@@ -1,9 +1,11 @@
+## UI/Morphic samples
 add_executable(Sample01-Empty SampleCommon.cpp Sample01-Empty.cpp)
 target_link_libraries(Sample01-Empty WodenEngine)
 
 add_executable(Sample02-String SampleCommon.cpp Sample02-String.cpp)
 target_link_libraries(Sample02-String WodenEngine)
 
+## Scene rendering samples.
 add_executable(SceneSample01-Empty SampleCommon.cpp SceneSample01-Empty.cpp)
 target_link_libraries(SceneSample01-Empty WodenEngine)
 
@@ -27,3 +29,7 @@ target_link_libraries(SceneSample07-ShadowCastingPointLight WodenEngine)
 
 add_executable(SceneSample08-ShadowCastingMultipleLights SampleCommon.cpp SceneSample08-ShadowCastingMultipleLights.cpp)
 target_link_libraries(SceneSample08-ShadowCastingMultipleLights WodenEngine)
+
+## Physics simulation sample
+add_executable(PhysicsSample01-FallingBox SampleCommon.cpp PhysicsSample01-FallingBox.cpp)
+target_link_libraries(PhysicsSample01-FallingBox WodenEngine)

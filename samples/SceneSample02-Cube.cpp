@@ -1,11 +1,8 @@
-#include "Woden/Rendering/Context.hpp"
 #include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
 #include "Woden/Rendering/Renderable.hpp"
-#include "Woden/Morphic/Morph.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 
-using namespace Woden::Morphic;
 using namespace Woden::SceneGraph;
 using namespace Woden::Math;
 

@@ -15,7 +15,10 @@ set(WodenEngine_Sources
     Morphic/StringMorph.cpp
     Morphic/SystemWindow.cpp
 
+    Physics/CollisionObject.cpp
     Physics/CollisionShape.cpp
+    Physics/PhysicsWorld.cpp
+    Physics/RigidBody.cpp
 
     Rendering/Context.cpp
     Rendering/GuiRenderer.cpp

@@ -8,6 +8,11 @@
 
 namespace Woden
 {
+namespace SceneGraph
+{
+typedef std::shared_ptr<class SceneNode> SceneNodePtr;
+}
+
 namespace Physics
 {
 
@@ -19,7 +24,7 @@ typedef std::shared_ptr<class SphereCollisionShape> SphereCollisionShapePtr;
 struct ShapeRayCastingResult
 {
     CollisionShapePtr shape;
-    float distance;
+    float distance = 0;
     Math::Vector3 point;
     Math::Vector3 normal;
 };
@@ -31,6 +36,7 @@ public:
     virtual bool isConvex() const;
 
     virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray);
+    virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode();
 };
 
 // Convex collision shape
@@ -55,7 +61,7 @@ public:
         radius = newRadius;
     }
 
-    virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray);
+    virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray) override;
 
 protected:
     Math::Scalar radius = 1;
@@ -75,7 +81,8 @@ public:
         halfExtent = newHalfExtent;
     }
 
-    virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray);
+    virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray) override;
+    virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode() override;
 
 protected:
     Math::Vector3 halfExtent = Math::Vector3(1, 1, 1);
