@@ -37,6 +37,10 @@ public:
 
     virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray);
     virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode();
+
+    Math::Scalar margin = 0.01;
+    Math::AABox localBoundingBox = Math::AABox(Math::Vector3::Zeros(), Math::Vector3::Zeros());
+    Math::AABox localBoundingBoxWithMargin = Math::AABox(Math::Vector3::Zeros(), Math::Vector3::Zeros());
 };
 
 // Convex collision shape
@@ -79,6 +83,8 @@ public:
     void setHalfExtent(Math::Vector3 newHalfExtent)
     {
         halfExtent = newHalfExtent;
+        localBoundingBox = Math::AABox::WithHalfExtent(newHalfExtent);
+        localBoundingBoxWithMargin = localBoundingBox.expandedBy(margin);
     }
 
     virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray) override;

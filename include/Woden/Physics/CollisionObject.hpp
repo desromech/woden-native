@@ -2,6 +2,7 @@
 #define WODEN_PHYSICS_COLLISION_OBJECT_HPP
 
 #include "CollisionMasks.hpp"
+#include "Woden/Math/AABox.hpp"
 #include "Woden/Math/RigidTransform.hpp"
 #include <memory>
 
@@ -46,6 +47,8 @@ public:
         transform = newTransform;
         transformChanged();
     }
+
+    Math::AABox getWorldBoundingBoxWithMargin() const;
 
     virtual void transformChanged();
 

@@ -11,6 +11,11 @@ void CollisionObject::transformChanged()
     // Nothing required here for now.
 }
 
+Math::AABox CollisionObject::getWorldBoundingBoxWithMargin() const
+{
+    return shape->localBoundingBoxWithMargin.transformedWith(transform);
+}
+
 SceneGraph::SceneNodePtr CollisionObject::constructVisualizationSceneNode()
 {
     auto shapeNode = shape->constructVisualizationSceneNode();

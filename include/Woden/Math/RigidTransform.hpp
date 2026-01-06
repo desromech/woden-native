@@ -22,7 +22,7 @@ struct RigidTransform
         return RigidTransform();
     }
 
-    Vector3 transformPosition(const Vector3 &position)
+    Vector3 transformPosition(const Vector3 &position) const
     {
         return rotation.rotateVector(position) + translation;
     }

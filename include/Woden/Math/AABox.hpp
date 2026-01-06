@@ -43,6 +43,36 @@ public:
         return result;
     }
 
+    template<typename FT>
+    void cornersDo(FT &&function)
+    {
+        function(Vector3(minCorner.x, minCorner.y, minCorner.z));
+        function(Vector3(maxCorner.x, minCorner.y, minCorner.z));
+        function(Vector3(minCorner.x, maxCorner.y, minCorner.z));
+        function(Vector3(maxCorner.x, maxCorner.y, minCorner.z));
+
+        function(Vector3(minCorner.x, minCorner.y, maxCorner.z));
+        function(Vector3(maxCorner.x, minCorner.y, maxCorner.z));
+        function(Vector3(minCorner.x, maxCorner.y, maxCorner.z));
+        function(Vector3(maxCorner.x, maxCorner.y, maxCorner.z));
+    }
+
+    template<typename T>
+    AABox transformedWith(T&& transform)
+    {
+        auto result = AABox::Empty();
+        cornersDo([&](const Vector3 &corner){
+            result.insertPoint(transform.transformPosition(corner));
+        });
+
+        return result;
+    }
+
+    AABox expandedBy(Scalar expansion)
+    {
+        return AABox(minCorner - expansion, maxCorner + expansion);
+    }
+
     bool isEmpty() const
     {
         return minCorner.x > maxCorner.x;
@@ -82,6 +112,19 @@ public:
             else
                 return Vector3(0, 0, sign(delta.z));
         }
+    }
+
+    bool isBoxOutside(const AABox &o) const
+    {
+        return
+            o.maxCorner.x < minCorner.x || maxCorner.x < o.minCorner.x ||
+            o.maxCorner.y < minCorner.y || maxCorner.y < o.minCorner.y ||
+            o.maxCorner.z < minCorner.z || maxCorner.z < o.minCorner.z;
+    }
+
+    bool hasIntersectionWithBox(const AABox &o) const
+    {
+        return !isBoxOutside(o);
     }
 
     RayCastingResult intersectionsWithRay(const Ray3D &ray) const

@@ -38,6 +38,13 @@ class DiscreteDynamicsPhysicsWorld : public PhysicsWorld
 {
 public:
     virtual void update(Math::Scalar delta) override;
+
+protected:
+    void resetNetForces();
+    void integrateMovement(Math::Scalar delta);
+    
+    void detectAndResolveCollisions();
+    std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> computeBroadphaseCandidatePairs();
 };
 
 } // End of namespace Physics

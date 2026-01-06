@@ -68,11 +68,52 @@ SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
 
 void DiscreteDynamicsPhysicsWorld::update(Math::Scalar delta)
 {
+    resetNetForces();
+    integrateMovement(delta);
+    detectAndResolveCollisions();
+}
+
+
+void DiscreteDynamicsPhysicsWorld::resetNetForces()
+{
     for(auto &object : collisionObjects)
         object->resetNetForces();
+}
 
+void DiscreteDynamicsPhysicsWorld::integrateMovement(Math::Scalar delta)
+{
     for(auto &object : collisionObjects)
         object->integrateMovement(delta);
 }
+
+void DiscreteDynamicsPhysicsWorld::detectAndResolveCollisions()
+{
+    auto candidatePairs = computeBroadphaseCandidatePairs();
+    if(!candidatePairs.empty())
+        printf("Candidate pairs: %zu\n", candidatePairs.size());
+}
+
+std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsPhysicsWorld::computeBroadphaseCandidatePairs()
+{
+    std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> candidatePairs;
+    for(size_t i = 0; i < collisionObjects.size(); ++i)
+    {
+        auto &firstCollisionObject = collisionObjects[i];
+        auto firstBoundingBox = firstCollisionObject->getWorldBoundingBoxWithMargin();
+        for(size_t j = i + 1; j < collisionObjects.size(); ++j)
+        {
+            auto &secondCollisionObject = collisionObjects[j];
+            auto secondBoundingBox = secondCollisionObject->getWorldBoundingBoxWithMargin();
+
+            if(firstBoundingBox.hasIntersectionWithBox(secondBoundingBox))
+                candidatePairs.push_back(std::make_pair(firstCollisionObject, secondCollisionObject));
+        }
+
+    }
+
+    return candidatePairs;
+}
+
+
 } // End of namespace Physics
 } // End of namespace Woden
