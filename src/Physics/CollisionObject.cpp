@@ -19,5 +19,14 @@ SceneGraph::SceneNodePtr CollisionObject::constructVisualizationSceneNode()
     return shapeNode;
 }
 
+void CollisionObject::resetNetForces()
+{
+}
+
+void CollisionObject::integrateMovement(Math::Scalar deltaTime)
+{
+    (void)deltaTime;
+}
+
 } // End of namespace Physics
 } // End of namespace Woden

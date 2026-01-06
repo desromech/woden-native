@@ -128,7 +128,7 @@ int Morph::runMainLoop()
         processEvents();
 
         auto newTime = Utility::getCurrentMilliseconds();
-        auto deltaTime = newTime - lastTime;
+        auto deltaTime = (newTime - lastTime)*0.001;
         for(auto &handleAndWindow : sdlWindowMap)
         {
             handleAndWindow.second->updateAndRender(deltaTime);

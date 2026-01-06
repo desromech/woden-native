@@ -25,8 +25,11 @@ class PhysicsWorld : public std::enable_shared_from_this<PhysicsWorld>
 public:
     void addCollisionObject(const CollisionObjectPtr &collisionObject);
 
+    virtual void update(Math::Scalar delta);
+
     SceneGraph::ScenePtr buildInteractiveScene();
 
+    Math::Vector3 gravity = Math::Vector3(0, -9.8, 0);
 protected:
     std::vector<CollisionObjectPtr> collisionObjects;
 };
@@ -34,7 +37,7 @@ protected:
 class DiscreteDynamicsPhysicsWorld : public PhysicsWorld
 {
 public:
-    Math::Vector3 gravity = Math::Vector3(0, -9.8, 0);
+    virtual void update(Math::Scalar delta) override;
 };
 
 } // End of namespace Physics

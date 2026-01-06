@@ -30,12 +30,22 @@ public:
         inverseMass = mass == 0 ? 0 : (1/newMass);
     }
 
+
     void computeMassDistribution();
+    
+    void resetNetForces();
+    void integrateMovement(Math::Scalar deltaTime) override;
 
 protected:
     Math::Scalar mass = 0;
     Math::Scalar inverseMass = 0;
     Math::Matrix3x3 inertiaTensor = Math::Matrix3x3::Zeros();
+
+    Math::Vector3 netForce = Math::Vector3::Zeros();
+    Math::Vector3 netTorque = Math::Vector3::Zeros();
+
+    Math::Vector3 linearVelocity;
+    Math::Vector3 angularVelocity;
 };
 
 } // End of namespace Physics

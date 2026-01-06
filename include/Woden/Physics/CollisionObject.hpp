@@ -49,6 +49,9 @@ public:
 
     virtual void transformChanged();
 
+    virtual void resetNetForces();
+    virtual void integrateMovement(Math::Scalar deltaTime);
+
     SceneGraph::SceneNodePtr constructVisualizationSceneNode();
 
     PhysicsWorldWeakPtr owner;

@@ -18,6 +18,11 @@ void PhysicsWorld::addCollisionObject(const CollisionObjectPtr &collisionObject)
     collisionObjects.push_back(collisionObject);
 }
 
+void PhysicsWorld::update(Math::Scalar delta)
+{
+    (void)delta;
+}
+
 SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
 {
     auto scene = SceneGraph::MakeScene();
@@ -44,9 +49,30 @@ SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
         }
     }
 
+    auto world = shared_from_this();
+    scene->updateFunction = [=](Math::Scalar deltaTime) {
+        // Update the world.
+        world->update(deltaTime);
+
+        // Update the scene nodes.
+        for(auto &pair : collisionObjectsToSceneNodeMap)
+        {
+            auto collisionObject = pair.first;
+            auto sceneNode = pair.second;
+            sceneNode->transform = collisionObject->getTransform().asTRSTransform3D();
+        }
+    };
 
     return scene;
 }
 
+void DiscreteDynamicsPhysicsWorld::update(Math::Scalar delta)
+{
+    for(auto &object : collisionObjects)
+        object->resetNetForces();
+
+    for(auto &object : collisionObjects)
+        object->integrateMovement(delta);
+}
 } // End of namespace Physics
 } // End of namespace Woden
