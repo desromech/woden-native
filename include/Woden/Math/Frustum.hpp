@@ -48,9 +48,9 @@ struct Frustum
 
     static Frustum MakePerspective(Scalar fovy, Scalar aspect, Scalar near, Scalar far)
     {
-        auto fovyRad = fovy *(M_PI/180.0) * 0.5;
-        auto top = near * tan(fovyRad);
-        auto right = top * aspect;
+        Scalar fovyRad = Scalar(fovy *(M_PI/180.0) * 0.5);
+        Scalar top = Scalar(near * tan(fovyRad));
+        Scalar right = top * aspect;
         return MakeFrustum(-right, right, -top, top, near, far);
     }
 

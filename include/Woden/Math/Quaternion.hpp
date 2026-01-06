@@ -31,38 +31,38 @@ struct Quaternion
     
     static Quaternion XRotation(Scalar angle)
     {
-        auto c = cos(angle*0.5);
-        auto s = sin(angle*0.5);
+        auto c = cos(Scalar(angle*0.5));
+        auto s = sin(Scalar(angle*0.5));
         return Quaternion(s, 0, 0, c);
     }
 
     static Quaternion YRotation(Scalar angle)
     {
-        auto c = cos(angle*0.5);
-        auto s = sin(angle*0.5);
+        auto c = cos(Scalar(angle*0.5));
+        auto s = sin(Scalar(angle*0.5));
         return Quaternion(0, s, 0, c);
     }
 
     static Quaternion ZRotation(Scalar angle)
     {
-        auto c = cos(angle*0.5);
-        auto s = sin(angle*0.5);
+        auto c = cos(Scalar(angle*0.5));
+        auto s = sin(Scalar(angle*0.5));
         return Quaternion(0, 0, s, c);
     }
 
     static Quaternion XRotationDegrees(Scalar angle)
     {
-        return XRotation(angle * M_PI / 180.0);
+        return XRotation(Scalar(angle * M_PI / 180.0));
     }
     
     static Quaternion YRotationDegrees(Scalar angle)
     {
-        return YRotation(angle * M_PI / 180.0);
+        return YRotation(Scalar(angle * M_PI / 180.0));
     }
     
     static Quaternion ZRotationDegrees(Scalar angle)
     {
-        return ZRotation(angle * M_PI / 180.0);
+        return ZRotation(Scalar(angle * M_PI / 180.0));
     }
 
     Quaternion conjugated() const
@@ -88,17 +88,17 @@ struct Quaternion
     Matrix3x3 asMatrix() const
     {
         return Matrix3x3(
-            1.0 - (2.0*j*j) - (2.0*k*k),
-            (2.0*i*j) - (2.0*k*r),
-            (2.0*i*k) + (2.0*j*r),
+            Scalar(1.0 - (2.0*j*j) - (2.0*k*k)),
+            Scalar((2.0*i*j) - (2.0*k*r)),
+            Scalar((2.0*i*k) + (2.0*j*r)),
 
-            (2.0*i*j) + (2.0*k*r),
-            1.0 - (2.0*i*i) - (2.0*k*k),
-            (2.0*j*k) - (2.0*i*r),
+            Scalar((2.0*i*j) + (2.0*k*r)),
+            Scalar(1.0 - (2.0*i*i) - (2.0*k*k)),
+            Scalar((2.0*j*k) - (2.0*i*r)),
 
-            (2.0*i*k) - (2.0*j*r),
-            (2.0*j*k) + (2.0*i*r),
-            1.0 - (2.0*i*i) - (2.0*j*j)
+            Scalar((2.0*i*k) - (2.0*j*r)),
+            Scalar((2.0*j*k) + (2.0*i*r)),
+            Scalar(1.0 - (2.0*i*i) - (2.0*j*j))
         );
     }
 

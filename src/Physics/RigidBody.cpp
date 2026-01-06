@@ -23,8 +23,8 @@ void RigidBody::integrateMovement(Math::Scalar deltaTime)
     
     // Integrate linear velocity
     auto linearAcceleration = owner.lock()->gravity + netForce*Math::Vector3(inverseMass);
-    linearVelocity += linearAcceleration*deltaTime;
-    setPosition(getPosition() + linearVelocity*deltaTime);
+    linearVelocity += linearAcceleration*Math::Vector3(deltaTime);
+    setPosition(getPosition() + linearVelocity*Math::Vector3(deltaTime));
 }
 
 }
