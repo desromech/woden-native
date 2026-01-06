@@ -23,6 +23,22 @@ public:
         return size == 0;
     }
 
+    bool containsOrigin()
+    {
+        if(!hasComputedClosest)
+            computeClosestToOrigin();
+        return closestPointToOrigin == Vector3::Zeros();
+    }
+
+    Vector3 getClosestPointToOrigin()
+    {
+        if(!hasComputedClosest)
+            computeClosestToOrigin();
+        return closestPointToOrigin;
+    }
+
+    void insertPoint(const Vector3 &point);
+    void insertPointWithFirstAndSecond(const Vector3 &point, const Vector3 &firstPoint, const Vector3 &secondPoint);
     void reduce();
 
     size_t size = 0;
@@ -32,8 +48,12 @@ public:
     std::array<Scalar, Capacity> barycentricCoordinates;
     std::array<bool, Capacity> usedPoints;
     
+private:
+    void computeClosestToOrigin();
+    void invalidateCache();
+
     bool hasComputedClosest = false;
-    bool containsOrigin = true;
+    Vector3 closestPointToOrigin;
 };
 
 } // End of namespace Math

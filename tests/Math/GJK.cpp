@@ -1,13 +1,37 @@
 #include "UnitTest++/UnitTest++.h"
 #include "Woden/Math/GJK.hpp"
 
+using namespace Woden::Math;
+
 SUITE(GJKVoronoiSimplexSolver)
 {
     TEST(Empty)
     {
-        auto solver = Woden::Math::GJKVoronoiSimplexSolver();
-        CHECK(solver.empty());
-        solver.reduce();
-        CHECK(solver.empty());
+        GJKVoronoiSimplexSolver simplex;
+        CHECK(simplex.empty());
+        simplex.reduce();
+        CHECK(simplex.empty());
+    }
+
+    TEST(SinglePoint)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(1, 0, 0));
+
+        CHECK_EQUAL(1, simplex.size);
+        CHECK_EQUAL(Vector3(1, 0, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(1, simplex.barycentricCoordinates[0]);
+        CHECK(!simplex.containsOrigin());
+    }
+
+    TEST(SinglePoint2)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(0, 0, 0));
+
+        CHECK_EQUAL(1, simplex.size);
+        CHECK_EQUAL(Vector3(0, 0, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(1, simplex.barycentricCoordinates[0]);
+        CHECK(simplex.containsOrigin());
     }
 }
