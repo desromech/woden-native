@@ -69,7 +69,7 @@ std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeConvexCollisionC
         contactPoint.secondPoint = simplex.getClosestPointToOriginInSecond();
         contactPoint.computeWorldContactPointAndDistances();
         result.push_back(contactPoint);
-        printf("Shallow penetration distance: %f| %f %f %f\n", shapeDistance, contactPoint.normal.x, contactPoint.normal.y, contactPoint.normal.z);
+        //printf("Shallow penetration distance: %f| %f %f %f\n", shapeDistance, contactPoint.normal.x, contactPoint.normal.y, contactPoint.normal.z);
     }
     else
     {
@@ -84,7 +84,7 @@ std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeConvexCollisionC
         contactPoint.firstPoint = deepContactSample.firstPoint;
         contactPoint.secondPoint = deepContactSample.secondPoint;
         contactPoint.computeWorldContactPointAndDistances();
-        printf("Deep penetration %f: %f %f %f\n", deepContactSample.distance, deepContactSample.normal.x, deepContactSample.normal.y, deepContactSample.normal.z);
+        //printf("Deep penetration %f: %f %f %f\n", deepContactSample.distance, deepContactSample.normal.x, deepContactSample.normal.y, deepContactSample.normal.z);
         result.push_back(contactPoint);
     }
 

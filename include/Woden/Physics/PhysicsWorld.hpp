@@ -54,6 +54,8 @@ protected:
     void resolveContactManifoldsCollisionsAndConstraints();
     void solveCollisionContactResponseList(const std::vector<ContactPoint> &contactList);
     void solveCollisionContactConstraintList(const std::vector<ContactPoint> &contactList);
+    void resolveContactCollisionResponse(const ContactPoint &contact);
+    void resolveContactConstraint(const ContactPoint &contact, Math::Scalar relaxationFactor);
 };
 
 } // End of namespace Physics

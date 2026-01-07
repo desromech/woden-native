@@ -38,5 +38,27 @@ bool CollisionObject::needsCollisionDetection()
     return false;
 }
 
+Math::Scalar CollisionObject::getMass() const
+{
+    return 0;
+}
+
+Math::Scalar CollisionObject::getInverseMass() const
+{
+    return 0;
+}
+
+void CollisionObject::applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection)
+{
+    (void)movement;
+    (void)relativePoint;
+    (void)normalDirection;
+}
+
+void CollisionObject::applyImpulse(Math::Vector3 impulse)
+{
+    (void)impulse;
+}
+
 } // End of namespace Physics
 } // End of namespace Woden

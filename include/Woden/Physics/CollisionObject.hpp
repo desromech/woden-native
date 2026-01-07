@@ -59,6 +59,11 @@ public:
 
     SceneGraph::SceneNodePtr constructVisualizationSceneNode();
 
+    virtual Math::Scalar getMass() const;
+    virtual Math::Scalar getInverseMass() const;
+    virtual void applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection);
+    virtual void applyImpulse(Math::Vector3 impulse);
+
     PhysicsWorldWeakPtr owner;
     CollisionShapePtr shape;
     

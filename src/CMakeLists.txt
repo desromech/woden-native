@@ -19,6 +19,7 @@ set(WodenEngine_Sources
     Physics/CollisionObject.cpp
     Physics/CollisionShape.cpp
     Physics/ContactManifold.cpp
+    Physics/ContactPoint.cpp
     Physics/PhysicsWorld.cpp
     Physics/RigidBody.cpp
 

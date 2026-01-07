@@ -32,5 +32,17 @@ bool RigidBody::needsCollisionDetection()
     return mass != 0;
 }
 
+void RigidBody::applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection)
+{
+    (void)relativePoint;
+    auto linearMovement = movement *inverseMass;
+    setPosition(getPosition() + normalDirection*linearMovement);
+}
+
+void RigidBody::applyImpulse(Math::Vector3 impulse)
+{
+    linearVelocity += impulse*inverseMass;
+}
+
 }
 }

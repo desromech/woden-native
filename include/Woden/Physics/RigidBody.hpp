@@ -14,12 +14,12 @@ class RigidBody : public CollisionObject
 {
 public:
 
-    Math::Scalar getMass() const
+    virtual Math::Scalar getMass() const override
     {
         return mass;
     }
 
-    Math::Scalar getInverseMass() const
+    virtual Math::Scalar getInverseMass() const override
     {
         return inverseMass;
     }
@@ -37,6 +37,8 @@ public:
     void integrateMovement(Math::Scalar deltaTime) override;
     
     bool needsCollisionDetection() override;
+    virtual void applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection) override;
+    virtual void applyImpulse(Math::Vector3 impulse);
 
 protected:
     Math::Scalar mass = 0;
@@ -45,9 +47,6 @@ protected:
 
     Math::Vector3 netForce = Math::Vector3::Zeros();
     Math::Vector3 netTorque = Math::Vector3::Zeros();
-
-    Math::Vector3 linearVelocity;
-    Math::Vector3 angularVelocity;
 };
 
 } // End of namespace Physics

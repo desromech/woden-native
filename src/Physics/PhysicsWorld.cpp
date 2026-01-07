@@ -153,10 +153,63 @@ void DiscreteDynamicsPhysicsWorld::resolveContactManifoldsCollisionsAndConstrain
 
 void DiscreteDynamicsPhysicsWorld::solveCollisionContactResponseList(const std::vector<ContactPoint> &contactList)
 {
+    for(auto &contact : contactList)
+        resolveContactCollisionResponse(contact);
+
+}
+
+void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(const ContactPoint &contact)
+{
+	auto firstCollisionObject = contact.firstObject;
+	auto secondCollisionObject = contact.secondObject;
+	
+	auto contactNormal = contact.normal;
+
+    auto firstContactVelocity = firstCollisionObject->linearVelocity;
+	auto secondContactVelocity = secondCollisionObject->linearVelocity;
+
+    auto relativeVelocity = firstContactVelocity - secondContactVelocity;
+    auto separatingSpeed = relativeVelocity.dot(contactNormal);
+    if(separatingSpeed >= 0)
+        return;
+
+    auto restitutionCoefficient = Math::sqrt(firstCollisionObject->restitutionCoefficient*secondCollisionObject->restitutionCoefficient);
+    auto newSeparatingSpeed = -separatingSpeed*restitutionCoefficient;
+    auto deltaVelocity = newSeparatingSpeed - separatingSpeed;
+
+    auto totalInverseMass = firstCollisionObject->getInverseMass() + secondCollisionObject->getInverseMass();
+    if(totalInverseMass <= 0)
+        return;
+
+    auto impulse = deltaVelocity / totalInverseMass;
+    auto impulsePerInverseMass = contactNormal*impulse;
+    firstCollisionObject->applyImpulse(impulsePerInverseMass);
+    secondCollisionObject->applyImpulse(impulsePerInverseMass);
 }
 
 void DiscreteDynamicsPhysicsWorld::solveCollisionContactConstraintList(const std::vector<ContactPoint> &contactList)
 {
+    Math::Scalar relaxationFactor = 1;
+    for(auto &contact : contactList)
+        resolveContactConstraint(contact, relaxationFactor);
+}
+
+void DiscreteDynamicsPhysicsWorld::resolveContactConstraint(const ContactPoint &contact, Math::Scalar relaxationFactor)
+{
+    auto penetrationDistance = contact.penetrationDistance;
+    if(penetrationDistance < 0)
+        return;
+    
+    auto &firstCollisionObject = contact.firstObject;
+    auto &secondCollisionObject = contact.secondObject;
+
+    auto inverseInertia = contact.inverseLinearInertia();
+    if(inverseInertia <= 0)
+        return;
+    
+    auto penetrationDelta = penetrationDistance*relaxationFactor/inverseInertia;
+    firstCollisionObject->applyMovementAtRelativePoint(penetrationDelta, contact.getRelativeFirstPoint(), contact.normal);
+    secondCollisionObject->applyMovementAtRelativePoint(penetrationDelta, contact.getRelativeSecondPoint(), -contact.normal);
 }
 
 } // End of namespace Physics

@@ -25,6 +25,12 @@ struct ContactPoint
     CollisionObjectPtr firstObject;
     CollisionObjectPtr secondObject;
 
+    Math::Scalar inverseInertia() const;
+    Math::Scalar inverseLinearInertia() const;
+
+    Math::Vector3 getRelativeFirstPoint() const;
+    Math::Vector3 getRelativeSecondPoint() const;
+
     void computeWorldContactPointAndDistances()
     {
         penetrationDistance = requiredSeparation + (secondPoint - firstPoint).dot(normal);
