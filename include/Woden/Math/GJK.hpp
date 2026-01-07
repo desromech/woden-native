@@ -59,6 +59,62 @@ private:
     Vector3 closestPointToOrigin;
 };
 
+template<typename FS, typename SS>
+GJKVoronoiSimplexSolver computeGJKSimplex(FS&& firstSupportFunction, SS&& secondSupportFunction, const Vector3 &startingDirectionHint)
+{
+    const int MaxNumberOfIterations = 32;
+    const Scalar Epsilon = 0.00001;
+    GJKVoronoiSimplexSolver simplex;
+
+    auto nextDirection = startingDirectionHint;
+	auto firstSupportPoint = firstSupportFunction(nextDirection);
+	auto secondSupportPoint = secondSupportFunction(-nextDirection);
+    auto lastPoint = firstSupportPoint - secondSupportPoint;
+	simplex.insertPointWithFirstAndSecond(lastPoint, firstSupportPoint, secondSupportPoint);
+	nextDirection = -lastPoint;
+
+    for(int remainingIterations = MaxNumberOfIterations; remainingIterations > 0; --remainingIterations)
+    {
+		firstSupportPoint = firstSupportFunction(nextDirection);
+		secondSupportPoint = secondSupportFunction(-nextDirection);
+
+        auto nextPoint = firstSupportPoint - secondSupportPoint;
+
+        // Are we getting closer to the origin?
+		auto delta = nextPoint - lastPoint;
+		if (delta.dot(nextDirection) <= Epsilon)
+            return simplex;
+
+		simplex.insertPointWithFirstAndSecond(nextPoint, firstSupportPoint, secondSupportPoint);
+		lastPoint = nextPoint;
+
+		// Do we contain the origin?
+		if(simplex.containsOrigin())
+            return simplex;
+
+		// Advance in direction to the origin.
+		nextDirection = -simplex.getClosestPointToOrigin();
+		
+        // Reduce the simplex
+		simplex.reduce();
+    }
+
+    return simplex;
+}
+
+template<typename FS, typename SS>
+GJKVoronoiSimplexSolver computeGJKSimplex(FS&& firstSupportFunction, SS&& secondSupportFunction)
+{
+    return computeGJKSimplex(firstSupportFunction, secondSupportFunction, Vector3(1, 0, 0));
+}
+
+template<typename FS, typename SS>
+Scalar computeGJKDistance(FS&& firstSupportFunction, SS&& secondSupportFunction)
+{
+    return computeGJKSimplex(firstSupportFunction, secondSupportFunction).getClosestPointToOrigin().length();
+}
+
+
 } // End of namespace Math
 } // End of namespace Woden
 

@@ -1,5 +1,7 @@
 #include "UnitTest++/UnitTest++.h"
 #include "Woden/Math/GJK.hpp"
+#include "Woden/Math/Sphere.hpp"
+#include "Woden/Math/AABox.hpp"
 
 using namespace Woden::Math;
 
@@ -380,5 +382,21 @@ SUITE(GJKVoronoiSimplexSolver)
         CHECK_EQUAL(size_t(4), simplex.size);
         CHECK_EQUAL(Vector3(0,0, 0), simplex.getClosestPointToOrigin());
         CHECK(simplex.containsOrigin());
+    }
+}
+
+SUITE(GJK)
+{
+    TEST(SphereSphereDistance)
+    {
+        auto firstShape = Sphere(Vector3(-2, 0, 0), 1);
+        auto secondShape = Sphere(Vector3(2, 0, 0), 1);
+        auto distance = firstShape.computeDistanceWithSphere(secondShape);
+        auto jgkDistance = computeGJKDistance(
+            [&](const Vector3 &D){ return firstShape.support(D); },
+            [&](const Vector3 &D){ return secondShape.support(D); }
+        );
+
+        CHECK(closeTo(distance, jgkDistance));
     }
 }

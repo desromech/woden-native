@@ -33,6 +33,11 @@ public:
         return (point - center).normalized();
     }
 
+    Scalar computeDistanceWithSphere(const Sphere &o) const
+    {
+        return max((center - o.center).length() - (radius + o.radius), 0);
+    }
+
     RayCastingResult intersectionsWithRay(const Ray3D &ray) const
     {
         // Ray sphere intersection formula from: https://viclw17.github.io/2018/07/16/raytracing-ray-sphere-intersection/
@@ -74,6 +79,11 @@ public:
         }
 
         return result;
+    }
+
+    Vector3 support(const Vector3 &D) const
+    {
+        return center + D.normalized()*radius;
     }
 
     Vector3 center;
