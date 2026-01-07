@@ -82,9 +82,15 @@ void GJKVoronoiSimplexSolver::computeClosestToOrigin()
     }
 
     // Tetrahedron
-    assert(size == 4);
+    if(size == 4)
+    {
+        computeClosestToTetrahedron();
+        hasComputedClosest = true;
+        return;
+    }
+    
+    // Unsupported case.
     abort();
-    hasComputedClosest = true;
 }
 
 void GJKVoronoiSimplexSolver::computeClosestToLine()
@@ -246,6 +252,180 @@ void GJKVoronoiSimplexSolver::computeClosestToTriangle()
     usedPoints[2] = true;
 
     closestPointToOrigin = (a*u) + (b*v) + (c*w);
+}
+
+Scalar pointSideOfPlane(Vector3 p, Vector3 p4, /*sideOfPlane*/ Vector3 p1, Vector3 p2, Vector3 p3)
+{
+	auto u = p2 - p1;
+	auto v = p3 - p1;
+	auto n = u.cross(v);
+	auto d = p1.dot(n);
+	auto signP = Math::sign(((p.dot(n)) - d));
+	auto signP4 = Math::sign(((p4.dot(n)) - d));
+	return signP*signP4;
+}
+
+void GJKVoronoiSimplexSolver::computeClosestToTetrahedron()
+{
+	auto a = points[0];
+	auto b = points[1];
+	auto c = points[2];
+	auto d = points[3];
+	auto p = Vector3::Zeros();
+	
+	auto abcSide = pointSideOfPlane(p, d, /*sideOfPlane*/ a, b, c);
+	auto abdSide = pointSideOfPlane(p, c, /*sideOfPlane*/ a, b, d);
+	auto acdSide = pointSideOfPlane(p, b, /*sideOfPlane*/ a, c, d);
+	auto bcdSide = pointSideOfPlane(p, a, /*sideOfPlane*/ b, c, d);
+
+	// Is inside?
+	if(abcSide >= 0 && abdSide >= 0 && acdSide >= 0 && bcdSide >= 0)
+    {
+        closestPointToOrigin = Vector3::Zeros();
+
+        barycentricCoordinates[0] = 1;
+        barycentricCoordinates[1] = 1;
+        barycentricCoordinates[2] = 1;
+        barycentricCoordinates[3] = 1;
+
+        usedPoints[0] = true;
+        usedPoints[1] = true;
+        usedPoints[2] = true;
+        usedPoints[3] = true;
+		return;
+    }
+
+    Scalar bestResult = INFINITY;
+
+	if(abcSide <= 0)
+    {
+        GJKVoronoiSimplexSolver subSimplex;
+        subSimplex.insertPoint(a);
+        subSimplex.insertPoint(b);
+        subSimplex.insertPoint(c);
+        subSimplex.computeClosestToTriangle();
+
+		auto newResult = subSimplex.closestPointToOrigin.length2();
+		if(newResult < bestResult)
+        {
+			bestResult = newResult;
+			auto &subBarycentric = subSimplex.barycentricCoordinates;
+			closestPointToOrigin = subSimplex.closestPointToOrigin;
+			
+            barycentricCoordinates[0] = subBarycentric[0];
+            barycentricCoordinates[1] = subBarycentric[1];
+            barycentricCoordinates[2] = subBarycentric[2];
+            barycentricCoordinates[3] = 0;
+
+            usedPoints[0] = true;
+            usedPoints[1] = true;
+            usedPoints[2] = true;
+            usedPoints[3] = false;
+        }
+    }
+
+	if(abdSide <= 0)
+    {
+        GJKVoronoiSimplexSolver subSimplex;
+        subSimplex.insertPoint(a);
+        subSimplex.insertPoint(b);
+        subSimplex.insertPoint(d);
+        subSimplex.computeClosestToTriangle();
+
+		auto newResult = subSimplex.closestPointToOrigin.length2();
+		if(newResult < bestResult)
+        {
+			bestResult = newResult;
+			auto &subBarycentric = subSimplex.barycentricCoordinates;
+			closestPointToOrigin = subSimplex.closestPointToOrigin;
+			
+            barycentricCoordinates[0] = subBarycentric[0];
+            barycentricCoordinates[1] = subBarycentric[1];
+            barycentricCoordinates[2] = 0;
+            barycentricCoordinates[3] = subBarycentric[2];
+
+            usedPoints[0] = true;
+            usedPoints[1] = true;
+            usedPoints[2] = false;
+            usedPoints[3] = true;
+        }
+    }
+    
+	if(acdSide <= 0)
+    {
+        GJKVoronoiSimplexSolver subSimplex;
+        subSimplex.insertPoint(a);
+        subSimplex.insertPoint(c);
+        subSimplex.insertPoint(d);
+        subSimplex.computeClosestToTriangle();
+
+		auto newResult = subSimplex.closestPointToOrigin.length2();
+		if(newResult < bestResult)
+        {
+			bestResult = newResult;
+			auto &subBarycentric = subSimplex.barycentricCoordinates;
+			closestPointToOrigin = subSimplex.closestPointToOrigin;
+			
+            barycentricCoordinates[0] = subBarycentric[0];
+            barycentricCoordinates[1] = 0;
+            barycentricCoordinates[2] = subBarycentric[1];
+            barycentricCoordinates[3] = subBarycentric[2];
+
+            usedPoints[0] = true;
+            usedPoints[1] = false;
+            usedPoints[2] = true;
+            usedPoints[3] = true;
+        }
+    }
+    
+    /*
+
+	bcdSide <= 0 ifTrue: [ 
+		subSimplex := self class new
+			points: { b . c . d };
+			computeClosestToTriangle.
+		newResult := subSimplex closestPointToOrigin length2.
+		newResult < bestResult ifTrue: [
+			bestResult := newResult.
+			subBarycentric := subSimplex barycentricCoordinates.
+			closestPointToOrigin := subSimplex closestPointToOrigin.
+			barycentricCoordinates := {0 . subBarycentric first . subBarycentric second . subBarycentric third}.
+			usedPoints := #(false true true true).
+		]
+	].	
+*/
+	if(bcdSide <= 0)
+    {
+        GJKVoronoiSimplexSolver subSimplex;
+        subSimplex.insertPoint(b);
+        subSimplex.insertPoint(c);
+        subSimplex.insertPoint(d);
+        subSimplex.computeClosestToTriangle();
+
+		auto newResult = subSimplex.closestPointToOrigin.length2();
+		if(newResult < bestResult)
+        {
+			bestResult = newResult;
+			auto &subBarycentric = subSimplex.barycentricCoordinates;
+			closestPointToOrigin = subSimplex.closestPointToOrigin;
+			
+            barycentricCoordinates[0] = 0;
+            barycentricCoordinates[1] = subBarycentric[0];
+            barycentricCoordinates[2] = subBarycentric[1];
+            barycentricCoordinates[3] = subBarycentric[2];
+
+            usedPoints[0] = false;
+            usedPoints[1] = true;
+            usedPoints[2] = true;
+            usedPoints[3] = true;
+        }
+    }
+
+    if(bestResult == INFINITY)
+    {
+        fprintf(stderr, "Unsupported case.\n");
+        abort();
+    }
 }
 
 void GJKVoronoiSimplexSolver::invalidateCache()

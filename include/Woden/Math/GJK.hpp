@@ -52,6 +52,7 @@ private:
     void computeClosestToOrigin();
     void computeClosestToLine();
     void computeClosestToTriangle();
+    void computeClosestToTetrahedron();
     void invalidateCache();
 
     bool hasComputedClosest = false;

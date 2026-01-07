@@ -288,4 +288,97 @@ SUITE(GJKVoronoiSimplexSolver)
         simplex.reduce();
         CHECK_EQUAL(size_t(3), simplex.size);
     }
+    
+    TEST(TetrahedronABC)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(-1, -1, 1));
+        simplex.insertPoint(Vector3(1, -1,  1));
+        simplex.insertPoint(Vector3(0, -1, -1));
+        simplex.insertPoint(Vector3(0, -2,  0));
+
+        CHECK_EQUAL(size_t(4), simplex.size);
+        CHECK_EQUAL(Vector3(0,-1, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(0.25, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(0.25, simplex.barycentricCoordinates[1]);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[2]);
+        CHECK_EQUAL(0.0, simplex.barycentricCoordinates[3]);
+        CHECK(!simplex.containsOrigin());
+
+        simplex.reduce();
+        CHECK_EQUAL(size_t(3), simplex.size);
+    }
+    
+    TEST(TetrahedronABD)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(-1, -1, 1));
+        simplex.insertPoint(Vector3(1, -1,  1));
+        simplex.insertPoint(Vector3(0, -2, 0));
+        simplex.insertPoint(Vector3(0, -1,  -1));
+
+        CHECK_EQUAL(size_t(4), simplex.size);
+        CHECK_EQUAL(Vector3(0,-1, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(0.25, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(0.25, simplex.barycentricCoordinates[1]);
+        CHECK_EQUAL(0.0, simplex.barycentricCoordinates[2]);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[3]);
+        CHECK(!simplex.containsOrigin());
+
+        simplex.reduce();
+        CHECK_EQUAL(size_t(3), simplex.size);
+    }
+    
+    TEST(TetrahedronACD)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(-1, -1, 1));
+        simplex.insertPoint(Vector3(1, -2, 0));
+        simplex.insertPoint(Vector3(1, -1, 1));
+        simplex.insertPoint(Vector3(0, -1, -1));
+
+        CHECK_EQUAL(size_t(4), simplex.size);
+        CHECK_EQUAL(Vector3(0,-1, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(0.25, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(0.0, simplex.barycentricCoordinates[1]);
+        CHECK_EQUAL(0.25, simplex.barycentricCoordinates[2]);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[3]);
+        CHECK(!simplex.containsOrigin());
+
+        simplex.reduce();
+        CHECK_EQUAL(size_t(3), simplex.size);
+    }
+    
+    TEST(TetrahedronBCD)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(0, -2, 0));
+        simplex.insertPoint(Vector3(-1, -1, 1));
+        simplex.insertPoint(Vector3(1, -1, 1));
+        simplex.insertPoint(Vector3(0, -1, -1));
+
+        CHECK_EQUAL(size_t(4), simplex.size);
+        CHECK_EQUAL(Vector3(0,-1, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(0.0, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(0.25, simplex.barycentricCoordinates[1]);
+        CHECK_EQUAL(0.25, simplex.barycentricCoordinates[2]);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[3]);
+        CHECK(!simplex.containsOrigin());
+
+        simplex.reduce();
+        CHECK_EQUAL(size_t(3), simplex.size);
+    }
+    
+    TEST(TetrahedronInside)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(-1, -1, 1));
+        simplex.insertPoint(Vector3( 1, -1, 1));
+        simplex.insertPoint(Vector3( 0, -1, -1));
+        simplex.insertPoint(Vector3( 0,  1, 0));
+
+        CHECK_EQUAL(size_t(4), simplex.size);
+        CHECK_EQUAL(Vector3(0,0, 0), simplex.getClosestPointToOrigin());
+        CHECK(simplex.containsOrigin());
+    }
 }
