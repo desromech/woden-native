@@ -158,8 +158,10 @@ void DiscreteDynamicsPhysicsWorld::solveCollisionContactResponseList(const std::
 
 }
 
-void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(const ContactPoint &contact)
+void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint contact)
 {
+    contact.update();
+
 	auto firstCollisionObject = contact.firstObject;
 	auto secondCollisionObject = contact.secondObject;
 	
@@ -194,8 +196,9 @@ void DiscreteDynamicsPhysicsWorld::solveCollisionContactConstraintList(const std
         resolveContactConstraint(contact, relaxationFactor);
 }
 
-void DiscreteDynamicsPhysicsWorld::resolveContactConstraint(const ContactPoint &contact, Math::Scalar relaxationFactor)
+void DiscreteDynamicsPhysicsWorld::resolveContactConstraint(ContactPoint contact, Math::Scalar relaxationFactor)
 {
+    contact.update();
     auto penetrationDistance = contact.penetrationDistance;
     if(penetrationDistance < 0)
         return;
