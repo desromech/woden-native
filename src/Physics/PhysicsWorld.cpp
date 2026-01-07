@@ -91,6 +91,7 @@ void DiscreteDynamicsPhysicsWorld::detectAndResolveCollisions()
 {
     auto candidatePairs = computeBroadphaseCandidatePairs();
     computeNarrowPhase(candidatePairs);
+    resolveContactManifoldsCollisionsAndConstraints();
 }
 
 std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsPhysicsWorld::computeBroadphaseCandidatePairs()
@@ -116,9 +117,10 @@ std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsP
 
 void DiscreteDynamicsPhysicsWorld::computeNarrowPhase(const std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> &broadphaseCandidates)
 {
+    contactManifoldCache.beginEpoch();
     for(auto &pair : broadphaseCandidates)
         detectNarrowPhaseCollisionOf(pair.first, pair.second);
-
+    contactManifoldCache.endEpoch();
 }
 
 void DiscreteDynamicsPhysicsWorld::detectNarrowPhaseCollisionOf(const CollisionObjectPtr &first, const CollisionObjectPtr &second)
@@ -133,7 +135,11 @@ void DiscreteDynamicsPhysicsWorld::detectNarrowPhaseCollisionOf(const CollisionO
 
     std::vector<ContactPoint> contactPoints = firstShape->detectAndComputeCollisionContactPoints(firstTransform, secondShape, secondTransform, separatingAxisHint);
     if(!contactPoints.empty())
-        printf("Narrow phase contact points: %zu\n", contactPoints.size());
+        contactManifoldCache.addContactPoints(contactPoints, first, second);
+}
+
+void DiscreteDynamicsPhysicsWorld::resolveContactManifoldsCollisionsAndConstraints()
+{
 }
 
 } // End of namespace Physics

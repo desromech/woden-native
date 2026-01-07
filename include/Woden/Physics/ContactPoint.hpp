@@ -17,6 +17,12 @@ struct ContactPoint
     Math::Scalar requiredSeparation = 0;
     Math::Vector3 firstPoint;
     Math::Vector3 secondPoint;
+    Math::Scalar penetrationDistance = 0;
+    
+    void computeWorldContactPointAndDistances()
+    {
+        penetrationDistance = requiredSeparation + (secondPoint - firstPoint).dot(normal);
+    }
 
     void flip()
     {
