@@ -51,6 +51,7 @@ public:
 private:
     void computeClosestToOrigin();
     void computeClosestToLine();
+    void computeClosestToTriangle();
     void invalidateCache();
 
     bool hasComputedClosest = false;
