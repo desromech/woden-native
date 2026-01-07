@@ -50,6 +50,7 @@ public:
     
 private:
     void computeClosestToOrigin();
+    void computeClosestToLine();
     void invalidateCache();
 
     bool hasComputedClosest = false;

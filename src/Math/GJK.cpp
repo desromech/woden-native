@@ -22,9 +22,20 @@ void GJKVoronoiSimplexSolver::insertPointWithFirstAndSecond(const Vector3 &point
 
 void GJKVoronoiSimplexSolver::reduce()
 {
+    if(!hasComputedClosest)
+        computeClosestToOrigin();
+
     // Single point or nothing. There is nothing to reduce
     if(size <= 1)
         return;
+
+    size_t usedPointCoint = 0;
+    for(size_t i = 0; i < size; ++i)
+    {
+        if(usedPoints[i])
+            ++usedPointCoint;
+    }
+
     // TODO: Implement this
 }
 
@@ -47,11 +58,9 @@ void GJKVoronoiSimplexSolver::computeClosestToOrigin()
         return;
     }
 
-    // Segment
+    // Line
     if(size == 2)
-    {
-        abort();
-    }
+        return computeClosestToLine();
 
     // Triangle
     if(size == 3)
@@ -62,6 +71,42 @@ void GJKVoronoiSimplexSolver::computeClosestToOrigin()
     assert(size == 4);
     abort();
 }
+
+void GJKVoronoiSimplexSolver::computeClosestToLine()
+{
+    auto from = points[0];
+    auto to = points[1];
+
+    auto delta = to - from;
+    auto lambda = (Vector3::Zeros() - from).dot(delta);
+    if (lambda <= 0)
+    {
+        barycentricCoordinates[0] = 1;
+        barycentricCoordinates[1] = 0;
+        usedPoints[0] = true;
+        usedPoints[1] = false;
+        closestPointToOrigin = from;
+        return;
+    }
+
+    lambda = lambda / delta.length2();
+    if(lambda >= 1)
+    {
+        barycentricCoordinates[0] = 0;
+        barycentricCoordinates[1] = 1;
+        usedPoints[0] = false;
+        usedPoints[1] = true;
+        closestPointToOrigin = to;
+        return;
+    }
+
+    closestPointToOrigin = from + (delta*lambda);
+    barycentricCoordinates[0] = 1 - lambda;
+    barycentricCoordinates[1] = lambda;
+    usedPoints[0] = true;
+    usedPoints[1] = true;
+}
+
 void GJKVoronoiSimplexSolver::invalidateCache()
 {
     hasComputedClosest = false;
