@@ -33,10 +33,16 @@ void GJKVoronoiSimplexSolver::reduce()
     for(size_t i = 0; i < size; ++i)
     {
         if(usedPoints[i])
+        {
+            points[usedPointCoint] = points[i];
+            firstPoints[usedPointCoint]  = firstPoints[i];
+            secondPoints[usedPointCoint] = secondPoints[i];
+            usedPoints[usedPointCoint]   = usedPoints[i];
             ++usedPointCoint;
+        }
     }
 
-    // TODO: Implement this
+    size = usedPointCoint;
 }
 
 void GJKVoronoiSimplexSolver::computeClosestToOrigin()
