@@ -27,5 +27,10 @@ void RigidBody::integrateMovement(Math::Scalar deltaTime)
     setPosition(getPosition() + linearVelocity*Math::Vector3(deltaTime));
 }
 
+bool RigidBody::needsCollisionDetection()
+{
+    return mass != 0;
+}
+
 }
 }

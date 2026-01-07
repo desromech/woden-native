@@ -33,8 +33,10 @@ public:
 
     void computeMassDistribution();
     
-    void resetNetForces();
+    void resetNetForces() override;
     void integrateMovement(Math::Scalar deltaTime) override;
+    
+    bool needsCollisionDetection() override;
 
 protected:
     Math::Scalar mass = 0;

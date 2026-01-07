@@ -33,5 +33,10 @@ void CollisionObject::integrateMovement(Math::Scalar deltaTime)
     (void)deltaTime;
 }
 
+bool CollisionObject::needsCollisionDetection()
+{
+    return false;
+}
+
 } // End of namespace Physics
 } // End of namespace Woden

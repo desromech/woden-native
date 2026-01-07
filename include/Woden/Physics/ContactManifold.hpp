@@ -11,7 +11,6 @@ namespace Woden
 {
 namespace Physics
 {
-typedef std::shared_ptr<class CollisionObject> CollisionObjectPtr;
 typedef std::shared_ptr<struct ContactManifold> ContactManifoldPtr;
 
 /**
@@ -34,7 +33,7 @@ class ContactManifoldCache
 public:
     void beginEpoch();
     void endEpoch();
-    void addContactPoints(const std::vector<ContactPoint> contacts, const CollisionObjectPtr &first, const CollisionObjectPtr &second);
+    void addContactPoints(const std::vector<ContactPoint> &contacts, const CollisionObjectPtr &first, const CollisionObjectPtr &second);
 
     Math::Vector3 getLastSeparatingAxis(const CollisionObjectPtr &first, const CollisionObjectPtr &second);
 

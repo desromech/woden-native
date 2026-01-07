@@ -106,6 +106,10 @@ std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsP
             auto &secondCollisionObject = collisionObjects[j];
             auto secondBoundingBox = secondCollisionObject->getWorldBoundingBoxWithMargin();
 
+            // Filter objects that do not need collision detection.
+            if(!firstCollisionObject->needsCollisionDetection() && !secondCollisionObject->needsCollisionDetection())
+                continue;
+
             if(firstBoundingBox.hasIntersectionWithBox(secondBoundingBox))
                 candidatePairs.push_back(std::make_pair(firstCollisionObject, secondCollisionObject));
         }
@@ -139,6 +143,19 @@ void DiscreteDynamicsPhysicsWorld::detectNarrowPhaseCollisionOf(const CollisionO
 }
 
 void DiscreteDynamicsPhysicsWorld::resolveContactManifoldsCollisionsAndConstraints()
+{
+    for(auto &manifold : contactManifoldCache.manifolds)
+    {
+        solveCollisionContactResponseList(manifold->contacts);
+        solveCollisionContactConstraintList(manifold->contacts);
+    }
+}
+
+void DiscreteDynamicsPhysicsWorld::solveCollisionContactResponseList(const std::vector<ContactPoint> &contactList)
+{
+}
+
+void DiscreteDynamicsPhysicsWorld::solveCollisionContactConstraintList(const std::vector<ContactPoint> &contactList)
 {
 }
 

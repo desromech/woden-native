@@ -55,6 +55,8 @@ public:
     virtual void resetNetForces();
     virtual void integrateMovement(Math::Scalar deltaTime);
 
+    virtual bool needsCollisionDetection();
+
     SceneGraph::SceneNodePtr constructVisualizationSceneNode();
 
     PhysicsWorldWeakPtr owner;
