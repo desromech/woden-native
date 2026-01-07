@@ -377,23 +377,7 @@ void GJKVoronoiSimplexSolver::computeClosestToTetrahedron()
             usedPoints[3] = true;
         }
     }
-    
-    /*
 
-	bcdSide <= 0 ifTrue: [ 
-		subSimplex := self class new
-			points: { b . c . d };
-			computeClosestToTriangle.
-		newResult := subSimplex closestPointToOrigin length2.
-		newResult < bestResult ifTrue: [
-			bestResult := newResult.
-			subBarycentric := subSimplex barycentricCoordinates.
-			closestPointToOrigin := subSimplex closestPointToOrigin.
-			barycentricCoordinates := {0 . subBarycentric first . subBarycentric second . subBarycentric third}.
-			usedPoints := #(false true true true).
-		]
-	].	
-*/
 	if(bcdSide <= 0)
     {
         GJKVoronoiSimplexSolver subSimplex;
