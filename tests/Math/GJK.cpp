@@ -18,7 +18,7 @@ SUITE(GJKVoronoiSimplexSolver)
         GJKVoronoiSimplexSolver simplex;
         simplex.insertPoint(Vector3(1, 0, 0));
 
-        CHECK_EQUAL(1, simplex.size);
+        CHECK_EQUAL(size_t(1), simplex.size);
         CHECK_EQUAL(Vector3(1, 0, 0), simplex.getClosestPointToOrigin());
         CHECK_EQUAL(1, simplex.barycentricCoordinates[0]);
         CHECK(!simplex.containsOrigin());
@@ -29,7 +29,7 @@ SUITE(GJKVoronoiSimplexSolver)
         GJKVoronoiSimplexSolver simplex;
         simplex.insertPoint(Vector3(0, 0, 0));
 
-        CHECK_EQUAL(1, simplex.size);
+        CHECK_EQUAL(size_t(1), simplex.size);
         CHECK_EQUAL(Vector3(0, 0, 0), simplex.getClosestPointToOrigin());
         CHECK_EQUAL(1, simplex.barycentricCoordinates[0]);
         CHECK(simplex.containsOrigin());
@@ -41,15 +41,97 @@ SUITE(GJKVoronoiSimplexSolver)
         simplex.insertPoint(Vector3(1, 0, 0));
         simplex.insertPoint(Vector3(2, 0, 0));
 
-        CHECK_EQUAL(2, simplex.size);
+        CHECK_EQUAL(size_t(2), simplex.size);
         CHECK_EQUAL(Vector3(1, 0, 0), simplex.getClosestPointToOrigin());
         CHECK_EQUAL(1, simplex.barycentricCoordinates[0]);
         CHECK_EQUAL(0, simplex.barycentricCoordinates[1]);
         CHECK(!simplex.containsOrigin());
 
         simplex.reduce();
-        CHECK_EQUAL(1, simplex.size);
+        CHECK_EQUAL(size_t(1), simplex.size);
         CHECK_EQUAL(Vector3(1, 0, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(1, simplex.barycentricCoordinates[0]);
+    }
+
+    TEST(LineInside)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(-1, 0, 0));
+        simplex.insertPoint(Vector3(1, 0, 0));
+
+        CHECK_EQUAL(size_t(2), simplex.size);
+        CHECK_EQUAL(Vector3(0, 0, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[1]);
+        CHECK(simplex.containsOrigin());
+    }
+
+    TEST(LineInside2)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(1, 0, 0));
+        simplex.insertPoint(Vector3(-1, 0, 0));
+
+        CHECK_EQUAL(size_t(2), simplex.size);
+        CHECK_EQUAL(Vector3(0, 0, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[1]);
+        CHECK(simplex.containsOrigin());
+    }
+
+    TEST(LineMiddle)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(-1, 1, 0));
+        simplex.insertPoint(Vector3(1, 1, 0));
+
+        CHECK_EQUAL(size_t(2), simplex.size);
+        CHECK_EQUAL(Vector3(0, 1, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[1]);
+        CHECK(!simplex.containsOrigin());
+
+        simplex.reduce();
+
+        CHECK_EQUAL(size_t(2), simplex.size);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[1]);
+    }
+
+    TEST(LineMiddle2)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(1, 1, 0));
+        simplex.insertPoint(Vector3(-1, 1, 0));
+
+        CHECK_EQUAL(size_t(2), simplex.size);
+        CHECK_EQUAL(Vector3(0, 1, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[1]);
+        CHECK(!simplex.containsOrigin());
+
+        simplex.reduce();
+
+        CHECK_EQUAL(size_t(2), simplex.size);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(0.5, simplex.barycentricCoordinates[1]);
+    }
+
+    TEST(LineSecond)
+    {
+        GJKVoronoiSimplexSolver simplex;
+        simplex.insertPoint(Vector3(-2, 0, 0));
+        simplex.insertPoint(Vector3(-1, 0, 0));
+
+        CHECK_EQUAL(size_t(2), simplex.size);
+        CHECK_EQUAL(Vector3(-1, 0, 0), simplex.getClosestPointToOrigin());
+        CHECK_EQUAL(0, simplex.barycentricCoordinates[0]);
+        CHECK_EQUAL(1, simplex.barycentricCoordinates[1]);
+        CHECK(!simplex.containsOrigin());
+
+        simplex.reduce();
+        CHECK_EQUAL(size_t(1), simplex.size);
+        CHECK_EQUAL(Vector3(-1, 0, 0), simplex.getClosestPointToOrigin());
         CHECK_EQUAL(1, simplex.barycentricCoordinates[0]);
     }
 }

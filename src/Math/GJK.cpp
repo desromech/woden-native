@@ -34,7 +34,7 @@ void GJKVoronoiSimplexSolver::reduce()
     {
         if(usedPoints[i])
         {
-            points[usedPointCoint] = points[i];
+            points[usedPointCoint]       = points[i];
             firstPoints[usedPointCoint]  = firstPoints[i];
             secondPoints[usedPointCoint] = secondPoints[i];
             usedPoints[usedPointCoint]   = usedPoints[i];
