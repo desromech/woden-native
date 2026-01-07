@@ -38,6 +38,37 @@ public:
         return closestPointToOrigin;
     }
 
+    Vector3 getClosestPointToOriginInFirst()
+    {
+        if(!hasComputedClosest)
+            computeClosestToOrigin();
+
+        Vector3 result = Vector3::Zeros();
+        Scalar barycentricSum = 0;
+        for(size_t i = 0; i < size; ++i)
+        {
+            result += firstPoints[i]*barycentricCoordinates[i];
+            barycentricSum += barycentricCoordinates[i];
+        }
+        return result / barycentricSum;
+    }
+
+
+    Vector3 getClosestPointToOriginInSecond()
+    {
+        if(!hasComputedClosest)
+            computeClosestToOrigin();
+
+        Vector3 result = Vector3::Zeros();
+        Scalar barycentricSum = 0;
+        for(size_t i = 0; i < size; ++i)
+        {
+            result += secondPoints[i]*barycentricCoordinates[i];
+            barycentricSum += barycentricCoordinates[i];
+        }
+        return result / barycentricSum;
+    }
+
     void insertPoint(const Vector3 &point);
     void insertPointWithFirstAndSecond(const Vector3 &point, const Vector3 &firstPoint, const Vector3 &secondPoint);
     void reduce();
@@ -158,8 +189,40 @@ std::optional<PenetrationDistanceSamplingResult> samplePenetrationDistanceAndNor
 template<typename FS, typename SS>
 std::optional<PenetrationDistanceSamplingResult> samplePenetrationDistanceAndNormalWithMargin(FS&& firstSupport, SS&& secondSupport, Scalar margin, const Vector3 &separatingAxisHint)
 {
-    (void)margin;
-    return samplePenetrationDistanceAndNormal(firstSupport, secondSupport, separatingAxisHint);
+    auto optSamplingResult = samplePenetrationDistanceAndNormal(firstSupport, secondSupport, separatingAxisHint);
+    if(!optSamplingResult.has_value())
+        return std::nullopt;
+
+    auto samplingResult = optSamplingResult.value();
+
+    auto distance = samplingResult.distance;
+    auto normal = samplingResult.normal;
+
+    auto extraSeparation = 0.5;
+    auto distanceWithMargin = extraSeparation + distance + margin;
+    auto displacement = normal * distanceWithMargin;
+
+    auto&& displacedFirstSupportFunction = [&](const Vector3 &D) {
+        return firstSupport(D) + displacement;
+    };
+
+    auto gjkSimplex = computeGJKSimplex(displacedFirstSupportFunction, secondSupport, separatingAxisHint);
+    auto separationVector = gjkSimplex.getClosestPointToOrigin();
+    auto separationVectorLength = separationVector.length();
+
+    auto correctedPenetrationDistance = distanceWithMargin - separationVectorLength + margin;
+
+    auto firstClosestPoint = gjkSimplex.getClosestPointToOriginInFirst();
+    auto secondClosestPoint = gjkSimplex.getClosestPointToOriginInSecond();
+
+    firstClosestPoint = firstClosestPoint - normal*Vector3(distanceWithMargin);
+
+    PenetrationDistanceSamplingResult correctedResult;
+    correctedResult.distance = correctedPenetrationDistance;
+    correctedResult.normal = normal;
+    correctedResult.firstPoint = firstClosestPoint;
+    correctedResult.secondPoint = secondClosestPoint;
+    return correctedResult;
 }
 
 } // End of namespace Math

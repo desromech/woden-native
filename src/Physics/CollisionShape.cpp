@@ -62,7 +62,7 @@ std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeConvexCollisionC
 
     if(shapeDistance > ShallowPenetrationThreshold)
     {
-        printf("Shallow penetration distance: %f\n", shapeDistance);
+        printf("TODO: Shallow penetration distance: %f\n", shapeDistance);
     }
     else
     {
