@@ -1,4 +1,5 @@
 #include "Woden/Physics/CollisionShape.hpp"
+#include "Woden/Math/GJK.hpp"
 #include "Woden/Math/Sphere.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
 #include "Woden/Rendering/Renderable.hpp"
@@ -31,7 +32,63 @@ bool ConvexCollisionShape::isConvex() const
     return true;
 }
 
+std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
+{
+    auto contactPoints = otherShape->detectAndComputeConvexCollisionContactPoints(otherShapeTransform, std::static_pointer_cast<ConvexCollisionShape> (shared_from_this()), myTransform, -initialSeparatingAxis);
+    for(auto &contact : contactPoints)
+        contact.flip();
+    return contactPoints;
+}
+
+std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
+{
+    const Math::Scalar ShallowPenetrationThreshold = 1.0e-5;
+
+    std::vector<ContactPoint> result;
+    auto &&firstSupportFunction = [&](const Math::Vector3 &D) {
+        return myTransform.transformPosition(localSupportInDirection(myTransform.inverseTransformNormalVector(D)));
+    };
+    auto &&secondSupportFunction = [&](const Math::Vector3 &D) {
+        return otherShapeTransform.transformPosition(otherShape->localSupportInDirection(otherShapeTransform.inverseTransformNormalVector(D)));
+    };
+
+    auto simplex = computeGJKSimplex(firstSupportFunction, secondSupportFunction, initialSeparatingAxis);
+
+    auto closestPointToOrigin = simplex.getClosestPointToOrigin();
+    Math::Scalar totalMargin = margin + otherShape->margin;
+    auto shapeDistance = closestPointToOrigin.length();
+    if(shapeDistance > totalMargin)
+        return result;
+
+    if(shapeDistance > ShallowPenetrationThreshold)
+    {
+        printf("Shallow penetration distance: %f\n", shapeDistance);
+    }
+    else
+    {
+        auto optDeepContact = samplePenetrationDistanceAndNormalWithMargin(firstSupportFunction, secondSupportFunction, totalMargin, initialSeparatingAxis);
+        if(!optDeepContact.has_value())
+            return result;
+
+        auto deepContactSample = optDeepContact.value();
+        ContactPoint contactPoint;
+        contactPoint.normal = deepContactSample.normal;
+        contactPoint.requiredSeparation = totalMargin;
+        contactPoint.firstPoint = deepContactSample.firstPoint;
+        contactPoint.secondPoint = deepContactSample.secondPoint;
+        printf("Deep penetration %f: %f %f %f\n", deepContactSample.distance, deepContactSample.normal.x, deepContactSample.normal.y, deepContactSample.normal.z);
+        result.push_back(contactPoint);
+    }
+
+    return result;
+}
+
 // Sphere collision shape
+Math::Vector3 SphereCollisionShape::localSupportInDirection(const Math::Vector3 &D)
+{
+    return D.normalized()*radius;
+}
+
 std::optional<ShapeRayCastingResult> SphereCollisionShape::rayCast(const Math::Ray3D &ray)
 {
     auto sphere = Math::Sphere(Math::Vector3(0), radius);
@@ -47,6 +104,11 @@ std::optional<ShapeRayCastingResult> SphereCollisionShape::rayCast(const Math::R
 }
 
 // Box collision shape
+Math::Vector3 BoxCollisionShape::localSupportInDirection(const Math::Vector3 &D)
+{
+    return localBoundingBox.support(D);
+}
+
 std::optional<ShapeRayCastingResult> BoxCollisionShape::rayCast(const Math::Ray3D &ray)
 {
     auto box = Math::AABox::WithHalfExtent(halfExtent);

@@ -3,6 +3,8 @@
 
 #include "Woden/Math/AABox.hpp"
 #include "Woden/Math/Ray3D.hpp"
+#include "Woden/Math/RigidTransform.hpp"
+#include "ContactManifold.hpp"
 #include <memory>
 #include <optional>
 
@@ -30,13 +32,16 @@ struct ShapeRayCastingResult
 };
 
 // Collision shape
-class CollisionShape
+class CollisionShape : public std::enable_shared_from_this<CollisionShape>
 {
 public:
     virtual bool isConvex() const;
 
     virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray);
     virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode();
+
+    virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) = 0;
+    virtual std::vector<ContactPoint> detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) = 0;
 
     Math::Scalar margin = 0.01;
     Math::AABox localBoundingBox = Math::AABox(Math::Vector3::Zeros(), Math::Vector3::Zeros());
@@ -48,6 +53,10 @@ class ConvexCollisionShape : public CollisionShape
 {
 public:
     virtual bool isConvex() const override;
+    virtual Math::Vector3 localSupportInDirection(const Math::Vector3 &D) = 0;
+
+    virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
+    virtual std::vector<ContactPoint> detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
 
 };
 
@@ -64,6 +73,8 @@ public:
     {
         radius = newRadius;
     }
+
+    virtual Math::Vector3 localSupportInDirection(const Math::Vector3 &D) override;
 
     virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray) override;
 
@@ -86,6 +97,8 @@ public:
         localBoundingBox = Math::AABox::WithHalfExtent(newHalfExtent);
         localBoundingBoxWithMargin = localBoundingBox.expandedBy(margin);
     }
+
+    virtual Math::Vector3 localSupportInDirection(const Math::Vector3 &D) override;
 
     virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray) override;
     virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode() override;

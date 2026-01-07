@@ -1,4 +1,5 @@
 #include "Woden/Physics/PhysicsWorld.hpp"
+#include "Woden/Physics/CollisionShape.hpp"
 #include "Woden/Physics/RigidBody.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 #include "Woden/Rendering/LightSource.hpp"
@@ -89,8 +90,7 @@ void DiscreteDynamicsPhysicsWorld::integrateMovement(Math::Scalar delta)
 void DiscreteDynamicsPhysicsWorld::detectAndResolveCollisions()
 {
     auto candidatePairs = computeBroadphaseCandidatePairs();
-    if(!candidatePairs.empty())
-        printf("Candidate pairs: %zu\n", candidatePairs.size());
+    computeNarrowPhase(candidatePairs);
 }
 
 std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsPhysicsWorld::computeBroadphaseCandidatePairs()
@@ -114,6 +114,27 @@ std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsP
     return candidatePairs;
 }
 
+void DiscreteDynamicsPhysicsWorld::computeNarrowPhase(const std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> &broadphaseCandidates)
+{
+    for(auto &pair : broadphaseCandidates)
+        detectNarrowPhaseCollisionOf(pair.first, pair.second);
+
+}
+
+void DiscreteDynamicsPhysicsWorld::detectNarrowPhaseCollisionOf(const CollisionObjectPtr &first, const CollisionObjectPtr &second)
+{
+    auto firstShape = first->shape;
+    auto firstTransform = first->getTransform();
+
+    auto secondShape = second->shape;
+    auto secondTransform = second->getTransform();
+
+    Math::Vector3 separatingAxisHint = contactManifoldCache.getLastSeparatingAxis(first, second);
+
+    std::vector<ContactPoint> contactPoints = firstShape->detectAndComputeCollisionContactPoints(firstTransform, secondShape, secondTransform, separatingAxisHint);
+    if(!contactPoints.empty())
+        printf("Narrow phase contact points: %zu\n", contactPoints.size());
+}
 
 } // End of namespace Physics
 } // End of namespace Woden

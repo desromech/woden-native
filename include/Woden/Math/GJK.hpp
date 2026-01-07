@@ -4,6 +4,7 @@
 #include "Vector3.hpp"
 #include <stddef.h>
 #include <array>
+#include <optional>
 
 namespace Woden
 {
@@ -114,6 +115,52 @@ Scalar computeGJKDistance(FS&& firstSupportFunction, SS&& secondSupportFunction)
     return computeGJKSimplex(firstSupportFunction, secondSupportFunction).getClosestPointToOrigin().length();
 }
 
+extern Vector3 PenetrationDistanceSampleVector[26];
+
+struct PenetrationDistanceSamplingResult
+{
+    Scalar distance = INFINITY;
+    Vector3 normal = Vector3::Zeros();
+    Vector3 firstPoint = Vector3::Zeros();
+    Vector3 secondPoint = Vector3::Zeros();
+};
+
+template<typename FS, typename SS>
+std::optional<PenetrationDistanceSamplingResult> samplePenetrationDistanceAndNormal(FS&& firstSupport, SS&& secondSupport, const Vector3 &separatingAxisHint)
+{
+    PenetrationDistanceSamplingResult bestResult;
+
+    auto&& sampleBlock = [&](const Vector3 &sampleVector){
+        Vector3 firstPoint = firstSupport(-sampleVector);
+        Vector3 secondPoint = secondSupport(sampleVector);
+        
+        auto supportVector = secondPoint - firstPoint;
+        auto delta = supportVector.dot(sampleVector);
+        if(delta < bestResult.distance)
+        {
+            bestResult.distance = delta;
+			bestResult.normal = sampleVector;
+			bestResult.firstPoint = firstPoint;
+			bestResult.secondPoint = secondPoint;
+        }
+    };
+
+    sampleBlock(separatingAxisHint);
+    sampleBlock(-separatingAxisHint);
+    for(const auto &sampleVector : PenetrationDistanceSampleVector)
+        sampleBlock(sampleVector);
+
+    if(bestResult.distance < 0)
+        return std::nullopt;
+    return bestResult;
+}
+
+template<typename FS, typename SS>
+std::optional<PenetrationDistanceSamplingResult> samplePenetrationDistanceAndNormalWithMargin(FS&& firstSupport, SS&& secondSupport, Scalar margin, const Vector3 &separatingAxisHint)
+{
+    (void)margin;
+    return samplePenetrationDistanceAndNormal(firstSupport, secondSupport, separatingAxisHint);
+}
 
 } // End of namespace Math
 } // End of namespace Woden

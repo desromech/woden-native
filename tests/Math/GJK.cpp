@@ -399,4 +399,16 @@ SUITE(GJK)
 
         CHECK(closeTo(distance, jgkDistance));
     }
+
+    TEST(BoxSphereDistance)
+    {
+        auto firstShape = Sphere(Vector3(-2, 0, 0), 1);
+        auto secondShape = AABox::WithHalfExtent(Vector3(0.5));
+        auto jgkDistance = computeGJKDistance(
+            [&](const Vector3 &D){ return firstShape.support(D); },
+            [&](const Vector3 &D){ return secondShape.support(D); }
+        );
+
+        CHECK(closeTo(0.5, jgkDistance));
+    }
 }

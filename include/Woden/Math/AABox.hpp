@@ -152,6 +152,19 @@ public:
         return result;
     }
 
+    Vector3 positiveVertex(const Vector3 &D) const
+    {
+        auto vertex = minCorner;
+        if(D.x >= 0) vertex.x = maxCorner.x;
+        if(D.y >= 0) vertex.y = maxCorner.y;
+        if(D.z >= 0) vertex.z = maxCorner.z;
+        return vertex;
+    }
+
+    Vector3 support(const Vector3 &D) const
+    {
+        return positiveVertex(D);
+    }
 
     Vector3 minCorner;
     Vector3 maxCorner;

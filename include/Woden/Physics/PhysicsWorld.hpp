@@ -1,6 +1,7 @@
 #ifndef WODEN_PHYSICS_PHYSICS_WORLD_HPP
 #define WODEN_PHYSICS_PHYSICS_WORLD_HPP
 
+#include "ContactManifold.hpp"
 #include "Woden/Math/Vector3.hpp"
 #include <memory>
 #include <vector>
@@ -30,8 +31,10 @@ public:
     SceneGraph::ScenePtr buildInteractiveScene();
 
     Math::Vector3 gravity = Math::Vector3(0, -9.8, 0);
+
 protected:
     std::vector<CollisionObjectPtr> collisionObjects;
+    ContactManifoldCache contactManifoldCache;
 };
 
 class DiscreteDynamicsPhysicsWorld : public PhysicsWorld
@@ -44,7 +47,10 @@ protected:
     void integrateMovement(Math::Scalar delta);
     
     void detectAndResolveCollisions();
+    
     std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> computeBroadphaseCandidatePairs();
+    void computeNarrowPhase(const std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> &broadphaseCandidates);
+    void detectNarrowPhaseCollisionOf(const CollisionObjectPtr &first, const CollisionObjectPtr &second);
 };
 
 } // End of namespace Physics

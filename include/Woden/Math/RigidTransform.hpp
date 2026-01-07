@@ -27,6 +27,11 @@ struct RigidTransform
         return rotation.rotateVector(position) + translation;
     }
 
+    Vector3 inverseTransformNormalVector(const Vector3 &normal) const
+    {
+        return rotation.conjugated().rotateVector(normal);
+    }
+
     Matrix3x3 asMatrix3x3() const
     {
         return rotation.asMatrix();
