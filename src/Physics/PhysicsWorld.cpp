@@ -182,13 +182,17 @@ void DiscreteDynamicsPhysicsWorld::detectNarrowPhaseCollisionOf(const CollisionO
 
 void DiscreteDynamicsPhysicsWorld::resolveContactManifoldsCollisionsAndConstraints()
 {
-    for(auto &manifold : contactManifoldCache.manifolds)
+    const int IterationCount = 3; 
+    for(int i = 0; i < IterationCount; ++i)
     {
-        if(!manifold->hasCollisionResponse())
-            continue;;
+        for(auto &manifold : contactManifoldCache.manifolds)
+        {
+            if(!manifold->hasCollisionResponse())
+                continue;;
 
-        solveCollisionContactResponseList(manifold->contacts);
-        solveCollisionContactConstraintList(manifold->contacts);
+            solveCollisionContactResponseList(manifold->contacts);
+            solveCollisionContactConstraintList(manifold->contacts);
+        }
     }
 }
 
