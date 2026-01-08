@@ -1,4 +1,5 @@
 #include "Woden/Physics/RigidBody.hpp"
+#include "Woden/Physics/CollisionShape.hpp"
 #include "Woden/Physics/PhysicsWorld.hpp"
 
 namespace Woden
@@ -7,7 +8,36 @@ namespace Physics
 {
 void RigidBody::computeMassDistribution()
 {
-    // TODO: Implement this.
+    if(mass == 0)
+        setInertiaTensor(Math::Matrix3x3::Zeros());
+    else
+        setInertiaTensor(shape->computeInertiaTensorWithMass(mass));
+
+}
+
+void RigidBody::setInertiaTensor(const Math::Matrix3x3 &tensor)
+{
+    inertiaTensor = tensor;
+    if(inertiaTensor.determinant() == 0)
+        inverseInertiaTensor = Math::Matrix3x3::Zeros();
+    else
+        inverseInertiaTensor = inertiaTensor.inverse();
+    updateWorldInertiaTensor();
+}
+
+void RigidBody::updateWorldInertiaTensor()
+{
+    auto rotationMatrix = transform.rotation.asMatrix();
+    auto transposedRotationMatrix = transform.rotation.asMatrix();
+
+	worldInertiaTensor = rotationMatrix * inertiaTensor * transposedRotationMatrix;
+	worldInverseInertiaTensor = rotationMatrix * inverseInertiaTensor * transposedRotationMatrix;
+}
+
+void RigidBody::transformChanged()
+{
+    CollisionObject::transformChanged();
+    updateWorldInertiaTensor();
 }
 
 void RigidBody::resetNetForces()
@@ -21,10 +51,27 @@ void RigidBody::integrateMovement(Math::Scalar deltaTime)
     if(mass == 0)
         return;
     
-    // Integrate linear velocity
-    auto linearAcceleration = owner.lock()->gravity + netForce*Math::Vector3(inverseMass);
+    // Compute the linear acceleration
+    auto linearAcceleration = owner.lock()->gravity + netForce*Math::Vector3(inverseMass) - linearVelocity*Math::Vector3(linearDamping) + internalLinearAcceleration;
+
+    // Integrate the linear acceleration
     linearVelocity += linearAcceleration*Math::Vector3(deltaTime);
-    setPosition(getPosition() + linearVelocity*Math::Vector3(deltaTime));
+
+    // Compute the angular acceleration.
+    auto angularAcceleration = worldInverseInertiaTensor * netTorque - angularVelocity*Math::Vector3(angularDamping);
+
+    // Integrate the angular acceleration.
+    angularVelocity += angularAcceleration*Math::Vector3(deltaTime);
+
+    // Integrate the position.
+    auto integratedPosition = getPosition() + linearVelocity*Math::Vector3(deltaTime);
+
+    // Integrate the orientation
+    auto integratedOrientation = Math::Quaternion(angularVelocity*Math::Vector3(0.5*deltaTime)).exp() * getOrientation();
+    integratedOrientation = integratedOrientation.normalized();
+
+    setPositionAndOrientation(integratedPosition, integratedOrientation);
+
 }
 
 bool RigidBody::needsCollisionDetection()

@@ -3,6 +3,7 @@
 
 #include "Scalar.hpp"
 #include "Matrix3x3.hpp"
+#include "Vector3.hpp"
 
 namespace Woden
 {
@@ -21,6 +22,16 @@ struct Quaternion
 
     Quaternion(Scalar cx, Scalar cy, Scalar cz, Scalar cw)
         : x(cx), y(cy), z(cz), w(cw)
+    {
+    }
+
+    Quaternion(const Vector3 &v)
+        : x(v.x), y(v.y), z(v.z), w(0)
+    {
+    }
+
+    Quaternion(const Vector3 &v, Scalar cw)
+        : x(v.x), y(v.y), z(v.z), w(cw)
     {
     }
 
@@ -75,6 +86,20 @@ struct Quaternion
         return x*o.x + y*o.y + z*o.z + w*o.w;
     }
 
+    Quaternion exp() const
+    {
+        auto v = xyz();
+        auto vl = v.length();
+        auto ew = ::exp(w);
+        if(closeTo(vl, 0))
+            return Quaternion(0, 0, 0, ew);
+
+        auto c = cos(vl);
+        auto s = sin(vl);
+
+        return Quaternion(v * (s / vl*ew), ew*c);
+    }
+
     Scalar length2() const
     {
         return dot(*this);
@@ -83,6 +108,14 @@ struct Quaternion
     Scalar length() const
     {
         return sqrt(length2());
+    }
+
+    Quaternion normalized() const
+    {
+        auto l = length();
+        if(l <= 0)
+            return Quaternion(0, 0, 0, 0);
+        return Quaternion(x / l, y / l, z / l, w / l);
     }
 
     Matrix3x3 asMatrix() const

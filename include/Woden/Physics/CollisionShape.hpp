@@ -38,6 +38,8 @@ public:
     virtual bool isConvex() const;
 
     virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray);
+
+    virtual Math::Matrix3x3 computeInertiaTensorWithMass(Math::Scalar mass);
     virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode();
 
     virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) = 0;
@@ -74,6 +76,7 @@ public:
         radius = newRadius;
     }
 
+    virtual Math::Matrix3x3 computeInertiaTensorWithMass(Math::Scalar mass) override;
     virtual Math::Vector3 localSupportInDirection(const Math::Vector3 &D) override;
 
     virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray) override;
@@ -98,6 +101,7 @@ public:
         localBoundingBoxWithMargin = localBoundingBox.expandedBy(margin);
     }
 
+    virtual Math::Matrix3x3 computeInertiaTensorWithMass(Math::Scalar mass) override;
     virtual Math::Vector3 localSupportInDirection(const Math::Vector3 &D) override;
 
     virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray) override;

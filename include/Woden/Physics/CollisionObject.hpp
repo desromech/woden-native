@@ -37,6 +37,24 @@ public:
         transformChanged();
     }
 
+    const Math::Quaternion & getOrientation() const
+    {
+        return transform.rotation;
+    }
+
+    void setOrientation(const Math::Quaternion &newOrientation)
+    {
+        transform.rotation = newOrientation;
+        transformChanged();
+    }
+
+    void setPositionAndOrientation(const Math::Vector3 &newPosition, const Math::Quaternion &newOrientation)
+    {
+        transform.translation = newPosition;
+        transform.rotation = newOrientation;
+        transformChanged();
+    }
+
     const Math::RigidTransform &getTransform() const
     {
         return transform;

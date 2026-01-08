@@ -21,6 +21,12 @@ std::optional<ShapeRayCastingResult> CollisionShape::rayCast(const Math::Ray3D &
     return std::nullopt;
 }
 
+Math::Matrix3x3 CollisionShape::computeInertiaTensorWithMass(Math::Scalar mass)
+{
+    (void)mass;
+    return Math::Matrix3x3::Zeros();
+}
+
 SceneGraph::SceneNodePtr CollisionShape::constructVisualizationSceneNode()
 {
     return nullptr;
@@ -94,6 +100,11 @@ std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeConvexCollisionC
 }
 
 // Sphere collision shape
+Math::Matrix3x3 SphereCollisionShape::computeInertiaTensorWithMass(Math::Scalar mass)
+{
+    return Math::Matrix3x3(radius * radius * 2 * 5 * mass);
+}
+
 Math::Vector3 SphereCollisionShape::localSupportInDirection(const Math::Vector3 &D)
 {
     return D.normalized()*Math::Vector3(radius);
@@ -114,6 +125,17 @@ std::optional<ShapeRayCastingResult> SphereCollisionShape::rayCast(const Math::R
 }
 
 // Box collision shape
+Math::Matrix3x3 BoxCollisionShape::computeInertiaTensorWithMass(Math::Scalar mass)
+{
+    auto extent = halfExtent*2.0;
+    auto extent2 = extent*extent;
+    return Math::Matrix3x3(
+        (extent2.y + extent2.z)/12*mass, 0, 0,
+        0, (extent2.x + extent2.z)/12*mass, 0,
+        0, 0, (extent2.x + extent2.y)/12*mass
+    );
+}
+
 Math::Vector3 BoxCollisionShape::localSupportInDirection(const Math::Vector3 &D)
 {
     return localBoundingBox.support(D);

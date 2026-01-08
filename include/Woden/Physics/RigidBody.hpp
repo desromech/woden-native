@@ -30,9 +30,21 @@ public:
         inverseMass = mass == 0 ? 0 : (1/newMass);
     }
 
+    const Math::Matrix3x3 &getInertiaTensor() const
+    {
+        return inertiaTensor;
+    }
+
+    const Math::Matrix3x3 &getInverseInertiaTensor() const
+    {
+        return inverseInertiaTensor;
+    }
+
+    void setInertiaTensor(const Math::Matrix3x3 &tensor);
 
     void computeMassDistribution();
-    
+    virtual void transformChanged() override;
+
     void resetNetForces() override;
     void integrateMovement(Math::Scalar deltaTime) override;
     
@@ -40,10 +52,21 @@ public:
     virtual void applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection) override;
     virtual void applyImpulse(Math::Vector3 impulse);
 
+    Math::Scalar linearDamping = 0.2;
+    Math::Scalar angularDamping = 0.2;
+
+    Math::Vector3 internalLinearAcceleration = Math::Vector3(0);
+    Math::Vector3 internalAngularAcceleration = Math::Vector3(0);
+
 protected:
+    void updateWorldInertiaTensor();
+
     Math::Scalar mass = 0;
     Math::Scalar inverseMass = 0;
     Math::Matrix3x3 inertiaTensor = Math::Matrix3x3::Zeros();
+    Math::Matrix3x3 inverseInertiaTensor = Math::Matrix3x3::Zeros();
+    Math::Matrix3x3 worldInertiaTensor = Math::Matrix3x3::Zeros();
+    Math::Matrix3x3 worldInverseInertiaTensor = Math::Matrix3x3::Zeros();
 
     Math::Vector3 netForce = Math::Vector3::Zeros();
     Math::Vector3 netTorque = Math::Vector3::Zeros();
