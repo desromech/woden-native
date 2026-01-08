@@ -32,7 +32,7 @@ public:
 
     bool castShadows = false;
 
-	Math::Scalar shadowMapNormalBiasFactor = 0.005;
+	Math::Scalar shadowMapNormalBiasFactor = 0.005f;
 };
 
 class DirectionalLightSource : public LightSource

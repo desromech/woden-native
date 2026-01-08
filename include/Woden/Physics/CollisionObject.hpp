@@ -70,9 +70,9 @@ public:
     Math::Vector3 linearVelocity = Math::Vector3(0);
     Math::Vector3 angularVelocity = Math::Vector3(0);
 
-    Math::Scalar restitutionCoefficient = 0.2;
-	Math::Scalar dynamicFrictionCoefficient = 0.5;
-	Math::Scalar staticFrictionCoefficient = 0.6;
+    Math::Scalar restitutionCoefficient = 0.2f;
+	Math::Scalar dynamicFrictionCoefficient = 0.5f;
+	Math::Scalar staticFrictionCoefficient = 0.6f;
 
     CollisionMasks collisionGroup = CollisionMasks::DefaultCollisionGroup;
     CollisionMasks collisionResponseGroupMask = CollisionMasks::DefaultCollisionResponseGroup;

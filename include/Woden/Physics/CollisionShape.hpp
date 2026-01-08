@@ -43,7 +43,7 @@ public:
     virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) = 0;
     virtual std::vector<ContactPoint> detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) = 0;
 
-    Math::Scalar margin = 0.01;
+    Math::Scalar margin = 0.01f;
     Math::AABox localBoundingBox = Math::AABox(Math::Vector3::Zeros(), Math::Vector3::Zeros());
     Math::AABox localBoundingBoxWithMargin = Math::AABox(Math::Vector3::Zeros(), Math::Vector3::Zeros());
 };

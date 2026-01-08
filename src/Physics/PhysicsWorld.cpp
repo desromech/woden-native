@@ -31,7 +31,7 @@ SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
     auto scene = SceneGraph::MakeScene();
     {
         auto directionalLightSource = std::make_shared<Woden::Rendering::DirectionalLightSource> ();
-        directionalLightSource->color = Math::Vector3(0.8, 0.8, 0.7);
+        directionalLightSource->color = Math::Vector3(0.8f, 0.8f, 0.7f);
         directionalLightSource->castShadows = true;
 
         auto lightNode = directionalLightSource->asSceneNode();
@@ -182,15 +182,24 @@ void DiscreteDynamicsPhysicsWorld::detectNarrowPhaseCollisionOf(const CollisionO
 
 void DiscreteDynamicsPhysicsWorld::resolveContactManifoldsCollisionsAndConstraints()
 {
-    const int IterationCount = 3; 
+    const int IterationCount = 5; 
     for(int i = 0; i < IterationCount; ++i)
     {
+        // Collision responses
         for(auto &manifold : contactManifoldCache.manifolds)
         {
             if(!manifold->hasCollisionResponse())
-                continue;;
+                continue;
 
             solveCollisionContactResponseList(manifold->contacts);
+        }
+
+        // Collision contraints
+        for(auto &manifold : contactManifoldCache.manifolds)
+        {
+            if(!manifold->hasCollisionResponse())
+                continue;
+
             solveCollisionContactConstraintList(manifold->contacts);
         }
     }
