@@ -218,6 +218,7 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
         return;
     contact.update();
 
+#if 1
 	auto firstCollisionObject = contact.firstObject;
 	auto secondCollisionObject = contact.secondObject;
 	
@@ -245,6 +246,89 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
         firstCollisionObject->applyImpulse(impulsePerInverseMass);
     if(contact.secondHasCollisionResponse())
         secondCollisionObject->applyImpulse(-impulsePerInverseMass);
+#else
+	// See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms.
+	
+	auto firstCollisionObject = contact.firstObject;
+	auto secondCollisionObject = contact.secondObject;
+	
+	auto contactNormal = contact.normal;
+
+	auto relativeFirstPoint = contact.getRelativeFirstPoint();
+	auto relativeSecondPoint = contact.getRelativeSecondPoint();
+
+/*	contactLocalToWorldMatrix3x3 := contact computeContactSpaceMatrix.
+
+	velocityChangePerImpulseWorldMatrix := 
+	(firstCollisionObject computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativeFirstPoint) +
+	(secondCollisionObject computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativeSecondPoint).
+	
+	velocityChangePerImpulseContactMatrix := contactLocalToWorldMatrix3x3 transpose * velocityChangePerImpulseWorldMatrix * contactLocalToWorldMatrix3x3.
+
+	inverseMass := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
+	velocityChangePerImpulseContactMatrix := velocityChangePerImpulseContactMatrix + (Matrix3x3 scale: inverseMass).
+	
+	(velocityChangePerImpulseContactMatrix determinant = 0) ifTrue: [ ^ self ].
+	impulseChangePerVelocityContactMatrix := velocityChangePerImpulseContactMatrix inverse.
+
+	firstContactVelocity := firstCollisionObject velocityAtRelativePoint: relativeFirstPoint.
+	secondContactVelocity := secondCollisionObject velocityAtRelativePoint: relativeSecondPoint.
+	
+	relativeSeparationVelocity := firstContactVelocity - secondContactVelocity.
+	
+	relativeContactSeparationVelocity := relativeSeparationVelocity * contactLocalToWorldMatrix3x3.
+	relativeContactSeparationVelocity x > 0.0 ifTrue: [ ^ self ].
+
+	relativeVelocityFromIntegrationDelta := firstCollisionObject linearVelocityIntegrationDelta - secondCollisionObject linearVelocityIntegrationDelta.
+	relativeContactVelocityFromIntegrationDelta := relativeVelocityFromIntegrationDelta dot: contactNormal.
+	
+	restitutionCoefficient := firstCollisionObject restitutionCoefficient * secondCollisionObject restitutionCoefficient.
+	
+	"Resting contact: reduce contact velocity by acceleration only speed increase, and set the restitution coeffiecient to 0"
+	relativeContactSeparationVelocity x abs < restingContactVelocityLimit ifTrue: [ 
+		restitutionCoefficient := 0.0
+	].
+
+	deltaVelocity := relativeContactSeparationVelocity x negated - (restitutionCoefficient * (relativeContactSeparationVelocity x - relativeContactVelocityFromIntegrationDelta)).
+	
+	contactLocalVelocityChange := Vector3 x: deltaVelocity
+		y: relativeContactSeparationVelocity y negated
+		z: relativeContactSeparationVelocity z negated.
+		
+	contactLocalImpulse := impulseChangePerVelocityContactMatrix * contactLocalVelocityChange.
+
+	"Compute the planar length for simulating friction."
+	staticFrictionCoefficient := firstCollisionObject staticFrictionCoefficient min: secondCollisionObject staticFrictionCoefficient.
+	planarImpulse := (contactLocalImpulse y squared + contactLocalImpulse z squared) sqrt.
+
+	"Is this in the limits for the static friction?"
+	planarImpulse > (contactLocalImpulse x * staticFrictionCoefficient) ifTrue: [
+		| dynamicFrictionCoefficient frictionNormalDelta |
+		dynamicFrictionCoefficient := firstCollisionObject dynamicFrictionCoefficient min: secondCollisionObject dynamicFrictionCoefficient.
+		
+		contactLocalImpulse y: contactLocalImpulse y / planarImpulse.
+		contactLocalImpulse z: contactLocalImpulse z / planarImpulse.
+
+		"contactLocalImpulse yz length = dynamicFrictionCoefficient * contactLocalImpulse x"
+		
+		"CHECK ME: What is the meaning of this correction? [From Millington Game Physics Engine Development, Chapter 15 pp 410]"
+		frictionNormalDelta := velocityChangePerImpulseContactMatrix firstRow dot: (Vector3 x: 1 y: dynamicFrictionCoefficient*contactLocalImpulse y z: dynamicFrictionCoefficient*contactLocalImpulse z).
+		contactLocalImpulse x: deltaVelocity / frictionNormalDelta.
+
+		contactLocalImpulse y: contactLocalImpulse y * dynamicFrictionCoefficient * contactLocalImpulse x.
+		contactLocalImpulse z: contactLocalImpulse z * dynamicFrictionCoefficient * contactLocalImpulse x.
+	].
+
+	contactImpulse := contactLocalToWorldMatrix3x3 * contactLocalImpulse.
+
+	contact firstObjectHasResponse ifTrue: [
+		firstCollisionObject applyImpulse: contactImpulse inRelativePosition: relativeFirstPoint
+	].
+	contact secondObjectHasResponse ifTrue: [
+		secondCollisionObject applyImpulse: contactImpulse negated inRelativePosition: relativeSecondPoint
+	].
+*/
+#endif
 }
 
 void DiscreteDynamicsPhysicsWorld::solveCollisionContactConstraintList(std::vector<ContactPoint> &contactList)
