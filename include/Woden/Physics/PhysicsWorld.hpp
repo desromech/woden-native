@@ -52,10 +52,10 @@ protected:
     void computeNarrowPhase(const std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> &broadphaseCandidates);
     void detectNarrowPhaseCollisionOf(const CollisionObjectPtr &first, const CollisionObjectPtr &second);
     void resolveContactManifoldsCollisionsAndConstraints();
-    void solveCollisionContactResponseList(const std::vector<ContactPoint> &contactList);
-    void solveCollisionContactConstraintList(const std::vector<ContactPoint> &contactList);
-    void resolveContactCollisionResponse(ContactPoint contact);
-    void resolveContactConstraint(ContactPoint contact, Math::Scalar relaxationFactor);
+    void solveCollisionContactResponseList(std::vector<ContactPoint> &contactList);
+    void solveCollisionContactConstraintList(std::vector<ContactPoint> &contactList);
+    void resolveContactCollisionResponse(ContactPoint &contact);
+    void resolveContactConstraint(ContactPoint &contact, Math::Scalar relaxationFactor);
 };
 
 } // End of namespace Physics

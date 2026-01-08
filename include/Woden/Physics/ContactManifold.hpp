@@ -21,6 +21,14 @@ struct ContactManifold
     void addContactPoint(const ContactPoint &contactPoint);
     void expireContactsUntil(int32_t expiredEpoch);
 
+    bool firstHasCollisionResponse() const;
+    bool secondHasCollisionResponse() const;
+
+    bool hasCollisionResponse() const
+    {
+        return firstHasCollisionResponse() || secondHasCollisionResponse();
+    }
+
     CollisionObjectPtr firstObject;
     CollisionObjectPtr secondObject;
 

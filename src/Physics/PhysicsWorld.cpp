@@ -146,20 +146,25 @@ void DiscreteDynamicsPhysicsWorld::resolveContactManifoldsCollisionsAndConstrain
 {
     for(auto &manifold : contactManifoldCache.manifolds)
     {
+        if(!manifold->hasCollisionResponse())
+            continue;;
+
         solveCollisionContactResponseList(manifold->contacts);
         solveCollisionContactConstraintList(manifold->contacts);
     }
 }
 
-void DiscreteDynamicsPhysicsWorld::solveCollisionContactResponseList(const std::vector<ContactPoint> &contactList)
+void DiscreteDynamicsPhysicsWorld::solveCollisionContactResponseList(std::vector<ContactPoint> &contactList)
 {
     for(auto &contact : contactList)
         resolveContactCollisionResponse(contact);
 
 }
 
-void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint contact)
+void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint &contact)
 {
+    if(!contact.hasCollisionResponse())
+        return;
     contact.update();
 
 	auto firstCollisionObject = contact.firstObject;
@@ -185,19 +190,24 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
 
     auto impulse = deltaVelocity / totalInverseMass;
     auto impulsePerInverseMass = contactNormal*impulse;
-    firstCollisionObject->applyImpulse(impulsePerInverseMass);
-    secondCollisionObject->applyImpulse(impulsePerInverseMass);
+    if(contact.firstHasCollisionResponse())
+        firstCollisionObject->applyImpulse(impulsePerInverseMass);
+    if(contact.secondHasCollisionResponse())
+        secondCollisionObject->applyImpulse(impulsePerInverseMass);
 }
 
-void DiscreteDynamicsPhysicsWorld::solveCollisionContactConstraintList(const std::vector<ContactPoint> &contactList)
+void DiscreteDynamicsPhysicsWorld::solveCollisionContactConstraintList(std::vector<ContactPoint> &contactList)
 {
     Math::Scalar relaxationFactor = 1;
     for(auto &contact : contactList)
         resolveContactConstraint(contact, relaxationFactor);
 }
 
-void DiscreteDynamicsPhysicsWorld::resolveContactConstraint(ContactPoint contact, Math::Scalar relaxationFactor)
+void DiscreteDynamicsPhysicsWorld::resolveContactConstraint(ContactPoint &contact, Math::Scalar relaxationFactor)
 {
+    if(!contact.hasCollisionResponse())
+        return;
+
     contact.update();
     auto penetrationDistance = contact.penetrationDistance;
     if(penetrationDistance < 0)
@@ -206,13 +216,15 @@ void DiscreteDynamicsPhysicsWorld::resolveContactConstraint(ContactPoint contact
     auto &firstCollisionObject = contact.firstObject;
     auto &secondCollisionObject = contact.secondObject;
 
-    auto inverseInertia = contact.inverseLinearInertia();
+    auto inverseInertia = contact.inverseInertia();
     if(inverseInertia <= 0)
         return;
     
     auto penetrationDelta = penetrationDistance*relaxationFactor/inverseInertia;
-    firstCollisionObject->applyMovementAtRelativePoint(penetrationDelta, contact.getRelativeFirstPoint(), contact.normal);
-    secondCollisionObject->applyMovementAtRelativePoint(penetrationDelta, contact.getRelativeSecondPoint(), -contact.normal);
+    if(contact.firstHasCollisionResponse())
+        firstCollisionObject->applyMovementAtRelativePoint(penetrationDelta, contact.getRelativeFirstPoint(), contact.normal);
+    if(contact.secondHasCollisionResponse())
+        secondCollisionObject->applyMovementAtRelativePoint(penetrationDelta, contact.getRelativeSecondPoint(), -contact.normal);
 }
 
 } // End of namespace Physics

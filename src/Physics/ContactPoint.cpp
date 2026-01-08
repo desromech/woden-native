@@ -6,6 +6,16 @@ namespace Woden
 namespace Physics
 {
 
+bool ContactPoint::firstHasCollisionResponse() const
+{
+    return int(firstObject->collisionResponseGroupMask) & int(secondObject->collisionGroup);
+}
+
+bool ContactPoint::secondHasCollisionResponse() const
+{
+    return int(secondObject->collisionResponseGroupMask) & int(firstObject->collisionGroup);
+}
+
 Math::Scalar ContactPoint::inverseInertia() const
 {
     return inverseLinearInertia();

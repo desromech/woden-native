@@ -1,4 +1,5 @@
 #include "Woden/Physics/ContactManifold.hpp"
+#include "Woden/Physics/CollisionObject.hpp"
 
 namespace Woden
 {
@@ -34,6 +35,16 @@ void ContactManifold::expireContactsUntil(int32_t expiredEpoch)
     }
 
     contacts.resize(destIndex);
+}
+
+bool ContactManifold::firstHasCollisionResponse() const
+{
+    return int(firstObject->collisionResponseGroupMask) & int(secondObject->collisionGroup);
+}
+
+bool ContactManifold::secondHasCollisionResponse() const
+{
+    return int(secondObject->collisionResponseGroupMask) & int(firstObject->collisionGroup);
 }
 
 void ContactManifoldCache::beginEpoch()

@@ -36,6 +36,14 @@ struct ContactPoint
     Math::Scalar inverseInertia() const;
     Math::Scalar inverseLinearInertia() const;
 
+    bool firstHasCollisionResponse() const;
+    bool secondHasCollisionResponse() const;
+
+    bool hasCollisionResponse() const
+    {
+        return firstHasCollisionResponse() || secondHasCollisionResponse();
+    }
+
     bool isSimilarTo(const ContactPoint &o) const
     {
         return
