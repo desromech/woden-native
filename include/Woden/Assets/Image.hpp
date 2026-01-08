@@ -43,8 +43,8 @@ public:
     template<typename FT>
     void renderNormalizedPixel32(FT &&renderFunction)
     {
-        float iw = 1.0 / width;
-        float ih = 1.0 / height;
+        float iw = 1.0f / width;
+        float ih = 1.0f / height;
         auto destinationRow = pixels.data();
         for(uint32_t y = 0; y < height; ++y)
         {

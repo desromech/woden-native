@@ -30,7 +30,7 @@ public:
 
     SceneGraph::ScenePtr buildInteractiveScene();
 
-    Math::Vector3 gravity = Math::Vector3(0, -9.8, 0);
+    Math::Vector3 gravity = Math::Vector3(0, -9.8f, 0);
 
 
     template<typename FT>

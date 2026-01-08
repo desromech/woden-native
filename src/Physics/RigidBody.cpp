@@ -36,12 +36,12 @@ void RigidBody::applyMovementAtRelativePoint(Math::Scalar movement, const Math::
 {
     (void)relativePoint;
     auto linearMovement = movement *inverseMass;
-    setPosition(getPosition() + normalDirection*linearMovement);
+    setPosition(getPosition() + normalDirection*Math::Vector3(linearMovement));
 }
 
 void RigidBody::applyImpulse(Math::Vector3 impulse)
 {
-    linearVelocity += impulse*inverseMass;
+    linearVelocity += impulse*Math::Vector3(inverseMass);
 }
 
 }

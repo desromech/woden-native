@@ -231,7 +231,7 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
         return;
 
     auto impulse = deltaVelocity / totalInverseMass;
-    auto impulsePerInverseMass = contactNormal*impulse;
+    auto impulsePerInverseMass = contactNormal*Math::Vector3(impulse);
     if(contact.firstHasCollisionResponse())
         firstCollisionObject->applyImpulse(impulsePerInverseMass);
     if(contact.secondHasCollisionResponse())

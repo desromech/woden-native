@@ -95,7 +95,7 @@ template<typename FS, typename SS>
 GJKVoronoiSimplexSolver computeGJKSimplex(FS&& firstSupportFunction, SS&& secondSupportFunction, const Vector3 &startingDirectionHint)
 {
     const int MaxNumberOfIterations = 32;
-    const Scalar Epsilon = 0.00001;
+    const Scalar Epsilon = 0.00001f;
     GJKVoronoiSimplexSolver simplex;
 
     auto nextDirection = startingDirectionHint;
@@ -198,7 +198,7 @@ std::optional<PenetrationDistanceSamplingResult> samplePenetrationDistanceAndNor
     auto distance = samplingResult.distance;
     auto normal = samplingResult.normal;
 
-    auto extraSeparation = 0.5;
+    auto extraSeparation = 0.5f;
     auto distanceWithMargin = extraSeparation + distance + margin;
     auto displacement = normal * distanceWithMargin;
 

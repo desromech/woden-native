@@ -96,7 +96,7 @@ std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeConvexCollisionC
 // Sphere collision shape
 Math::Vector3 SphereCollisionShape::localSupportInDirection(const Math::Vector3 &D)
 {
-    return D.normalized()*radius;
+    return D.normalized()*Math::Vector3(radius);
 }
 
 std::optional<ShapeRayCastingResult> SphereCollisionShape::rayCast(const Math::Ray3D &ray)
