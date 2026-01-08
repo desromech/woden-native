@@ -16,6 +16,13 @@ void SceneElement::addedToSceneElement(const SceneElementPtr &newParent)
     assert(0 && "Element does not support having a parent.");
 }
 
+void SceneElement::removedFromSceneElement(const SceneElementPtr &oldParent)
+{
+    (void)oldParent;
+    assert(0 && "Element does not support having a parent.");
+
+}
+
 void SceneElement::addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene)
 {
     (void)renderingScene;
@@ -88,6 +95,12 @@ void SceneTreeElement::addedToSceneElement(const SceneElementPtr &newParent)
     parent = newParent;
 }
 
+void SceneTreeElement::removedFromSceneElement(const SceneElementPtr &oldParent)
+{
+    (void)oldParent;
+    parent.reset();
+}
+
 ScenePtr SceneTreeElement::getScene()
 {
     auto p = parent.lock();
@@ -101,6 +114,13 @@ void SceneTreeElementWithChildren::addChild(SceneElementPtr child)
 {
     child->addedToSceneElement(shared_from_this());
     children.push_back(child);
+}
+
+void SceneTreeElementWithChildren::removeAllChildren()
+{
+    for(auto &child : children)
+        child->removedFromSceneElement(shared_from_this());
+    children.clear();
 }
 
 void SceneTreeElementWithChildren::addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene)

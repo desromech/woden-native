@@ -3,6 +3,8 @@
 #include "Woden/Physics/RigidBody.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 #include "Woden/Rendering/LightSource.hpp"
+#include "Woden/Rendering/MeshBuilder.hpp"
+#include "Woden/Rendering/MetallicRoughnessMaterial.hpp"
 #include <assert.h>
 #include <unordered_map>
 
@@ -50,6 +52,21 @@ SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
         }
     }
 
+    auto contactPointsNode = std::make_shared<SceneGraph::SceneNode> ();
+    scene->normalLayer->addChild(contactPointsNode);
+
+    auto contactMeshMaterial = std::make_shared<Rendering::MetallicRoughnessMaterial> ();
+    contactMeshMaterial->baseColorFactor = Math::Vector4(0, 0, 0, 1);
+    contactMeshMaterial->emissiveFactor = Math::Vector3(1, 0, 0);
+    contactMeshMaterial->roughnessFactor = 1.0;
+    contactMeshMaterial->metallicFactor = 0.0;
+
+    auto contactMesh = Rendering::MeshBuilder()
+            .setMaterial(contactMeshMaterial)
+            .addCubeWithExtent(Math::Vector3(0.1))
+            .generateTexcoordsWithFacePlanarTransformWithScale(Math::Vector2(1, 1))
+            .finishMesh();
+
     auto world = shared_from_this();
     scene->updateFunction = [=](Math::Scalar deltaTime) {
         // Update the world.
@@ -62,6 +79,27 @@ SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
             auto sceneNode = pair.second;
             sceneNode->transform = collisionObject->getTransform().asTRSTransform3D();
         }
+
+        // Update the contact points.
+        contactPointsNode->removeAllChildren();
+
+        worldSpaceContactPointsDo([&](const Math::Vector3 &firstPoint, const Math::Vector3 &secondPoint) {
+            // First contact point.
+            {
+                auto contactNode = std::make_shared<SceneGraph::SceneNode> ();
+                contactNode->transform.translation = firstPoint;
+                contactNode->addRenderable(contactMesh);
+                contactPointsNode->addChild(contactNode);
+            }
+
+            // Second contact point.
+            {
+                auto contactNode = std::make_shared<SceneGraph::SceneNode> ();
+                contactNode->transform.translation = secondPoint;
+                contactNode->addRenderable(contactMesh);
+                contactPointsNode->addChild(contactNode);
+            }
+        });
     };
 
     return scene;

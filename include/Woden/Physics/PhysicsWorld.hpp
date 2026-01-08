@@ -32,6 +32,17 @@ public:
 
     Math::Vector3 gravity = Math::Vector3(0, -9.8, 0);
 
+
+    template<typename FT>
+    void worldSpaceContactPointsDo(FT &&aBlock)
+    {
+        for(auto &manifold : contactManifoldCache.manifolds)
+        {
+            for(auto &contact : manifold->contacts)
+                aBlock(contact.firstPoint, contact.secondPoint);
+        }
+    }
+
 protected:
     std::vector<CollisionObjectPtr> collisionObjects;
     ContactManifoldCache contactManifoldCache;

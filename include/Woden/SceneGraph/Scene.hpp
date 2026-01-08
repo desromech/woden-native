@@ -41,6 +41,7 @@ class SceneElement : public std::enable_shared_from_this<SceneElement>
 {
 public:
     virtual void addedToSceneElement(const SceneElementPtr &newParent);
+    virtual void removedFromSceneElement(const SceneElementPtr &oldParent);
     virtual void addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene);
     virtual ScenePtr getScene();
 
@@ -82,7 +83,8 @@ inline ScenePtr MakeScene()
 class SceneTreeElement : public SceneElement
 {
 public:
-    virtual void addedToSceneElement(const SceneElementPtr &newParent);
+    virtual void addedToSceneElement(const SceneElementPtr &newParent) override;
+    virtual void removedFromSceneElement(const SceneElementPtr &oldParent) override;
     virtual ScenePtr getScene() override;
 
     SceneElementWeakPtr parent;
@@ -95,6 +97,8 @@ class SceneTreeElementWithChildren : public SceneTreeElement
 {
 public:
     void addChild(SceneElementPtr child);
+    void removeAllChildren();
+
     virtual void addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene) override;
 
     std::vector<SceneElementPtr> children;
