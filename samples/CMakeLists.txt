@@ -36,3 +36,9 @@ target_link_libraries(PhysicsSample01-FallingBox WodenEngine)
 
 add_executable(PhysicsSample02-FallingBoxAndFloor SampleCommon.cpp PhysicsSample02-FallingBoxAndFloor.cpp)
 target_link_libraries(PhysicsSample02-FallingBoxAndFloor WodenEngine)
+
+add_executable(PhysicsSample03-FallingBoxOnBox SampleCommon.cpp PhysicsSample03-FallingBoxOnBox.cpp)
+target_link_libraries(PhysicsSample03-FallingBoxOnBox WodenEngine)
+
+add_executable(PhysicsSample04-FallingBoxOnBox2 SampleCommon.cpp PhysicsSample04-FallingBoxOnBox2.cpp)
+target_link_libraries(PhysicsSample04-FallingBoxOnBox2 WodenEngine)

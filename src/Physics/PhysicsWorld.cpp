@@ -231,7 +231,7 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
     if(contact.firstHasCollisionResponse())
         firstCollisionObject->applyImpulse(impulsePerInverseMass);
     if(contact.secondHasCollisionResponse())
-        secondCollisionObject->applyImpulse(impulsePerInverseMass);
+        secondCollisionObject->applyImpulse(-impulsePerInverseMass);
 }
 
 void DiscreteDynamicsPhysicsWorld::solveCollisionContactConstraintList(std::vector<ContactPoint> &contactList)
@@ -245,7 +245,7 @@ void DiscreteDynamicsPhysicsWorld::resolveContactConstraint(ContactPoint &contac
 {
     if(!contact.hasCollisionResponse())
         return;
-
+    
     contact.update();
     auto penetrationDistance = contact.penetrationDistance;
     if(penetrationDistance < 0)
