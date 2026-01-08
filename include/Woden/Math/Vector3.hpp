@@ -2,6 +2,7 @@
 #define WODEN_MATH_VECTOR3_HPP
 
 #include "Scalar.hpp"
+#include <stdint.h>
 #include <ostream>
 
 namespace Woden
