@@ -230,37 +230,7 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
         return;
     contact.update();
 
-#if 0
-	auto firstCollisionObject = contact.firstObject;
-	auto secondCollisionObject = contact.secondObject;
-	
-	auto contactNormal = contact.normal;
-
-    auto firstContactVelocity = firstCollisionObject->linearVelocity;
-	auto secondContactVelocity = secondCollisionObject->linearVelocity;
-
-    auto relativeVelocity = firstContactVelocity - secondContactVelocity;
-    auto separatingSpeed = relativeVelocity.dot(contactNormal);
-    if(separatingSpeed >= 0)
-        return;
-
-    auto restitutionCoefficient = Math::sqrt(firstCollisionObject->restitutionCoefficient*secondCollisionObject->restitutionCoefficient);
-    auto newSeparatingSpeed = -separatingSpeed*restitutionCoefficient;
-    auto deltaVelocity = newSeparatingSpeed - separatingSpeed;
-
-    auto totalInverseMass = firstCollisionObject->getInverseMass() + secondCollisionObject->getInverseMass();
-    if(totalInverseMass <= 0)
-        return;
-
-    auto impulse = deltaVelocity / totalInverseMass;
-    auto impulsePerInverseMass = contactNormal*Math::Vector3(impulse);
-    if(contact.firstHasCollisionResponse())
-        firstCollisionObject->applyImpulse(impulsePerInverseMass);
-    if(contact.secondHasCollisionResponse())
-        secondCollisionObject->applyImpulse(-impulsePerInverseMass);
-#else
-	// See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms.
-	
+	// See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms.	
 	auto firstCollisionObject = contact.firstObject;
 	auto secondCollisionObject = contact.secondObject;
 	
@@ -347,7 +317,6 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
 
 	if(contact.secondHasCollisionResponse())
         secondCollisionObject->applyImpulseInRelativePosition(-contactImpulse, relativeSecondPoint);
-#endif
 }
 
 void DiscreteDynamicsPhysicsWorld::solveCollisionContactConstraintList(std::vector<ContactPoint> &contactList)
