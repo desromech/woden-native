@@ -15,6 +15,13 @@ void RigidBody::computeMassDistribution()
 
 }
 
+Math::Scalar RigidBody::computeAngularInertiaForRelativeContactPoint(const Math::Vector3 &relativePoint, const Math::Vector3 &normal) const
+{
+    auto torquePerUnitImpulse = relativePoint.cross(normal);
+	auto rotationPerUnitImpulse = worldInverseInertiaTensor * torquePerUnitImpulse;
+	return (rotationPerUnitImpulse.cross(relativePoint)).dot(normal);
+}
+
 Math::Matrix3x3 RigidBody::computeVelocityPerImpulseWorldMatrixForRelativeContactPoint(const Math::Vector3 &relativePoint) const
 {
     auto relativePointCrossMatrix = Math::Matrix3x3::SkewSymmetric(relativePoint);
@@ -41,7 +48,7 @@ void RigidBody::setInertiaTensor(const Math::Matrix3x3 &tensor)
 void RigidBody::updateWorldInertiaTensor()
 {
     auto rotationMatrix = transform.rotation.asMatrix();
-    auto transposedRotationMatrix = transform.rotation.asMatrix();
+    auto transposedRotationMatrix = rotationMatrix.transpose();
 
 	worldInertiaTensor = rotationMatrix * inertiaTensor * transposedRotationMatrix;
 	worldInverseInertiaTensor = rotationMatrix * inverseInertiaTensor * transposedRotationMatrix;
@@ -68,13 +75,17 @@ void RigidBody::integrateMovement(Math::Scalar deltaTime)
     auto linearAcceleration = owner.lock()->gravity + netForce*Math::Vector3(inverseMass) - linearVelocity*Math::Vector3(linearDamping) + internalLinearAcceleration;
 
     // Integrate the linear acceleration
-    linearVelocity += linearAcceleration*Math::Vector3(deltaTime);
+    auto integratedVelocity = linearVelocity + linearAcceleration*Math::Vector3(deltaTime);
+    linearVelocityIntegrationDelta = integratedVelocity - linearVelocity;
+    linearVelocity = integratedVelocity;
 
     // Compute the angular acceleration.
     auto angularAcceleration = worldInverseInertiaTensor * netTorque - angularVelocity*Math::Vector3(angularDamping);
 
     // Integrate the angular acceleration.
-    angularVelocity += angularAcceleration*Math::Vector3(deltaTime);
+    auto integratedAngularVelocity = angularVelocity + angularAcceleration*Math::Vector3(deltaTime);
+    angularVelocityIntegrationDelta = integratedAngularVelocity - angularVelocity;
+    angularVelocity = integratedAngularVelocity;
 
     // Integrate the position.
     auto integratedPosition = getPosition() + linearVelocity*Math::Vector3(deltaTime);
@@ -92,12 +103,42 @@ bool RigidBody::needsCollisionDetection()
     return mass != 0;
 }
 
-void RigidBody::applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection)
+void RigidBody::applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &movementDirection)
 {
     (void)relativePoint;
     auto linearMovement = movement *inverseMass;
 
-    setPosition(getPosition() + normalDirection*Math::Vector3(linearMovement));
+    auto angularDirection = worldInverseInertiaTensor * relativePoint.cross(movementDirection);
+    auto angularFactor = angularDirection.length();
+    if(Math::closeTo(angularFactor, 0))
+        return wakeUpForTranslationBy(movementDirection*Math::Vector3(linearMovement));
+
+    angularDirection = angularDirection / angularFactor;
+    auto angularMovement = movement*angularFactor;
+    if(abs(angularMovement) <= 0)
+        return wakeUpForTranslationBy(movementDirection*Math::Vector3(linearMovement));
+
+    if(abs(angularMovement) > angularMovementLimit)
+    {
+        angularMovement = angularMovement >= 0 ? angularMovementLimit : -angularMovementLimit;
+        auto angularSpentMovement = angularMovement / angularFactor; 
+
+        linearMovement = (movement - angularSpentMovement)*inverseMass;
+    }
+
+    wakeUpForTranslationByAndRotateByAngularIncrement(movementDirection * linearMovement, angularDirection*angularMovement);
+}
+
+void RigidBody::wakeUpForTranslationBy(const Math::Vector3 &linearTranslation)
+{
+    // TODO: Wake up
+    translateBy(linearTranslation);
+}
+
+void RigidBody::wakeUpForTranslationByAndRotateByAngularIncrement(const Math::Vector3 &linearIncrement, const Math::Vector3 &angularIncrement)
+{
+    // TODO: Wake up
+    translateByAndRotateBy(linearIncrement, angularIncrement);
 }
 
 void RigidBody::applyImpulse(const Math::Vector3 &impulse)

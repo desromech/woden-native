@@ -153,7 +153,6 @@ public:
         );
     }
 
-
     Scalar determinant() const
     {
 	    // | m11 m12 m13 | m11 m12

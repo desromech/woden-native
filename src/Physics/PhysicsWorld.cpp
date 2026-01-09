@@ -230,7 +230,7 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
         return;
     contact.update();
 
-#if 1
+#if 0
 	auto firstCollisionObject = contact.firstObject;
 	auto secondCollisionObject = contact.secondObject;
 	
@@ -284,7 +284,6 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
     {
         return;
     }
-        
 
 	auto impulseChangePerVelocityContactMatrix = velocityChangePerImpulseContactMatrix.inverse();
 

@@ -75,6 +75,7 @@ public:
 
     virtual bool needsCollisionDetection();
 
+    virtual Math::Scalar computeAngularInertiaForRelativeContactPoint(const Math::Vector3 &relativePoint, const Math::Vector3 &normal) const;
     virtual Math::Matrix3x3 computeVelocityPerImpulseWorldMatrixForRelativeContactPoint(const Math::Vector3 &relativePoint) const;
     virtual Math::Vector3 computeVelocityAtRelativePoint(const Math::Vector3 &relativePoint);
 
@@ -85,6 +86,10 @@ public:
     virtual void applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection);
     virtual void applyImpulse(const Math::Vector3 &impulse);
     virtual void applyImpulseInRelativePosition(const Math::Vector3 &impulse, const Math::Vector3 &relativePoint);
+
+    void translateBy(const Math::Vector3 &translation);
+    void translateByAndRotateBy(const Math::Vector3 &translation, const Math::Vector3 &angularIncrement);
+
 
     PhysicsWorldWeakPtr owner;
     CollisionShapePtr shape;

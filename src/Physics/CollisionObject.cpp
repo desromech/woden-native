@@ -16,6 +16,13 @@ Math::AABox CollisionObject::getWorldBoundingBoxWithMargin() const
     return shape->localBoundingBoxWithMargin.transformedWith(transform);
 }
 
+Math::Scalar CollisionObject::computeAngularInertiaForRelativeContactPoint(const Math::Vector3 &relativePoint, const Math::Vector3 &normal) const
+{
+    (void)relativePoint;
+    (void)normal;
+    return 0;
+}
+
 Math::Matrix3x3 CollisionObject::computeVelocityPerImpulseWorldMatrixForRelativeContactPoint(const Math::Vector3 &relativePoint) const
 {
     (void)relativePoint;
@@ -76,6 +83,19 @@ void CollisionObject::applyImpulseInRelativePosition(const Math::Vector3 &impuls
 {
     (void)relativePoint;
     applyImpulse(impulse);
+}
+
+void CollisionObject::translateBy(const Math::Vector3 &translation)
+{
+    transform.translation += translation;
+    transformChanged();
+}
+
+void CollisionObject::translateByAndRotateBy(const Math::Vector3 &translation, const Math::Vector3 &angularIncrement)
+{
+    transform.translation += translation;
+    transform.rotation = (Math::Quaternion(angularIncrement * 0.5).exp() * transform.rotation).normalized();
+    transformChanged();
 }
 
 } // End of namespace Physics

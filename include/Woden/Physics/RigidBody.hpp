@@ -44,6 +44,7 @@ public:
 
     void computeMassDistribution();
     
+    virtual Math::Scalar computeAngularInertiaForRelativeContactPoint(const Math::Vector3 &relativePoint, const Math::Vector3 &normal) const override;
     virtual Math::Matrix3x3 computeVelocityPerImpulseWorldMatrixForRelativeContactPoint(const Math::Vector3 &relativePoint) const override;
     virtual Math::Vector3 computeVelocityAtRelativePoint(const Math::Vector3 &relativePoint);
 
@@ -57,11 +58,16 @@ public:
     virtual void applyImpulse(const Math::Vector3 &impulse);
     virtual void applyImpulseInRelativePosition(const Math::Vector3 &impulse, const Math::Vector3 &relativePoint);
 
+    void wakeUpForTranslationBy(const Math::Vector3 &linearTranslation);
+    void wakeUpForTranslationByAndRotateByAngularIncrement(const Math::Vector3 &linearIncrement, const Math::Vector3 &angularIncrement);
+
     Math::Scalar linearDamping = 0.2;
     Math::Scalar angularDamping = 0.2;
 
     Math::Vector3 internalLinearAcceleration = Math::Vector3(0);
     Math::Vector3 internalAngularAcceleration = Math::Vector3(0);
+
+    Math::Scalar angularMovementLimit = 0.2;
 
 protected:
     void updateWorldInertiaTensor();

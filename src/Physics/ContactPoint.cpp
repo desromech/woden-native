@@ -18,12 +18,18 @@ bool ContactPoint::secondHasCollisionResponse() const
 
 Math::Scalar ContactPoint::inverseInertia() const
 {
-    return inverseLinearInertia();
+    return inverseLinearInertia() + inverseAngularInertia();
 }
 
 Math::Scalar ContactPoint::inverseLinearInertia() const
 {
     return firstObject->getInverseMass() + secondObject->getInverseMass();
+}
+
+Math::Scalar ContactPoint::inverseAngularInertia() const
+{
+    return firstObject->computeAngularInertiaForRelativeContactPoint(getRelativeFirstPoint(), normal)
+        + secondObject->computeAngularInertiaForRelativeContactPoint(getRelativeSecondPoint(), -normal);
 }
 
 Math::Vector3 ContactPoint::getRelativeFirstPoint() const

@@ -35,6 +35,7 @@ struct ContactPoint
 
     Math::Scalar inverseInertia() const;
     Math::Scalar inverseLinearInertia() const;
+    Math::Scalar inverseAngularInertia() const;
 
     bool firstHasCollisionResponse() const;
     bool secondHasCollisionResponse() const;
