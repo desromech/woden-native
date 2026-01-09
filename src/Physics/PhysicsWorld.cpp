@@ -110,11 +110,13 @@ void DiscreteDynamicsPhysicsWorld::update(Math::Scalar delta, Math::Scalar fixed
 {
     accumulatedTime += delta;
 
-    int remainingIterationCount = 4;
-    while(accumulatedTime >= fixedTimeStep && remainingIterationCount > 0)
+    // Clamp to avoid spiral of death. See https://code.tutsplus.com/how-to-create-a-custom-2d-physics-engine-the-core-engine--gamedev-7493t
+    if(accumulatedTime >= 0.2f)
+        accumulatedTime = 0.2f;
+
+    while(accumulatedTime >= fixedTimeStep)
     {
         accumulatedTime -= fixedTimeStep;
-        --remainingIterationCount;
 
         resetNetForces();
         integrateMovement(fixedTimeStep);
