@@ -36,6 +36,19 @@ Math::Vector3 ContactPoint::getRelativeSecondPoint() const
     return secondPoint - secondObject->getPosition();
 }
 
+Math::Matrix3x3 ContactPoint::computeContactSpaceMatrix() const
+{
+    auto x = normal;
+    auto y = Math::Vector3(1, 0, 0);
+    if(abs(normal.x) > abs(normal.y))
+        y = Math::Vector3(0, 1, 0);
+
+    auto z = x.cross(y).normalized();
+    y = z.cross(x).normalized();
+    
+    return Math::Matrix3x3::WithColumns(x, y, z);
+}
+
 void ContactPoint::computeLocalVersionWithTransforms(const Math::RigidTransform &firstTransform, const Math::RigidTransform &secondTransform)
 {
     localFirstPoint = firstTransform.inverseTransformPosition(firstPoint);

@@ -257,9 +257,9 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
 	auto relativeFirstPoint = contact.getRelativeFirstPoint();
 	auto relativeSecondPoint = contact.getRelativeSecondPoint();
 
-/*	contactLocalToWorldMatrix3x3 := contact computeContactSpaceMatrix.
+	auto contactLocalToWorldMatrix3x3 = contact.computeContactSpaceMatrix();
 
-	velocityChangePerImpulseWorldMatrix := 
+/* velocityChangePerImpulseWorldMatrix := 
 	(firstCollisionObject computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativeFirstPoint) +
 	(secondCollisionObject computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativeSecondPoint).
 	

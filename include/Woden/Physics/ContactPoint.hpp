@@ -54,6 +54,8 @@ struct ContactPoint
     Math::Vector3 getRelativeFirstPoint() const;
     Math::Vector3 getRelativeSecondPoint() const;
 
+    Math::Matrix3x3 computeContactSpaceMatrix() const;
+
     void computeLocalVersionWithTransforms(const Math::RigidTransform &firstTransform, const Math::RigidTransform &secondTransform);
     void computeWorldVersionsWithTransforms(const Math::RigidTransform &firstTransform, const Math::RigidTransform &secondTransform);
 
