@@ -53,6 +53,8 @@ class DiscreteDynamicsPhysicsWorld : public PhysicsWorld
 public:
     virtual void update(Math::Scalar delta, Math::Scalar fixedTimeStep = 1.0f/120.0f) override;
 
+    Math::Scalar restingContactVelocityLimit = 0.1;
+
 protected:
     Math::Scalar accumulatedTime = 0;
 

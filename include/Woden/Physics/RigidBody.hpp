@@ -43,6 +43,10 @@ public:
     void setInertiaTensor(const Math::Matrix3x3 &tensor);
 
     void computeMassDistribution();
+    
+    virtual Math::Matrix3x3 computeVelocityPerImpulseWorldMatrixForRelativeContactPoint(const Math::Vector3 &relativePoint) const override;
+    virtual Math::Vector3 computeVelocityAtRelativePoint(const Math::Vector3 &relativePoint);
+
     virtual void transformChanged() override;
 
     void resetNetForces() override;
@@ -50,7 +54,8 @@ public:
     
     bool needsCollisionDetection() override;
     virtual void applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection) override;
-    virtual void applyImpulse(Math::Vector3 impulse);
+    virtual void applyImpulse(const Math::Vector3 &impulse);
+    virtual void applyImpulseInRelativePosition(const Math::Vector3 &impulse, const Math::Vector3 &relativePoint);
 
     Math::Scalar linearDamping = 0.2;
     Math::Scalar angularDamping = 0.2;

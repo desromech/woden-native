@@ -271,45 +271,56 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
 
 	auto contactLocalToWorldMatrix3x3 = contact.computeContactSpaceMatrix();
 
-/* velocityChangePerImpulseWorldMatrix := 
-	(firstCollisionObject computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativeFirstPoint) +
-	(secondCollisionObject computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativeSecondPoint).
+    auto velocityChangePerImpulseWorldMatrix = 
+        firstCollisionObject->computeVelocityPerImpulseWorldMatrixForRelativeContactPoint(relativeFirstPoint) +
+        secondCollisionObject->computeVelocityPerImpulseWorldMatrixForRelativeContactPoint(relativeSecondPoint);
 	
-	velocityChangePerImpulseContactMatrix := contactLocalToWorldMatrix3x3 transpose * velocityChangePerImpulseWorldMatrix * contactLocalToWorldMatrix3x3.
+	auto velocityChangePerImpulseContactMatrix = contactLocalToWorldMatrix3x3.transpose() * velocityChangePerImpulseWorldMatrix * contactLocalToWorldMatrix3x3;
 
-	inverseMass := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
-	velocityChangePerImpulseContactMatrix := velocityChangePerImpulseContactMatrix + (Matrix3x3 scale: inverseMass).
+    auto inverseMass = firstCollisionObject->getInverseMass() + secondCollisionObject->getInverseMass();
+	velocityChangePerImpulseContactMatrix = velocityChangePerImpulseContactMatrix + (Math::Matrix3x3(inverseMass));
 	
-	(velocityChangePerImpulseContactMatrix determinant = 0) ifTrue: [ ^ self ].
-	impulseChangePerVelocityContactMatrix := velocityChangePerImpulseContactMatrix inverse.
+    if (velocityChangePerImpulseContactMatrix.determinant() == 0)
+    {
+        return;
+    }
+        
 
-	firstContactVelocity := firstCollisionObject velocityAtRelativePoint: relativeFirstPoint.
-	secondContactVelocity := secondCollisionObject velocityAtRelativePoint: relativeSecondPoint.
-	
-	relativeSeparationVelocity := firstContactVelocity - secondContactVelocity.
-	
-	relativeContactSeparationVelocity := relativeSeparationVelocity * contactLocalToWorldMatrix3x3.
-	relativeContactSeparationVelocity x > 0.0 ifTrue: [ ^ self ].
+	auto impulseChangePerVelocityContactMatrix = velocityChangePerImpulseContactMatrix.inverse();
 
-	relativeVelocityFromIntegrationDelta := firstCollisionObject linearVelocityIntegrationDelta - secondCollisionObject linearVelocityIntegrationDelta.
-	relativeContactVelocityFromIntegrationDelta := relativeVelocityFromIntegrationDelta dot: contactNormal.
+    auto firstContactVelocity = firstCollisionObject->computeVelocityAtRelativePoint(relativeFirstPoint);
+	auto secondContactVelocity = secondCollisionObject->computeVelocityAtRelativePoint(relativeSecondPoint);
 	
-	restitutionCoefficient := firstCollisionObject restitutionCoefficient * secondCollisionObject restitutionCoefficient.
+    auto relativeSeparationVelocity = firstContactVelocity - secondContactVelocity;
 	
-	"Resting contact: reduce contact velocity by acceleration only speed increase, and set the restitution coeffiecient to 0"
-	relativeContactSeparationVelocity x abs < restingContactVelocityLimit ifTrue: [ 
-		restitutionCoefficient := 0.0
-	].
+    auto relativeContactSeparationVelocity = relativeSeparationVelocity * contactLocalToWorldMatrix3x3;
+	if(relativeContactSeparationVelocity.x > 0)
+    {
+        return;
+    }
 
-	deltaVelocity := relativeContactSeparationVelocity x negated - (restitutionCoefficient * (relativeContactSeparationVelocity x - relativeContactVelocityFromIntegrationDelta)).
+	auto relativeVelocityFromIntegrationDelta = firstCollisionObject->linearVelocityIntegrationDelta - secondCollisionObject->linearVelocityIntegrationDelta;
+	auto relativeContactVelocityFromIntegrationDelta = relativeVelocityFromIntegrationDelta.dot(contactNormal);
 	
-	contactLocalVelocityChange := Vector3 x: deltaVelocity
-		y: relativeContactSeparationVelocity y negated
-		z: relativeContactSeparationVelocity z negated.
+	auto restitutionCoefficient = Math::sqrt(firstCollisionObject->restitutionCoefficient * secondCollisionObject->restitutionCoefficient);
+	
+	// Resting contact: reduce contact velocity by acceleration only speed increase, and set the restitution coefficient to 0.
+	if(abs(relativeContactSeparationVelocity.x) < restingContactVelocityLimit)
+    { 
+		restitutionCoefficient = 0;
+    }
+
+	auto deltaVelocity = -relativeContactSeparationVelocity.x - (restitutionCoefficient * (relativeContactSeparationVelocity.x - relativeContactVelocityFromIntegrationDelta));
+	
+	auto contactLocalVelocityChange = Math::Vector3(
+        deltaVelocity,
+		-relativeContactSeparationVelocity.y,
+		-relativeContactSeparationVelocity.z
+    );
 		
-	contactLocalImpulse := impulseChangePerVelocityContactMatrix * contactLocalVelocityChange.
+	auto contactLocalImpulse = impulseChangePerVelocityContactMatrix * contactLocalVelocityChange;
 
-	"Compute the planar length for simulating friction."
+	/*"Compute the planar length for simulating friction."
 	staticFrictionCoefficient := firstCollisionObject staticFrictionCoefficient min: secondCollisionObject staticFrictionCoefficient.
 	planarImpulse := (contactLocalImpulse y squared + contactLocalImpulse z squared) sqrt.
 
@@ -331,15 +342,15 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
 		contactLocalImpulse z: contactLocalImpulse z * dynamicFrictionCoefficient * contactLocalImpulse x.
 	].
 
-	contactImpulse := contactLocalToWorldMatrix3x3 * contactLocalImpulse.
+    */
 
-	contact firstObjectHasResponse ifTrue: [
-		firstCollisionObject applyImpulse: contactImpulse inRelativePosition: relativeFirstPoint
-	].
-	contact secondObjectHasResponse ifTrue: [
-		secondCollisionObject applyImpulse: contactImpulse negated inRelativePosition: relativeSecondPoint
-	].
-*/
+	auto contactImpulse = contactLocalToWorldMatrix3x3 * contactLocalImpulse;
+
+	if(contact.firstHasCollisionResponse())
+        firstCollisionObject->applyImpulseInRelativePosition(contactImpulse, relativeFirstPoint);
+
+	if(contact.secondHasCollisionResponse())
+        secondCollisionObject->applyImpulseInRelativePosition(-contactImpulse, relativeSecondPoint);
 #endif
 }
 

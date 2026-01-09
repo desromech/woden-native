@@ -15,6 +15,19 @@ void RigidBody::computeMassDistribution()
 
 }
 
+Math::Matrix3x3 RigidBody::computeVelocityPerImpulseWorldMatrixForRelativeContactPoint(const Math::Vector3 &relativePoint) const
+{
+    auto relativePointCrossMatrix = Math::Matrix3x3::SkewSymmetric(relativePoint);
+    auto torquePerUnitImpulse = relativePointCrossMatrix;
+    auto rotationPerUnitImpulse = worldInverseInertiaTensor * torquePerUnitImpulse;
+    return -(relativePointCrossMatrix * rotationPerUnitImpulse);
+}
+
+Math::Vector3 RigidBody::computeVelocityAtRelativePoint(const Math::Vector3 &relativePoint)
+{
+    return linearVelocity + angularVelocity.cross(relativePoint);
+}
+
 void RigidBody::setInertiaTensor(const Math::Matrix3x3 &tensor)
 {
     inertiaTensor = tensor;
@@ -83,12 +96,19 @@ void RigidBody::applyMovementAtRelativePoint(Math::Scalar movement, const Math::
 {
     (void)relativePoint;
     auto linearMovement = movement *inverseMass;
+
     setPosition(getPosition() + normalDirection*Math::Vector3(linearMovement));
 }
 
-void RigidBody::applyImpulse(Math::Vector3 impulse)
+void RigidBody::applyImpulse(const Math::Vector3 &impulse)
 {
     linearVelocity += impulse*Math::Vector3(inverseMass);
+}
+
+void RigidBody::applyImpulseInRelativePosition(const Math::Vector3 &impulse, const Math::Vector3 &relativePoint)
+{
+    linearVelocity += impulse*inverseMass;
+	angularVelocity += worldInverseInertiaTensor * (relativePoint.cross(impulse));
 }
 
 }

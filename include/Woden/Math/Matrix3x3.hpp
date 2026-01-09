@@ -144,6 +144,15 @@ public:
         );
     }
 
+    static Matrix3x3 SkewSymmetric(const Vector3 &v)
+    {
+        return Matrix3x3(
+            0, -v.z, v.y,
+            v.z, 0, -v.x,
+            -v.y, v.x, 0
+        );
+    }
+
 
     Scalar determinant() const
     {
@@ -191,6 +200,15 @@ public:
     bool operator!=(const Matrix3x3 &o) const
     {
         return !(*this == o);
+    }
+
+    Matrix3x3 operator-() const
+    {
+        return Matrix3x3(
+            -m11, -m12, -m13,
+            -m21, -m22, -m23,
+            -m31, -m32, -m33
+        );
     }
 
     Matrix3x3 operator+(const Matrix3x3 &o) const

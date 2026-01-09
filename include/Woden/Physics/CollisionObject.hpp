@@ -75,18 +75,25 @@ public:
 
     virtual bool needsCollisionDetection();
 
+    virtual Math::Matrix3x3 computeVelocityPerImpulseWorldMatrixForRelativeContactPoint(const Math::Vector3 &relativePoint) const;
+    virtual Math::Vector3 computeVelocityAtRelativePoint(const Math::Vector3 &relativePoint);
+
     SceneGraph::SceneNodePtr constructVisualizationSceneNode();
 
     virtual Math::Scalar getMass() const;
     virtual Math::Scalar getInverseMass() const;
     virtual void applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection);
-    virtual void applyImpulse(Math::Vector3 impulse);
+    virtual void applyImpulse(const Math::Vector3 &impulse);
+    virtual void applyImpulseInRelativePosition(const Math::Vector3 &impulse, const Math::Vector3 &relativePoint);
 
     PhysicsWorldWeakPtr owner;
     CollisionShapePtr shape;
     
     Math::Vector3 linearVelocity = Math::Vector3(0);
     Math::Vector3 angularVelocity = Math::Vector3(0);
+
+    Math::Vector3 linearVelocityIntegrationDelta = Math::Vector3::Zeros();
+    Math::Vector3 angularVelocityIntegrationDelta = Math::Vector3::Zeros();
 
     Math::Scalar restitutionCoefficient = 0.2f;
 	Math::Scalar dynamicFrictionCoefficient = 0.5f;
