@@ -21,11 +21,11 @@ int woden_main(int argc, const char **argv)
 
     {
         auto pointLightSource = std::make_shared<Woden::Rendering::PointLightSource> ();
-        pointLightSource->color = Vector3(0.8, 0.8, 0.2);
+        pointLightSource->color = Vector3(0.8f, 0.8f, 0.2f);
         pointLightSource->intensity = 5;
         pointLightSource->influenceRadius = 4;
 
-        scene->normalLayer->addChild(pointLightSource->asSceneNodeWithPosition(Vector3(-1.5, 1.5, 1.6)));
+        scene->normalLayer->addChild(pointLightSource->asSceneNodeWithPosition(Vector3(-1.5f, 1.5f, 1.6f)));
 
     }
 

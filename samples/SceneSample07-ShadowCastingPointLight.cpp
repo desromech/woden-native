@@ -85,7 +85,7 @@ int woden_main(int argc, const char **argv)
 
     {
         auto pointLightSource = std::make_shared<Woden::Rendering::PointLightSource> ();
-        pointLightSource->color = Vector3(0.8, 0.8, 0.7);
+        pointLightSource->color = Vector3(0.8f, 0.8f, 0.7f);
         pointLightSource->intensity = 10;
         pointLightSource->influenceRadius = 10;
         pointLightSource->castShadows = true;

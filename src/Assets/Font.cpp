@@ -38,8 +38,8 @@ FontFacePtr Font::getOrCreateFaceWithHeight(uint32_t height)
     face->image = image;
     face->bakedChars.resize(256-31);
 
-    stbtt_BakeFontBitmap(rawData.data(), 0, height, image->pixels.data(), image->width, image->height, 31, 256 - 31, face->bakedChars.data());
-    stbtt_GetScaledFontVMetrics(rawData.data(), 0, height, &face->ascent, &face->descent, &face->linegap);
+    stbtt_BakeFontBitmap(rawData.data(), 0, float(height), image->pixels.data(), image->width, image->height, 31, 256 - 31, face->bakedChars.data());
+    stbtt_GetScaledFontVMetrics(rawData.data(), 0, float(height), &face->ascent, &face->descent, &face->linegap);
     
     return face;
 }

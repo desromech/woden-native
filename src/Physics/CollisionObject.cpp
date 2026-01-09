@@ -94,7 +94,7 @@ void CollisionObject::translateBy(const Math::Vector3 &translation)
 void CollisionObject::translateByAndRotateBy(const Math::Vector3 &translation, const Math::Vector3 &angularIncrement)
 {
     transform.translation += translation;
-    transform.rotation = (Math::Quaternion(angularIncrement * 0.5).exp() * transform.rotation).normalized();
+    transform.rotation = (Math::Quaternion(angularIncrement * Math::Vector3(0.5)).exp() * transform.rotation).normalized();
     transformChanged();
 }
 

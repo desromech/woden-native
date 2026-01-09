@@ -103,17 +103,17 @@ void MeshBuilder::beginWithTopologyAndMaterial(agpu_primitive_topology topology,
         auto &lastPrimitive = primitives.back();
         if(lastPrimitive.topology == topology && lastPrimitive.material == material)
         {
-            baseVertex = positions.size();
+            baseVertex = uint32_t(positions.size());
             return;
         }
         finishLastPrimitive();
     }
 
-    baseVertex = positions.size();
+    baseVertex = uint32_t(positions.size());
     MeshBuilderPrimitive primitive = {};
     primitive.material = currentMaterial;
     primitive.topology = topology;
-    primitive.firstIndex = indices.size();
+    primitive.firstIndex = uint32_t(indices.size());
 
     primitives.push_back(primitive);
 }
@@ -124,7 +124,7 @@ void MeshBuilder::finishLastPrimitive()
         return;
     
     auto primitive = &primitives.back();
-    primitive->indexCount = indices.size() - primitive->firstIndex;
+    primitive->indexCount = uint32_t(indices.size()) - primitive->firstIndex;
 
 }
 

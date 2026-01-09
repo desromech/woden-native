@@ -91,7 +91,7 @@ void RigidBody::integrateMovement(Math::Scalar deltaTime)
     auto integratedPosition = getPosition() + linearVelocity*Math::Vector3(deltaTime);
 
     // Integrate the orientation
-    auto integratedOrientation = Math::Quaternion(angularVelocity*Math::Vector3(0.5*deltaTime)).exp() * getOrientation();
+    auto integratedOrientation = Math::Quaternion(angularVelocity*Math::Vector3(0.5f*deltaTime)).exp() * getOrientation();
     integratedOrientation = integratedOrientation.normalized();
 
     setPositionAndOrientation(integratedPosition, integratedOrientation);
@@ -126,7 +126,7 @@ void RigidBody::applyMovementAtRelativePoint(Math::Scalar movement, const Math::
         linearMovement = (movement - angularSpentMovement)*inverseMass;
     }
 
-    wakeUpForTranslationByAndRotateByAngularIncrement(movementDirection * linearMovement, angularDirection*angularMovement);
+    wakeUpForTranslationByAndRotateByAngularIncrement(movementDirection * Math::Vector3(linearMovement), angularDirection*Math::Vector3(angularMovement));
 }
 
 void RigidBody::wakeUpForTranslationBy(const Math::Vector3 &linearTranslation)
@@ -148,7 +148,7 @@ void RigidBody::applyImpulse(const Math::Vector3 &impulse)
 
 void RigidBody::applyImpulseInRelativePosition(const Math::Vector3 &impulse, const Math::Vector3 &relativePoint)
 {
-    linearVelocity += impulse*inverseMass;
+    linearVelocity += impulse* Math::Vector3(inverseMass);
 	angularVelocity += worldInverseInertiaTensor * (relativePoint.cross(impulse));
 }
 

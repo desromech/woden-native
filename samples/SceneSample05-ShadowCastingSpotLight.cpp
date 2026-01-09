@@ -45,7 +45,7 @@ int woden_main(int argc, const char **argv)
 
     {
         auto spotLightSource = std::make_shared<Woden::Rendering::SpotLightSource> ();
-        spotLightSource->color = Vector3(0.8, 0.8, 0.7);
+        spotLightSource->color = Vector3(0.8f, 0.8f, 0.7f);
         spotLightSource->intensity = 20;
         spotLightSource->influenceRadius = 10;
         spotLightSource->castShadows = true;

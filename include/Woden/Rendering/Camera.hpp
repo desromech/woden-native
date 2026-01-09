@@ -26,11 +26,11 @@ public:
     }
 
     bool isPerspective = true;
-    Math::Scalar nearDistance = 0.1;
+    Math::Scalar nearDistance = 0.1f;
     Math::Scalar farDistance = 1000.0;
     Math::Scalar fovY = 60.0;
 
-    Math::Scalar cascadeSplitDistributionLambda = 0.99;
+    Math::Scalar cascadeSplitDistributionLambda = 0.99f;
 };
 
 } // End of namespace Rendering

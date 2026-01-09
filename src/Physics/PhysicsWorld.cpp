@@ -64,7 +64,7 @@ SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
 
     auto contactMesh = Rendering::MeshBuilder()
             .setMaterial(contactMeshMaterial)
-            .addCubeWithExtent(Math::Vector3(0.1))
+            .addCubeWithExtent(Math::Vector3(0.1f))
             .generateTexcoordsWithFacePlanarTransformWithScale(Math::Vector2(1, 1))
             .finishMesh();
 

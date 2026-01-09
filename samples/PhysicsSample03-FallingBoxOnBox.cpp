@@ -22,7 +22,7 @@ int woden_main(int argc, const char **argv)
         rigidBody->shape = shape;
         rigidBody->setMass(1);
         rigidBody->computeMassDistribution();
-        rigidBody->setPosition(Vector3(0.6, 1.5, 0));
+        rigidBody->setPosition(Vector3(0.6f, 1.5f, 0));
 
         world->addCollisionObject(rigidBody);
     }
@@ -44,13 +44,13 @@ int woden_main(int argc, const char **argv)
     // Floor
     {
         auto shape = std::make_shared<BoxCollisionShape> ();
-        shape->setHalfExtent(Vector3(4, 0.1, 4));
+        shape->setHalfExtent(Vector3(4, 0.1f, 4));
 
         auto floor = std::make_shared<RigidBody> ();
         floor->shape = shape;
         floor->setMass(0);
         floor->computeMassDistribution();
-        floor->setPosition(Vector3(0, -0.8, 0));
+        floor->setPosition(Vector3(0, -0.8f, 0));
 
         world->addCollisionObject(floor);
     }

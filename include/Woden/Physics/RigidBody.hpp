@@ -61,13 +61,13 @@ public:
     void wakeUpForTranslationBy(const Math::Vector3 &linearTranslation);
     void wakeUpForTranslationByAndRotateByAngularIncrement(const Math::Vector3 &linearIncrement, const Math::Vector3 &angularIncrement);
 
-    Math::Scalar linearDamping = 0.2;
-    Math::Scalar angularDamping = 0.2;
+    Math::Scalar linearDamping = 0.2f;
+    Math::Scalar angularDamping = 0.2f;
 
     Math::Vector3 internalLinearAcceleration = Math::Vector3(0);
     Math::Vector3 internalAngularAcceleration = Math::Vector3(0);
 
-    Math::Scalar angularMovementLimit = 0.2;
+    Math::Scalar angularMovementLimit = 0.2f;
 
 protected:
     void updateWorldInertiaTensor();

@@ -45,7 +45,7 @@ int woden_main(int argc, const char **argv)
 
     {
         auto directionalLightSource = std::make_shared<Woden::Rendering::DirectionalLightSource> ();
-        directionalLightSource->color = Vector3(0.8, 0.8, 0.7);
+        directionalLightSource->color = Vector3(0.8f, 0.8f, 0.7f);
         directionalLightSource->castShadows = true;
 
         auto lightNode = directionalLightSource->asSceneNode();

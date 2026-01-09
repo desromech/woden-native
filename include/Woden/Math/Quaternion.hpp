@@ -5,6 +5,11 @@
 #include "Matrix3x3.hpp"
 #include "Vector3.hpp"
 
+#ifdef _WIN32
+#pragma warning( push )
+#pragma warning( disable : 4201 ) // Anonymous unions and structs
+#endif
+
 namespace Woden
 {
 namespace Math
@@ -194,5 +199,9 @@ struct Quaternion
 };
 } // End of namespace Math
 } // End of namespace Woden
+
+#ifdef _WIN32
+#pragma warning( pop )
+#endif
 
 #endif //WODEN_MATH_QUATERNION_HPP

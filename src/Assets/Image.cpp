@@ -57,8 +57,8 @@ bool Image::saveToTGA(const std::string &filename)
 
     TGAHeader header = {0};
     header.imageType = 2;
-    header.width = width;
-    header.height = height;
+    header.width = uint16_t(width);
+    header.height = uint16_t(height);
     header.pixelDepth = 32;
 
     if(1 != fwrite(&header, sizeof(TGAHeader), 1, file))
@@ -168,10 +168,10 @@ Math::Vector4 Image::sampleDataAtTexcoord(Math::Vector2 texcoord)
 
     Math::Vector2 fractCoord = position - leftTopCoord;
 
-    Math::Vector4 leftTopValue     = fetchData(leftTopCoord.x,     leftTopCoord.y);
-    Math::Vector4 leftBottomValue  = fetchData(leftBottomCoord.x,  leftBottomCoord.y);
-    Math::Vector4 rightTopValue    = fetchData(rightTopCoord.x,    rightTopCoord.y);
-    Math::Vector4 rightBottomValue = fetchData(rightBottomCoord.x, rightBottomCoord.y);
+    Math::Vector4 leftTopValue     = fetchData(int(leftTopCoord.x),     int(leftTopCoord.y));
+    Math::Vector4 leftBottomValue  = fetchData(int(leftBottomCoord.x),  int(leftBottomCoord.y));
+    Math::Vector4 rightTopValue    = fetchData(int(rightTopCoord.x),    int(rightTopCoord.y));
+    Math::Vector4 rightBottomValue = fetchData(int(rightBottomCoord.x), int(rightBottomCoord.y));
 
     auto topValue = Math::mix(leftTopValue, rightTopValue, fractCoord.x);
     auto bottomValue = Math::mix(leftBottomValue, rightBottomValue, fractCoord.x);

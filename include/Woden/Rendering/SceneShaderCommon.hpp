@@ -43,7 +43,7 @@ struct SceneCameraState
 
 struct GlobalLightingState
 {
-    Math::CompactVector3 ambientLighting = Math::CompactVector3(0.2, 0.2, 0.2);
+    Math::CompactVector3 ambientLighting = Math::CompactVector3(0.2f, 0.2f, 0.2f);
     uint32_t numberOfLights;
 };
 

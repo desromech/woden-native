@@ -48,7 +48,7 @@ std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeCollisionContact
 
 std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
 {
-    const Math::Scalar ShallowPenetrationThreshold = 1.0e-5;
+    const Math::Scalar ShallowPenetrationThreshold = 1.0e-5f;
 
     std::vector<ContactPoint> result;
     auto &&firstSupportFunction = [&](const Math::Vector3 &D) {
@@ -127,7 +127,7 @@ std::optional<ShapeRayCastingResult> SphereCollisionShape::rayCast(const Math::R
 // Box collision shape
 Math::Matrix3x3 BoxCollisionShape::computeInertiaTensorWithMass(Math::Scalar mass)
 {
-    auto extent = halfExtent*2.0;
+    auto extent = halfExtent* Math::Vector3(2.0);
     auto extent2 = extent*extent;
     return Math::Matrix3x3(
         (extent2.y + extent2.z)/12*mass, 0, 0,
