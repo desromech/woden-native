@@ -319,29 +319,26 @@ void DiscreteDynamicsPhysicsWorld::resolveContactCollisionResponse(ContactPoint 
 		
 	auto contactLocalImpulse = impulseChangePerVelocityContactMatrix * contactLocalVelocityChange;
 
-	/*"Compute the planar length for simulating friction."
-	staticFrictionCoefficient := firstCollisionObject staticFrictionCoefficient min: secondCollisionObject staticFrictionCoefficient.
-	planarImpulse := (contactLocalImpulse y squared + contactLocalImpulse z squared) sqrt.
+	// Compute the planar length for simulating friction.
+	auto staticFrictionCoefficient = std::min(firstCollisionObject->staticFrictionCoefficient, secondCollisionObject->staticFrictionCoefficient);
+	auto planarImpulse = Math::sqrt(contactLocalImpulse.y*contactLocalImpulse.y + contactLocalImpulse.z*contactLocalImpulse.z);
 
-	"Is this in the limits for the static friction?"
-	planarImpulse > (contactLocalImpulse x * staticFrictionCoefficient) ifTrue: [
-		| dynamicFrictionCoefficient frictionNormalDelta |
-		dynamicFrictionCoefficient := firstCollisionObject dynamicFrictionCoefficient min: secondCollisionObject dynamicFrictionCoefficient.
+	// Is this in the limits for the static friction?
+	if(planarImpulse > contactLocalImpulse.x * staticFrictionCoefficient)
+    {
+        auto dynamicFrictionCoefficient = std::min(firstCollisionObject->dynamicFrictionCoefficient, secondCollisionObject->dynamicFrictionCoefficient);
+		contactLocalImpulse.y /= planarImpulse;
+		contactLocalImpulse.z /= planarImpulse;
+
+		//contactLocalImpulse yz length = dynamicFrictionCoefficient * contactLocalImpulse x
 		
-		contactLocalImpulse y: contactLocalImpulse y / planarImpulse.
-		contactLocalImpulse z: contactLocalImpulse z / planarImpulse.
+		// CHECK ME: What is the meaning of this correction? [From Millington Game Physics Engine Development, Chapter 15 pp 410]
+		//auto frictionNormalDelta = velocityChangePerImpulseContactMatrix.firstRow().dot(Math::Vector3(1, dynamicFrictionCoefficient*contactLocalImpulse.y, dynamicFrictionCoefficient*contactLocalImpulse.z));
+        //contactLocalImpulse.x = deltaVelocity / frictionNormalDelta;
 
-		"contactLocalImpulse yz length = dynamicFrictionCoefficient * contactLocalImpulse x"
-		
-		"CHECK ME: What is the meaning of this correction? [From Millington Game Physics Engine Development, Chapter 15 pp 410]"
-		frictionNormalDelta := velocityChangePerImpulseContactMatrix firstRow dot: (Vector3 x: 1 y: dynamicFrictionCoefficient*contactLocalImpulse y z: dynamicFrictionCoefficient*contactLocalImpulse z).
-		contactLocalImpulse x: deltaVelocity / frictionNormalDelta.
-
-		contactLocalImpulse y: contactLocalImpulse y * dynamicFrictionCoefficient * contactLocalImpulse x.
-		contactLocalImpulse z: contactLocalImpulse z * dynamicFrictionCoefficient * contactLocalImpulse x.
-	].
-
-    */
+		contactLocalImpulse.y *= dynamicFrictionCoefficient * contactLocalImpulse.x;
+		contactLocalImpulse.z *= dynamicFrictionCoefficient * contactLocalImpulse.x;
+	}
 
 	auto contactImpulse = contactLocalToWorldMatrix3x3 * contactLocalImpulse;
 
