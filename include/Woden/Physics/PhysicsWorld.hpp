@@ -26,7 +26,7 @@ class PhysicsWorld : public std::enable_shared_from_this<PhysicsWorld>
 public:
     void addCollisionObject(const CollisionObjectPtr &collisionObject);
 
-    virtual void update(Math::Scalar delta);
+    virtual void update(Math::Scalar delta, Math::Scalar fixedTimeStep = 1.0f/120.0f);
 
     SceneGraph::ScenePtr buildInteractiveScene();
 
@@ -51,9 +51,11 @@ protected:
 class DiscreteDynamicsPhysicsWorld : public PhysicsWorld
 {
 public:
-    virtual void update(Math::Scalar delta) override;
+    virtual void update(Math::Scalar delta, Math::Scalar fixedTimeStep = 1.0f/120.0f) override;
 
 protected:
+    Math::Scalar accumulatedTime = 0;
+
     void resetNetForces();
     void integrateMovement(Math::Scalar delta);
     

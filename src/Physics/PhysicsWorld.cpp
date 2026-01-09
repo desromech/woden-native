@@ -21,9 +21,10 @@ void PhysicsWorld::addCollisionObject(const CollisionObjectPtr &collisionObject)
     collisionObjects.push_back(collisionObject);
 }
 
-void PhysicsWorld::update(Math::Scalar delta)
+void PhysicsWorld::update(Math::Scalar delta, Math::Scalar fixedTimeStep)
 {
     (void)delta;
+    (void)fixedTimeStep;
 }
 
 SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
@@ -105,11 +106,20 @@ SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
     return scene;
 }
 
-void DiscreteDynamicsPhysicsWorld::update(Math::Scalar delta)
+void DiscreteDynamicsPhysicsWorld::update(Math::Scalar delta, Math::Scalar fixedTimeStep)
 {
-    resetNetForces();
-    integrateMovement(delta);
-    detectAndResolveCollisions();
+    accumulatedTime += delta;
+
+    int remainingIterationCount = 4;
+    while(accumulatedTime >= fixedTimeStep && remainingIterationCount > 0)
+    {
+        accumulatedTime -= fixedTimeStep;
+        --remainingIterationCount;
+
+        resetNetForces();
+        integrateMovement(fixedTimeStep);
+        detectAndResolveCollisions();
+    }
 }
 
 
