@@ -95,3 +95,6 @@ add_subdirectory(samples)
 
 # Build the tests
 add_subdirectory(tests)
+
+## Build the tools
+add_subdirectory(tools)
