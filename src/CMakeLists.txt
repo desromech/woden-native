@@ -6,6 +6,9 @@ set(WodenEngine_Sources
     Assets/ResourceCache.cpp
     Assets/Texture.cpp
 
+    GameFramework/Actor.cpp
+    GameFramework/World.cpp
+
     Math/GJK.cpp
     Math/Matrix3x3.cpp
     Math/Vector3.cpp
@@ -15,6 +18,7 @@ set(WodenEngine_Sources
     Morphic/SceneMorph.cpp
     Morphic/StringMorph.cpp
     Morphic/SystemWindow.cpp
+    Morphic/WorldMorph.cpp
 
     Physics/CollisionObject.cpp
     Physics/CollisionShape.cpp

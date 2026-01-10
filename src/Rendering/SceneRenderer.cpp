@@ -399,7 +399,8 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
         currentRenderingScene->currentCamera = camera;
     }
 
-    scene->addIntoRenderingScene(currentRenderingScene);
+    if(scene)
+        scene->addIntoRenderingScene(currentRenderingScene);
 
     // Reset the shadow map atlas4
     shadowMapAtlasAllocator.initializeWithExtent(ShadowMapAtlasSize, ShadowMapAtlasSize);

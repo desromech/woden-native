@@ -45,3 +45,7 @@ target_link_libraries(PhysicsSample05-SuspendedBoxWithRope WodenEngine)
 
 add_executable(PhysicsSample06-SuspendedBoxWithRod SampleCommon.cpp PhysicsSample06-SuspendedBoxWithRod.cpp)
 target_link_libraries(PhysicsSample06-SuspendedBoxWithRod WodenEngine)
+
+## Game framework samples.
+add_executable(GameFrameworkSample01-CubeAndLightActor SampleCommon.cpp GameFrameworkSample01-CubeAndLightActor.cpp)
+target_link_libraries(GameFrameworkSample01-CubeAndLightActor WodenEngine)
