@@ -1,4 +1,6 @@
 #include "Woden/Morphic/WorldMorph.hpp"
+#include "Woden/GameFramework/World.hpp"
+#include "Woden/GameFramework/SceneSubsystem.hpp"
 #include "Woden/Rendering/Camera.hpp"
 #include "Woden/Rendering/GuiRenderer.hpp"
 #include "Woden/Rendering/SceneRenderer.hpp"
@@ -24,6 +26,13 @@ WorldMorph::WorldMorph()
 void WorldMorph::update(Math::Scalar deltaTime)
 {
     Morph::update(deltaTime);
+
+    if(world)
+    {
+        auto sceneSubsystem = world->getSceneSubsystem();
+        scene = sceneSubsystem->scene;
+    }
+
 }
 
 void WorldMorph::drawWith(const Rendering::GUIRendererPtr &renderer)

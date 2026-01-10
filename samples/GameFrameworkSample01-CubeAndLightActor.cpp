@@ -1,4 +1,5 @@
 #include "Woden/GameFramework/Actor.hpp"
+#include "Woden/GameFramework/ActorSceneComponent.hpp"
 #include "Woden/GameFramework/World.hpp"
 #include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
@@ -24,6 +25,9 @@ int woden_main(int argc, const char **argv)
             .finishMesh();
         
         auto actor = std::make_shared<Actor> ();
+        auto meshComponent = std::make_shared<ActorMeshSceneComponent> ();
+        meshComponent->mesh = cubeMesh;
+        actor->addComponent(meshComponent);
         world->spawnActor(actor);
     }
 

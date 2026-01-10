@@ -2,18 +2,29 @@
 #define WODEN_GAME_FRAMEWORK_ACTOR_HPP
 
 #include <memory>
+#include <vector>
 
 namespace Woden
 {
 namespace GameFramework
 {
 typedef std::shared_ptr<class Actor> ActorPtr;
+typedef std::shared_ptr<class ActorComponent> ActorComponentPtr;
+typedef std::shared_ptr<class ActorSceneComponent> ActorSceneComponentPtr;
+typedef std::shared_ptr<class World> WorldPtr;
 typedef std::weak_ptr<class World> WorldWeakPtr;
 
-class Actor
+class Actor : public std::enable_shared_from_this<Actor>
 {
 public:
-    WorldWeakPtr owner;
+    void addComponent(const ActorComponentPtr &component);
+    virtual void beginPlay();
+    virtual void registerWithSubsystemsInWorld(const WorldPtr &world);
+
+    WorldWeakPtr world;
+    std::vector<ActorComponentPtr> components;
+    ActorSceneComponentPtr rootSceneComponent;
+    bool isRegisteredInWorld = false;
 };
 
 } // End of namespace GameFramework

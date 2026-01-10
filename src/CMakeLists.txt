@@ -7,6 +7,9 @@ set(WodenEngine_Sources
     Assets/Texture.cpp
 
     GameFramework/Actor.cpp
+    GameFramework/ActorComponent.cpp
+    GameFramework/ActorSceneComponent.cpp
+    GameFramework/SceneSubsystem.cpp
     GameFramework/World.cpp
 
     Math/GJK.cpp
