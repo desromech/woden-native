@@ -52,3 +52,6 @@ target_link_libraries(GameFrameworkSample01-CubeAndLightActor WodenEngine)
 
 add_executable(GameFrameworkSample02-FallingBoxActor SampleCommon.cpp GameFrameworkSample02-FallingBoxActor.cpp)
 target_link_libraries(GameFrameworkSample02-FallingBoxActor WodenEngine)
+
+add_executable(GameFrameworkSample03-FallingBoxAndFloor SampleCommon.cpp GameFrameworkSample03-FallingBoxAndFloor.cpp)
+target_link_libraries(GameFrameworkSample03-FallingBoxAndFloor WodenEngine)
