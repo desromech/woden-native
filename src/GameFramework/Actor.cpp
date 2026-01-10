@@ -16,6 +16,15 @@ void Actor::beginPlay()
 {
 }
 
+void Actor::endPlay()
+{
+}
+
+void Actor::tick(float deltaTime)
+{
+    (void)deltaTime;
+}
+
 void Actor::registerWithSubsystemsInWorld(const WorldPtr &world)
 {
     if(isRegisteredInWorld)

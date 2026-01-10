@@ -20,6 +20,10 @@ class Actor : public std::enable_shared_from_this<Actor>
 public:
     void addComponent(const ActorComponentPtr &component);
     virtual void beginPlay();
+    virtual void endPlay();
+
+    virtual void tick(float deltaTime);
+
     virtual void registerWithSubsystemsInWorld(const WorldPtr &world);
 
     Math::Vector3 getPosition() const;

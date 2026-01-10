@@ -29,6 +29,7 @@ public:
     void addForceGenerator(const ForceGeneratorPtr &forceGenerator);
 
     virtual void update(Math::Scalar delta, Math::Scalar fixedTimeStep = 1.0f/120.0f);
+    virtual void updateSingleTimeStep(Math::Scalar delta);
 
     SceneGraph::ScenePtr buildInteractiveScene();
 
@@ -57,6 +58,7 @@ class DiscreteDynamicsPhysicsWorld : public PhysicsWorld
 {
 public:
     virtual void update(Math::Scalar delta, Math::Scalar fixedTimeStep = 1.0f/120.0f) override;
+    virtual void updateSingleTimeStep(Math::Scalar delta) override;
 
     Math::Scalar restingContactVelocityLimit = 0.1f;
 

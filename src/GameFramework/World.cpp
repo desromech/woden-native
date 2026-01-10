@@ -63,5 +63,39 @@ const SceneSubsystemPtr &World::getSceneSubsystem()
     return sceneSubsystem;
 }
 
+void World::updateWithDeltaTime(Math::Scalar deltaTime)
+{
+    if(!isPlaying)
+        return;
+    
+    accumulatedDeltaTime += deltaTime;
+    if(accumulatedDeltaTime > 0.2)
+        accumulatedDeltaTime = 0.2;
+    
+    while(accumulatedDeltaTime >= updateTimeStep)
+    {
+        accumulatedDeltaTime -= updateTimeStep;
+        updateSingleTimeStep(updateTimeStep);
+    }
+}
+
+void World::updateSingleTimeStep(Math::Scalar deltaTime)
+{
+    currentTime += deltaTime;
+    for(auto &subsystem : subsystems)
+        subsystem->prePhysicsUpdateSingleTimeStep(deltaTime);
+
+    // TODO: Move this onto a subsystem.
+    for(auto &actor : actors)
+        actor->tick(deltaTime);
+
+    for(auto &subsystem : subsystems)
+        subsystem->updateSingleTimeStep(deltaTime);
+
+    for(auto &subsystem : subsystems)
+        subsystem->postActorMessagesUpdateSingleTimeStep(deltaTime);
+
+}
+
 } // End of namespace GameFramework
 } // End of namespace Woden

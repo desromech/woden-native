@@ -36,6 +36,11 @@ void PhysicsWorld::update(Math::Scalar delta, Math::Scalar fixedTimeStep)
     (void)fixedTimeStep;
 }
 
+void PhysicsWorld::updateSingleTimeStep(Math::Scalar delta)
+{
+    (void)delta;
+}
+
 SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
 {
     auto scene = SceneGraph::MakeScene();
@@ -158,14 +163,17 @@ void DiscreteDynamicsPhysicsWorld::update(Math::Scalar delta, Math::Scalar fixed
     while(accumulatedTime >= fixedTimeStep)
     {
         accumulatedTime -= fixedTimeStep;
-
-        resetNetForces();
-        evaluateForceGenerators(fixedTimeStep);
-        integrateMovement(fixedTimeStep);
-        detectAndResolveCollisions();
+        updateSingleTimeStep(fixedTimeStep);
     }
 }
 
+void DiscreteDynamicsPhysicsWorld::updateSingleTimeStep(Math::Scalar delta)
+{
+    resetNetForces();
+    evaluateForceGenerators(delta);
+    integrateMovement(delta);
+    detectAndResolveCollisions();
+}
 
 void DiscreteDynamicsPhysicsWorld::resetNetForces()
 {

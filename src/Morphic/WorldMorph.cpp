@@ -29,8 +29,13 @@ void WorldMorph::update(Math::Scalar deltaTime)
 
     if(world)
     {
+        // Update the world
+        world->updateWithDeltaTime(deltaTime);
+
+        // Get the scene.
         auto sceneSubsystem = world->getSceneSubsystem();
         scene = sceneSubsystem->scene;
+
     }
 
 }

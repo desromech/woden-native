@@ -1,6 +1,7 @@
 #ifndef WODEN_GAME_FRAMEWORK_SUBSYSTEM_HPP
 #define WODEN_GAME_FRAMEWORK_SUBSYSTEM_HPP
 
+#include "Woden/Math/Scalar.hpp"
 #include <memory>
 
 namespace Woden
@@ -16,6 +17,21 @@ class Subsystem
 public:
     virtual ~Subsystem() {}
     virtual void beginPlay() {}
+
+    virtual void prePhysicsUpdateSingleTimeStep(Math::Scalar deltaTime)
+    {
+        (void)deltaTime;
+    }
+
+    virtual void updateSingleTimeStep(Math::Scalar deltaTime)
+    {
+        (void)deltaTime;
+    }
+
+    virtual void postActorMessagesUpdateSingleTimeStep(Math::Scalar deltaTime)
+    {
+        (void)deltaTime;
+    }
 };
 
 } // End of namespace GameFramework

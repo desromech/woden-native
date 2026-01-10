@@ -1,6 +1,7 @@
 #ifndef WODEN_GAME_FRAMEWORK_WORLD_HPP
 #define WODEN_GAME_FRAMEWORK_WORLD_HPP
 
+#include "Woden/Math/Scalar.hpp"
 #include <memory>
 #include <vector>
 
@@ -35,11 +36,20 @@ public:
     void addSubsystem(const SubsystemPtr &subsystem);
     const SceneSubsystemPtr &getSceneSubsystem();
 
+    void updateWithDeltaTime(Math::Scalar deltaTime);
+    void updateSingleTimeStep(Math::Scalar deltaTime);
+
+    Math::Scalar updateTimeStep = 1.0f / 60.0f;
+    Math::Scalar currentTime = 0.0f;
+
 protected:
     std::vector<ActorPtr> actors;
     std::vector<SubsystemPtr> subsystems;
-    bool isPlaying = false;
     SceneSubsystemPtr sceneSubsystem;
+
+    bool isPlaying = false;
+    Math::Scalar accumulatedDeltaTime = 0.0f;
+
 };
 
 } // End of namespace GameFramework

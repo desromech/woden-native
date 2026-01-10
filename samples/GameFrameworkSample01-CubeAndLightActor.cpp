@@ -10,6 +10,18 @@ using namespace Woden::GameFramework;
 using namespace Woden::SceneGraph;
 using namespace Woden::Math;
 
+class MovingCubeActor : public Actor
+{
+public:
+    virtual void tick(float deltaTime) override
+    {
+        currentTime += deltaTime;
+        setPosition(Vector3(Woden::Math::sin(currentTime)*3, 0, 0));
+    }
+
+    float currentTime = 0;
+};
+
 int woden_main(int argc, const char **argv)
 {
     (void)argc;
@@ -24,7 +36,7 @@ int woden_main(int argc, const char **argv)
             .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
             .finishMesh();
         
-        auto actor = std::make_shared<Actor> ();
+        auto actor = std::make_shared<MovingCubeActor> ();
         auto meshComponent = std::make_shared<ActorMeshSceneComponent> ();
         meshComponent->mesh = cubeMesh;
         actor->addComponent(meshComponent);
