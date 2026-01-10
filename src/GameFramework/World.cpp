@@ -1,6 +1,7 @@
 #include "Woden/GameFramework/World.hpp"
 #include "Woden/GameFramework/Actor.hpp"
 #include "Woden/GameFramework/ActorTickSubsystem.hpp"
+#include "Woden/GameFramework/PhysicsSubsystem.hpp"
 #include "Woden/GameFramework/SceneSubsystem.hpp"
 #include "Woden/Morphic/WorldMorph.hpp"
 
@@ -13,6 +14,7 @@ namespace GameFramework
 World::World()
 {
     getActorTickSubsystem();
+    getPhysicsSubsystem();
     getSceneSubsystem();
 }
 
@@ -73,6 +75,16 @@ const ActorTickSubsystemPtr &World::getActorTickSubsystem()
         addSubsystem(actorTickSubsystem);
     }
     return actorTickSubsystem;
+}
+
+const PhysicsSubsystemPtr &World::getPhysicsSubsystem()
+{
+    if(!physicsSubsystem)
+    {
+        physicsSubsystem = std::make_shared<PhysicsSubsystem> ();
+        addSubsystem(physicsSubsystem);
+    }
+    return physicsSubsystem;
 }
 
 const SceneSubsystemPtr &World::getSceneSubsystem()

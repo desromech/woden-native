@@ -1,0 +1,45 @@
+#ifndef WODEN_GAME_FRAMEWORK_COLLISION_SHAPE_COMPONENT_HPP
+#define WODEN_GAME_FRAMEWORK_COLLISION_SHAPE_COMPONENT_HPP
+
+#include "ActorComponent.hpp"
+#include "Woden/Physics/CollisionShape.hpp"
+#include "Woden/Math/TRSTransform3D.hpp"
+
+namespace Woden
+{
+namespace GameFramework
+{
+
+typedef std::shared_ptr<class AbstractCollisionShapeComponent> AbstractCollisionShapeComponentPtr;
+
+/**
+ * I am an abstract collision shape.
+ */
+class AbstractCollisionShapeComponent : public ActorComponent
+{
+public:
+    virtual bool isCompoundCollisionShapeComponent() const;
+
+    virtual void addedToActor(const ActorPtr &actor) override;
+
+    virtual Woden::Physics::CollisionShapePtr asValidCollisionShapeWithoutTransform() = 0;
+    virtual Woden::Physics::CollisionShapePtr asValidCollisionShape();
+
+    Math::TRSTransform3D transform;
+};
+
+/**
+ * I am a box collision shape.
+ */
+class BoxCollisionShapeComponent : public AbstractCollisionShapeComponent
+{
+public:
+    Math::Vector3 halfExtent = Math::Vector3::Ones();
+
+    virtual Woden::Physics::CollisionShapePtr asValidCollisionShapeWithoutTransform() override;
+};
+
+} // End of namespace GameFramework
+} // End of namespace Woden
+
+#endif //WODEN_GAME_FRAMEWORK_COLLISION_SHAPE_COMPONENT_HPP

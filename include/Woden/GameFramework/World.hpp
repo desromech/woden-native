@@ -18,6 +18,7 @@ namespace GameFramework
 typedef std::shared_ptr<class Actor> ActorPtr;
 typedef std::shared_ptr<class Subsystem> SubsystemPtr;
 typedef std::shared_ptr<class ActorTickSubsystem> ActorTickSubsystemPtr;
+typedef std::shared_ptr<class PhysicsSubsystem> PhysicsSubsystemPtr;
 typedef std::shared_ptr<class SceneSubsystem> SceneSubsystemPtr;
 typedef std::shared_ptr<class World> WorldPtr;
 
@@ -39,6 +40,7 @@ public:
 
     void addSubsystem(const SubsystemPtr &subsystem);
     const ActorTickSubsystemPtr &getActorTickSubsystem();
+    const PhysicsSubsystemPtr &getPhysicsSubsystem();
     const SceneSubsystemPtr &getSceneSubsystem();
 
     void updateWithDeltaTime(Math::Scalar deltaTime);
@@ -51,6 +53,7 @@ protected:
     std::vector<ActorPtr> actors;
     std::vector<SubsystemPtr> subsystems;
     ActorTickSubsystemPtr actorTickSubsystem;
+    PhysicsSubsystemPtr physicsSubsystem;
     SceneSubsystemPtr sceneSubsystem;
 
     bool isPlaying = false;

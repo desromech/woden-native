@@ -110,5 +110,17 @@ void CollisionObject::translateByAndRotateBy(const Math::Vector3 &translation, c
     transformChanged();
 }
 
+void CollisionObject::loadStateFromModel()
+{
+    if(model)
+        model->loadCollisionStateInto(shared_from_this());
+}
+
+void CollisionObject::saveStateIntoModel()
+{
+    if(model)
+        model->saveCollisionStateFrom(shared_from_this());
+}
+
 } // End of namespace Physics
 } // End of namespace Woden

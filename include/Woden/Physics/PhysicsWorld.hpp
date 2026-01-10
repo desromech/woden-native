@@ -18,6 +18,7 @@ namespace Physics
 {
 typedef std::shared_ptr<class CollisionObject> CollisionObjectPtr;
 typedef std::shared_ptr<class ForceGenerator> ForceGeneratorPtr;
+typedef std::shared_ptr<class PhysicsWorld> PhysicsWorldPtr;
 
 /**
  * I am an object that participates in colliosions.
@@ -27,6 +28,9 @@ class PhysicsWorld : public std::enable_shared_from_this<PhysicsWorld>
 public:
     void addCollisionObject(const CollisionObjectPtr &collisionObject);
     void addForceGenerator(const ForceGeneratorPtr &forceGenerator);
+
+    void loadCollisionStateFromModels();
+    void saveCollisionStateIntoModels();
 
     virtual void update(Math::Scalar delta, Math::Scalar fixedTimeStep = 1.0f/120.0f);
     virtual void updateSingleTimeStep(Math::Scalar delta);

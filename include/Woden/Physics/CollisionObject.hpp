@@ -20,9 +20,18 @@ typedef std::shared_ptr<class CollisionObject> CollisionObjectPtr;
 typedef std::weak_ptr<class PhysicsWorld> PhysicsWorldWeakPtr;
 
 /**
+ * Collision object model interface.
+ */
+struct CollisionObjectModel
+{
+    virtual void loadCollisionStateInto(const CollisionObjectPtr &collisionObject) = 0;
+    virtual void saveCollisionStateFrom(const CollisionObjectPtr &collisionObject) = 0;
+};
+
+/**
  * I am an object that participates in colliosions.
  */
-class CollisionObject
+class CollisionObject : public std::enable_shared_from_this<CollisionObject>
 {
 public:
 
@@ -94,9 +103,12 @@ public:
     void translateBy(const Math::Vector3 &translation);
     void translateByAndRotateBy(const Math::Vector3 &translation, const Math::Vector3 &angularIncrement);
 
+    void loadStateFromModel();
+    void saveStateIntoModel();
 
     PhysicsWorldWeakPtr owner;
     CollisionShapePtr shape;
+    CollisionObjectModel *model = nullptr;
     
     Math::Vector3 linearVelocity = Math::Vector3(0);
     Math::Vector3 angularVelocity = Math::Vector3(0);

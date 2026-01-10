@@ -30,6 +30,18 @@ void PhysicsWorld::addForceGenerator(const ForceGeneratorPtr &forceGenerator)
     forceGenerators.push_back(forceGenerator);
 }
 
+void PhysicsWorld::loadCollisionStateFromModels()
+{
+    for(auto &object : collisionObjects)
+        object->loadStateFromModel();
+}
+
+void PhysicsWorld::saveCollisionStateIntoModels()
+{
+    for(auto &object : collisionObjects)
+        object->saveStateIntoModel();
+}
+
 void PhysicsWorld::update(Math::Scalar delta, Math::Scalar fixedTimeStep)
 {
     (void)delta;

@@ -1,5 +1,7 @@
 #include "Woden/GameFramework/Actor.hpp"
 #include "Woden/GameFramework/ActorSceneComponents.hpp"
+#include "Woden/GameFramework/CollisionObjectComponents.hpp"
+#include "Woden/GameFramework/CollisionShapeComponents.hpp"
 #include "Woden/GameFramework/World.hpp"
 #include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
@@ -28,6 +30,15 @@ int woden_main(int argc, const char **argv)
         auto meshComponent = std::make_shared<ActorMeshSceneComponent> ();
         meshComponent->mesh = cubeMesh;
         actor->addComponent(meshComponent);
+
+        auto collisionShapeComponent = std::make_shared<BoxCollisionShapeComponent> ();
+        collisionShapeComponent->halfExtent = Vector3(0.5, 0.5, 0.5);
+        actor->addComponent(collisionShapeComponent);
+
+        auto rigidBody = std::make_shared<RigidBodyComponent> ();
+        rigidBody->setMass(1);
+        actor->addComponent(rigidBody);
+        
         world->spawnActor(actor);
     }
 

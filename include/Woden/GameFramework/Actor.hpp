@@ -11,6 +11,8 @@ namespace GameFramework
 {
 typedef std::shared_ptr<class Actor> ActorPtr;
 typedef std::shared_ptr<class ActorComponent> ActorComponentPtr;
+typedef std::shared_ptr<class AbstractCollisionShapeComponent> AbstractCollisionShapeComponentPtr;
+typedef std::shared_ptr<class CollisionObjectComponent> CollisionObjectComponentPtr;
 typedef std::shared_ptr<class ActorSceneComponent> ActorSceneComponentPtr;
 typedef std::shared_ptr<class World> WorldPtr;
 typedef std::weak_ptr<class World> WorldWeakPtr;
@@ -40,11 +42,13 @@ public:
     WorldWeakPtr world;
     std::vector<ActorComponentPtr> components;
     ActorSceneComponentPtr rootSceneComponent;
+    CollisionObjectComponentPtr collisionObjectComponent;
+    AbstractCollisionShapeComponentPtr collisionShapeComponent;
 
 protected:
     void subscribeForTicking();
     void unsubscribeForTicking();
-    
+
     bool isRegisteredInWorld = false;
     bool wantsToTick = false;
 };
