@@ -67,6 +67,18 @@ Math::Scalar CollisionObject::getInverseMass() const
     return 0;
 }
 
+void CollisionObject::applyForceInRelativePosition(const Math::Vector3 &force, const Math::Vector3 &relativePosition)
+{
+    (void)force;
+    (void)relativePosition;
+    // BY default do nothing
+}
+
+void CollisionObject::applyForceInPosition(const Math::Vector3 &force, const Math::Vector3 &worldPosition)
+{
+    applyForceInRelativePosition(force, worldPosition - transform.translation);
+}
+
 void CollisionObject::applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection)
 {
     (void)movement;

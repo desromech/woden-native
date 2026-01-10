@@ -83,6 +83,10 @@ public:
 
     virtual Math::Scalar getMass() const;
     virtual Math::Scalar getInverseMass() const;
+
+    virtual void applyForceInRelativePosition(const Math::Vector3 &force, const Math::Vector3 &relativePosition);
+    virtual void applyForceInPosition(const Math::Vector3 &force, const Math::Vector3 &worldPosition);
+
     virtual void applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &normalDirection);
     virtual void applyImpulse(const Math::Vector3 &impulse);
     virtual void applyImpulseInRelativePosition(const Math::Vector3 &impulse, const Math::Vector3 &relativePoint);

@@ -103,6 +103,12 @@ bool RigidBody::needsCollisionDetection()
     return mass != 0;
 }
 
+void RigidBody::applyForceInRelativePosition(const Math::Vector3 &force, const Math::Vector3 &relativePosition)
+{
+    netForce += force;
+	netTorque += relativePosition.cross(force);
+}
+
 void RigidBody::applyMovementAtRelativePoint(Math::Scalar movement, const Math::Vector3 &relativePoint, const Math::Vector3 &movementDirection)
 {
     (void)relativePoint;
