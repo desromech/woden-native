@@ -55,7 +55,7 @@ bool Image::saveToTGA(const std::string &filename)
     if(!file)
         return false;
 
-    TGAHeader header = {0};
+    TGAHeader header = {};
     header.imageType = 2;
     header.width = uint16_t(width);
     header.height = uint16_t(height);
@@ -189,6 +189,8 @@ ImagePtr Image::intoNormalMap()
     normalImage->pixels.resize(normalImage->pitch*normalImage->height);
 
     normalImage->renderPixels32([&](int x, int y, int width, int height){
+        (void)width;
+        (void)height;
         auto dx = (fetchHeight(x + 1, y) - fetchHeight(x - 1, y)) *0.5f;
         auto dy = (fetchHeight(x, y + 1) - fetchHeight(x, y - 1)) *0.5f;
 
@@ -215,6 +217,8 @@ ImagePtr Image::computeNextNormalMipLevel()
     nextLevel->pixels.resize(nextLevel->pitch*nextLevel->height);
 
     nextLevel->renderPixels32([&](uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
+        (void)w;
+        (void)h;
         auto texcoord = Math::Vector2(x*2 + 0.5, y*2 + 0.5);
         texcoord = texcoord / Math::Vector2(width, height);
         auto mipData = sampleDataAtTexcoord(texcoord);
@@ -237,6 +241,8 @@ ImagePtr Image::computeNextDataMipLevel()
     nextLevel->pixels.resize(nextLevel->pitch*nextLevel->height);
 
     nextLevel->renderPixels32([&](uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
+        (void)w;
+        (void)h;
         auto texcoord = Math::Vector2(x*2 + 0.5, y*2 + 0.5);
         texcoord = texcoord / Math::Vector2(width, height);
         auto mipData = sampleDataAtTexcoord(texcoord);
