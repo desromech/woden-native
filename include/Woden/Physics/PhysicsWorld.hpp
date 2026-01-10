@@ -3,6 +3,7 @@
 
 #include "ContactManifold.hpp"
 #include "Woden/Math/Vector3.hpp"
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -43,6 +44,8 @@ public:
                 aBlock(contact.firstPoint, contact.secondPoint);
         }
     }
+
+    void worldAnchorPointsDo(const std::function<void (Math::Vector3)> &aBlock);
 
 protected:
     std::vector<CollisionObjectPtr> collisionObjects;

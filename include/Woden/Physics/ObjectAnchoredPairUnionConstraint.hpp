@@ -30,6 +30,12 @@ public:
         return secondObject->getTransform().transformPosition(secondObjectLocalAnchorPoint);
     }
 
+    void worldAnchorPointsDo(const std::function<void (Math::Vector3)> &aBlock)
+    {
+        aBlock(computeFirstObjectAnchorPoint());
+        aBlock(computeSecondObjectAnchorPoint());
+    }
+    
     Math::Vector3 firstObjectLocalAnchorPoint = Math::Vector3::Zeros();
     Math::Vector3 secondObjectLocalAnchorPoint = Math::Vector3::Zeros();
 };

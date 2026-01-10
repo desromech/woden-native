@@ -77,6 +77,22 @@ SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
             .generateTexcoordsWithFacePlanarTransformWithScale(Math::Vector2(1, 1))
             .finishMesh();
 
+
+    auto anchorPointsNode = std::make_shared<SceneGraph::SceneNode> ();
+    scene->normalLayer->addChild(anchorPointsNode);
+
+    auto anchorMeshMaterial = std::make_shared<Rendering::MetallicRoughnessMaterial> ();
+    anchorMeshMaterial->baseColorFactor = Math::Vector4(0, 0, 0, 1);
+    anchorMeshMaterial->emissiveFactor = Math::Vector3(0, 1, 0);
+    anchorMeshMaterial->roughnessFactor = 1.0;
+    anchorMeshMaterial->metallicFactor = 0.0;
+
+    auto anchorMesh = Rendering::MeshBuilder()
+            .setMaterial(anchorMeshMaterial)
+            .addCubeWithExtent(Math::Vector3(0.1f))
+            .generateTexcoordsWithFacePlanarTransformWithScale(Math::Vector2(1, 1))
+            .finishMesh();
+
     auto world = shared_from_this();
     scene->updateFunction = [=](Math::Scalar deltaTime) {
         // Update the world.
@@ -110,9 +126,25 @@ SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
                 contactPointsNode->addChild(contactNode);
             }
         });
+
+        // Update the anchor points
+        anchorPointsNode->removeAllChildren();
+
+        worldAnchorPointsDo([&](const Math::Vector3 &anchorPoint){
+            auto anchorNode = std::make_shared<SceneGraph::SceneNode> ();
+            anchorNode->transform.translation = anchorPoint;
+            anchorNode->addRenderable(anchorMesh);
+            anchorPointsNode->addChild(anchorNode);
+        });
     };
 
     return scene;
+}
+
+void PhysicsWorld::worldAnchorPointsDo(const std::function<void (Math::Vector3)> &aBlock)
+{
+    for(auto &forceGenerator : forceGenerators)
+        forceGenerator->worldAnchorPointsDo(aBlock);
 }
 
 void DiscreteDynamicsPhysicsWorld::update(Math::Scalar delta, Math::Scalar fixedTimeStep)

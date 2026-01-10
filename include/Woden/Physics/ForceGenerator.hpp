@@ -2,7 +2,9 @@
 #define WODEN_PHYSICS_FORCE_GENERATOR_HPP
 
 #include "Woden/Math/Scalar.hpp"
+#include "Woden/Math/Vector3.hpp"
 #include <memory>
+#include <functional>
 
 namespace Woden
 {
@@ -22,6 +24,11 @@ public:
     virtual void evaluateWithDeltaTime(Math::Scalar deltaTime)
     {
         (void)deltaTime;
+    }
+
+    virtual void worldAnchorPointsDo(const std::function<void (Math::Vector3)> &aBlock)
+    {
+        (void)aBlock;
     }
 
     PhysicsWorldWeakPtr owner;
