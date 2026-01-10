@@ -27,7 +27,7 @@ void Actor::tick(float deltaTime)
     (void)deltaTime;
 }
 
-void Actor::registerWithSubsystemsInWorld(const WorldPtr &world)
+void Actor::registerWithSubsystemsInWorld(const WorldPtr &newWorld)
 {
     if(isRegisteredInWorld)
         return;
@@ -37,7 +37,7 @@ void Actor::registerWithSubsystemsInWorld(const WorldPtr &world)
         subscribeForTicking();
     
     for(auto &component : components)
-        component->registerInWorld(world);
+        component->registerInWorld(newWorld);
 }
 
 Math::Vector3 Actor::getPosition() const

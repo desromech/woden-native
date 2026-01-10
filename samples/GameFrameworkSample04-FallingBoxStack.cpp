@@ -47,7 +47,7 @@ int woden_main(int argc, const char **argv)
 
     {
         auto floorMesh = Woden::Rendering::MeshBuilder()
-            .addCubeWithHalfExtent(Vector3(4, 0.1, 4))
+            .addCubeWithHalfExtent(Vector3(4, 0.1f, 4))
             .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
             .finishMesh();
         
@@ -57,13 +57,13 @@ int woden_main(int argc, const char **argv)
         actor->addComponent(meshComponent);
 
         auto collisionShapeComponent = std::make_shared<BoxCollisionShapeComponent> ();
-        collisionShapeComponent->halfExtent = Vector3(4, 0.1, 4);
+        collisionShapeComponent->halfExtent = Vector3(4, 0.1f, 4);
         actor->addComponent(collisionShapeComponent);
 
         auto collisionObject = std::make_shared<CollisionObjectComponent> ();
         actor->addComponent(collisionObject);
 
-        actor->setPosition(Vector3(0, -0.8, 0));
+        actor->setPosition(Vector3(0, -0.8f, 0));
         
         world->spawnActor(actor);
     }

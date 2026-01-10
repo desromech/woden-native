@@ -21,7 +21,7 @@ void CollisionObjectComponent::registerInWorld(const WorldPtr &world)
 {
     ActorComponent::registerInWorld(world);
 
-    auto collisionObject = makeCollisionObjectInstance();
+    collisionObject = makeCollisionObjectInstance();
     world->getPhysicsSubsystem()->physicsWorld->addCollisionObject(collisionObject);
 
 }

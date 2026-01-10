@@ -18,8 +18,8 @@ void ShadowMapAtlasAllocator::initializeWithExtent(uint32_t atlasWidth, uint32_t
     columns = 4;
     rows = 4;
 
-    shadowMapExtent.x = atlasWidth / columns;
-    shadowMapExtent.y = atlasHeight / rows;
+    shadowMapExtent.x = Math::Scalar(atlasWidth) / Math::Scalar(columns);
+    shadowMapExtent.y = Math::Scalar(atlasHeight) / Math::Scalar(rows);
 
     capacity = columns*rows;
     size = 0;
@@ -46,8 +46,8 @@ bool ShadowMapAtlasAllocator::allocate(ShadowMapAtlasAllocation *outAllocation)
     
     outAllocation->shadowMapExtent = shadowMapExtent;
 
-    outAllocation->shadowMapAtlasExtent.x = atlasWidth;
-    outAllocation->shadowMapAtlasExtent.y = atlasHeight;
+    outAllocation->shadowMapAtlasExtent.x = Math::Scalar(atlasWidth);
+    outAllocation->shadowMapAtlasExtent.y = Math::Scalar(atlasHeight);
 
     ++size;
 
@@ -64,7 +64,7 @@ static Math::Scalar computeLightGridDepthSliceOffset(Math::Scalar lightGridDepth
     return -lightGridDepth * log(nearDistance) / log(farDistance / nearDistance);
 }
 
-static Math::Vector2 computeLightGridDepthSliceScaleOffset(double lightGridDepth, double nearDistance, double farDistance)
+static Math::Vector2 computeLightGridDepthSliceScaleOffset(Math::Scalar lightGridDepth, Math::Scalar nearDistance, Math::Scalar farDistance)
 {
     Math::Scalar scale = computeLightGridDepthSliceScale(lightGridDepth, nearDistance, farDistance);
     Math::Scalar offset = computeLightGridDepthSliceOffset(lightGridDepth, nearDistance, farDistance);
@@ -90,7 +90,7 @@ agpu_shader_resource_binding_ref SceneRendererScreen::getValidGuiTextureBinding(
 
 void SceneRenderer::addRenderingSceneObjectStateFor(RenderingSceneObject &sceneObject)
 {
-    sceneObject.sceneObjectStateIndex = sceneObjectStates.size();
+    sceneObject.sceneObjectStateIndex = uint32_t(sceneObjectStates.size());
 
     SceneObjectState objectState = {};
     objectState.transformationMatrix = sceneObject.modelMatrix;
@@ -190,7 +190,7 @@ void SceneRenderer::gatherRenderingSceneStates()
 
         SceneCameraState cameraState = {};
         auto aspect = Math::Scalar(screen->screenWidth) / Math::Scalar(screen->screenHeight);
-        cameraState.framebufferExtent = Math::Vector2(screen->screenWidth, screen->screenHeight);
+        cameraState.framebufferExtent = Math::Vector2(Math::Scalar(screen->screenWidth), Math::Scalar(screen->screenHeight));
         cameraState.framebufferReciprocalExtent = cameraState.framebufferExtent.reciprocal();
         cameraState.flipVertically = flipVertically;
 
@@ -216,7 +216,7 @@ void SceneRenderer::gatherRenderingSceneStates()
         }
         else
         {
-            cameraState.projectionMatrix = Math::Matrix4x4::ReverseDepthPerspective(60.0, aspect, 0.1, 1000.0);
+            cameraState.projectionMatrix = Math::Matrix4x4::ReverseDepthPerspective(60.0, aspect, 0.1f, 1000.0);
         }
 
         if(flipVertically)
@@ -265,7 +265,7 @@ void SceneRenderer::uploadRenderingSceneStates()
 
         {
             agpu_buffer_description desc = {};
-            desc.size = alignedTo(sizeof(GlobalLightingState), 256);
+            desc.size = agpu_uint(alignedTo(sizeof(GlobalLightingState), 256));
             desc.heap_type = AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL;
             desc.usage_modes = desc.main_usage_mode = agpu_buffer_usage_mask(AGPU_UNIFORM_BUFFER);
             desc.mapping_flags = AGPU_MAP_DYNAMIC_STORAGE_BIT;

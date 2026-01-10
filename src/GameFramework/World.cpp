@@ -104,7 +104,7 @@ void World::updateWithDeltaTime(Math::Scalar deltaTime)
     
     accumulatedDeltaTime += deltaTime;
     if(accumulatedDeltaTime > 0.2)
-        accumulatedDeltaTime = 0.2;
+        accumulatedDeltaTime = 0.2f;
     
     while(accumulatedDeltaTime >= updateTimeStep)
     {

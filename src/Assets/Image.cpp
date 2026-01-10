@@ -131,8 +131,8 @@ float Image::fetchHeight(int x, int y)
     auto row32 = reinterpret_cast<uint32_t*> (row);
     auto pixelValue = row32[x];
 
-    auto height = (pixelValue & 0xff) / 255.0f;
-    return height;
+    auto heightSample = (pixelValue & 0xff) / 255.0f;
+    return heightSample;
 }
 
 Math::Vector4 Image::fetchData(int x, int y)
@@ -159,7 +159,7 @@ Math::Vector4 Image::fetchData(int x, int y)
 
 Math::Vector4 Image::sampleDataAtTexcoord(Math::Vector2 texcoord)
 {
-    Math::Vector2 position = texcoord*Math::Vector2(width, height);
+    Math::Vector2 position = texcoord*Math::Vector2(Math::Scalar(width), Math::Scalar(height));
 
     Math::Vector2 leftTopCoord     = position.floor();
     Math::Vector2 leftBottomCoord  = leftTopCoord + Math::Vector2(0, 1);
@@ -219,8 +219,8 @@ ImagePtr Image::computeNextNormalMipLevel()
     nextLevel->renderPixels32([&](uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
         (void)w;
         (void)h;
-        auto texcoord = Math::Vector2(x*2 + 0.5, y*2 + 0.5);
-        texcoord = texcoord / Math::Vector2(width, height);
+        auto texcoord = Math::Vector2(x*2 + 0.5f, y*2 + 0.5f);
+        texcoord = texcoord / Math::Vector2(Math::Scalar(width), Math::Scalar(height));
         auto mipData = sampleDataAtTexcoord(texcoord);
         
         auto N = (mipData.xyz() * 2 - 1).normalized();
@@ -243,8 +243,8 @@ ImagePtr Image::computeNextDataMipLevel()
     nextLevel->renderPixels32([&](uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
         (void)w;
         (void)h;
-        auto texcoord = Math::Vector2(x*2 + 0.5, y*2 + 0.5);
-        texcoord = texcoord / Math::Vector2(width, height);
+        auto texcoord = Math::Vector2(x*2 + 0.5f, y*2 + 0.5f);
+        texcoord = texcoord / Math::Vector2(Math::Scalar(width), Math::Scalar(height));
         auto mipData = sampleDataAtTexcoord(texcoord);
         return encodeDataPixel32(mipData);
     });
