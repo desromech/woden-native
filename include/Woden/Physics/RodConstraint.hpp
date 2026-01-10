@@ -1,5 +1,5 @@
-#ifndef WODEN_PHYSICS_ROPE_CONSTRAINT_HPP
-#define WODEN_PHYSICS_ROPE_CONSTRAINT_HPP
+#ifndef WODEN_PHYSICS_ROD_CONSTRAINT_HPP
+#define WODEN_PHYSICS_ROD_CONSTRAINT_HPP
 
 #include "ObjectAnchoredPairUnionConstraint.hpp"
 
@@ -9,9 +9,9 @@ namespace Physics
 {
 
 /**
- * I am a rope constraint.
+ * I am a fixed rod constraint.
  */
-class RopeConstraint : public ObjectAnchoredPairUnionConstraint
+class RodConstraint : public ObjectAnchoredPairUnionConstraint
 {
 public:
     Math::Vector3 computeFirstObjectAnchorPoint() const
@@ -35,13 +35,13 @@ public:
         auto firstAnchorPoint = computeFirstObjectAnchorPoint();
         auto secondAnchorPoint = computeSecondObjectAnchorPoint();
 
-        auto ropeVector = firstAnchorPoint - secondAnchorPoint;
-        auto ropeVectorLength = ropeVector.length();
-        if(ropeVectorLength <= length)
+        auto rodVector = firstAnchorPoint - secondAnchorPoint;
+        auto rodVectorLength = rodVector.length();
+        if(rodVectorLength <= 0.0)
             return;
         
-        auto deltaLength = ropeVectorLength - length;
-        auto forceDirection = ropeVector / ropeVectorLength;
+        auto deltaLength = rodVectorLength - length;
+        auto forceDirection = rodVector / rodVectorLength;
         auto force = -forceDirection * Math::Vector3(stiffness*deltaLength);
 
         if(firstObject)
@@ -58,4 +58,4 @@ public:
 } // End of namespace Physics
 } // End of namespace Woden
 
-#endif //WODEN_PHYSICS_OBJECT_PAIR_UNION_CONSTRAINT_HPP
+#endif //WODEN_PHYSICS_ROD_CONSTRAINT_HPP

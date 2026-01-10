@@ -42,3 +42,6 @@ target_link_libraries(PhysicsSample03-FallingBoxOnBox WodenEngine)
 
 add_executable(PhysicsSample05-SuspendedBoxWithRope SampleCommon.cpp PhysicsSample05-SuspendedBoxWithRope.cpp)
 target_link_libraries(PhysicsSample05-SuspendedBoxWithRope WodenEngine)
+
+add_executable(PhysicsSample06-SuspendedBoxWithRod SampleCommon.cpp PhysicsSample06-SuspendedBoxWithRod.cpp)
+target_link_libraries(PhysicsSample06-SuspendedBoxWithRod WodenEngine)
