@@ -47,6 +47,7 @@ void ActorSceneComponent::registerInWorld(const WorldPtr &world)
     
     auto &sceneSubsystem = world->getSceneSubsystem();
     sceneNode = std::make_shared<SceneGraph::SceneNode> ();
+    sceneNode->transform = transform;
 
     auto parentComponent = parent.lock();
     if(parentComponent)
@@ -59,11 +60,57 @@ void ActorSceneComponent::registerInWorld(const WorldPtr &world)
     }
 }
 
+Math::Vector3 ActorSceneComponent::getPosition() const
+{
+    return transform.translation;
+}
+
+void ActorSceneComponent::setPosition(const Math::Vector3 &newPosition)
+{
+    transform.translation = newPosition;
+    transformChanged();
+}
+
+Math::Quaternion ActorSceneComponent::getOrientation() const
+{
+    return transform.rotation;
+}
+
+void ActorSceneComponent::setOrientation(const Math::Quaternion &newOrientation)
+{
+    transform.rotation = newOrientation;
+    transformChanged();
+}
+
+Math::TRSTransform3D ActorSceneComponent::getTransform() const
+{
+    return transform;
+}
+
+void ActorSceneComponent::setTransform(const Math::TRSTransform3D &newTransform)
+{
+    transform = newTransform;
+    transformChanged();
+}
+
+void ActorSceneComponent::transformChanged()
+{
+    if(sceneNode)
+        sceneNode->transform = transform;
+} 
+
 void ActorMeshSceneComponent::registerInWorld(const WorldPtr &world)
 {
     ActorSceneComponent::registerInWorld(world);
     if(mesh)
         sceneNode->addRenderable(mesh);
+}
+
+void ActorLightSourceComponent::registerInWorld(const WorldPtr &world)
+{
+    ActorSceneComponent::registerInWorld(world);
+    if(light)
+        sceneNode->addLightSource(light);
 }
 
 } // End of namespace GameFramework

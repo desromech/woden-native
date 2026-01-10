@@ -37,7 +37,12 @@ int woden_main(int argc, const char **argv)
         pointLightSource->intensity = 5;
         pointLightSource->influenceRadius = 4;
 
+        auto lightComponent = std::make_shared<ActorLightSourceComponent> ();
+        lightComponent->light = pointLightSource;
+
         auto lightSourceActor = std::make_shared<Actor> ();
+        lightSourceActor->addComponent(lightComponent);
+        lightSourceActor->setPosition(Vector3(0, 1.5, 2));
         world->spawnActor(lightSourceActor);
     }
     
