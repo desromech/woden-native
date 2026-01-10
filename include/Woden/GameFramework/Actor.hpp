@@ -35,11 +35,18 @@ public:
     Math::TRSTransform3D getTransform() const;
     void setTransform(const Math::TRSTransform3D &newTransform);
 
+    void setWantsToTick(bool newWantsToTick);
+
     WorldWeakPtr world;
     std::vector<ActorComponentPtr> components;
     ActorSceneComponentPtr rootSceneComponent;
-    bool isRegisteredInWorld = false;
 
+protected:
+    void subscribeForTicking();
+    void unsubscribeForTicking();
+    
+    bool isRegisteredInWorld = false;
+    bool wantsToTick = false;
 };
 
 } // End of namespace GameFramework

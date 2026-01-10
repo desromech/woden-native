@@ -13,6 +13,11 @@ using namespace Woden::Math;
 class MovingCubeActor : public Actor
 {
 public:
+    MovingCubeActor()
+    {
+        setWantsToTick(true);
+    }
+
     virtual void tick(float deltaTime) override
     {
         currentTime += deltaTime;

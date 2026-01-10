@@ -17,6 +17,7 @@ namespace GameFramework
 {
 typedef std::shared_ptr<class Actor> ActorPtr;
 typedef std::shared_ptr<class Subsystem> SubsystemPtr;
+typedef std::shared_ptr<class ActorTickSubsystem> ActorTickSubsystemPtr;
 typedef std::shared_ptr<class SceneSubsystem> SceneSubsystemPtr;
 typedef std::shared_ptr<class World> WorldPtr;
 
@@ -26,6 +27,9 @@ typedef std::shared_ptr<class World> WorldPtr;
 class World : public std::enable_shared_from_this<World>
 {
 public:
+    World();
+    ~World();
+
     void beginPlay();
 
     void spawnActor(const ActorPtr &actor);
@@ -34,6 +38,7 @@ public:
     Morphic::SystemWindowPtr playInSystemWindow();
 
     void addSubsystem(const SubsystemPtr &subsystem);
+    const ActorTickSubsystemPtr &getActorTickSubsystem();
     const SceneSubsystemPtr &getSceneSubsystem();
 
     void updateWithDeltaTime(Math::Scalar deltaTime);
@@ -45,6 +50,7 @@ public:
 protected:
     std::vector<ActorPtr> actors;
     std::vector<SubsystemPtr> subsystems;
+    ActorTickSubsystemPtr actorTickSubsystem;
     SceneSubsystemPtr sceneSubsystem;
 
     bool isPlaying = false;

@@ -1,5 +1,6 @@
 #include "Woden/GameFramework/World.hpp"
 #include "Woden/GameFramework/Actor.hpp"
+#include "Woden/GameFramework/ActorTickSubsystem.hpp"
 #include "Woden/GameFramework/SceneSubsystem.hpp"
 #include "Woden/Morphic/WorldMorph.hpp"
 
@@ -7,6 +8,17 @@ namespace Woden
 {
 namespace GameFramework
 {
+
+
+World::World()
+{
+    getActorTickSubsystem();
+    getSceneSubsystem();
+}
+
+World::~World()
+{
+}
 
 void World::beginPlay()
 {
@@ -53,6 +65,16 @@ void World::addSubsystem(const SubsystemPtr &subsystem)
         sceneSubsystem->beginPlay();
 }
 
+const ActorTickSubsystemPtr &World::getActorTickSubsystem()
+{
+    if(!actorTickSubsystem)
+    {
+        actorTickSubsystem = std::make_shared<ActorTickSubsystem> ();
+        addSubsystem(actorTickSubsystem);
+    }
+    return actorTickSubsystem;
+}
+
 const SceneSubsystemPtr &World::getSceneSubsystem()
 {
     if(!sceneSubsystem)
@@ -84,10 +106,6 @@ void World::updateSingleTimeStep(Math::Scalar deltaTime)
     currentTime += deltaTime;
     for(auto &subsystem : subsystems)
         subsystem->prePhysicsUpdateSingleTimeStep(deltaTime);
-
-    // TODO: Move this onto a subsystem.
-    for(auto &actor : actors)
-        actor->tick(deltaTime);
 
     for(auto &subsystem : subsystems)
         subsystem->updateSingleTimeStep(deltaTime);

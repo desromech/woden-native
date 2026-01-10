@@ -1,6 +1,8 @@
 #include "Woden/GameFramework/Actor.hpp"
 #include "Woden/GameFramework/ActorComponent.hpp"
 #include "Woden/GameFramework/ActorSceneComponent.hpp"
+#include "Woden/GameFramework/ActorTickSubsystem.hpp"
+#include "Woden/GameFramework/World.hpp"
 
 namespace Woden
 {
@@ -31,6 +33,9 @@ void Actor::registerWithSubsystemsInWorld(const WorldPtr &world)
         return;
     isRegisteredInWorld = true;
     
+    if(wantsToTick)
+        subscribeForTicking();
+    
     for(auto &component : components)
         component->registerInWorld(world);
 }
@@ -54,6 +59,7 @@ Math::Quaternion Actor::getOrientation() const
         return Math::Quaternion::Identity();
     return rootSceneComponent->getOrientation();
 }
+
 void Actor::setOrientation(const Math::Quaternion &newOrientation)
 {
     if(rootSceneComponent)
@@ -66,10 +72,33 @@ Math::TRSTransform3D Actor::getTransform() const
         return Math::TRSTransform3D();
     return rootSceneComponent->getTransform();
 }
+
 void Actor::setTransform(const Math::TRSTransform3D &newTransform)
 {
     if(rootSceneComponent)
         rootSceneComponent->setTransform(newTransform);
+}
+
+void Actor::setWantsToTick(bool newWantsToTick)
+{
+    wantsToTick = newWantsToTick;
+    if(isRegisteredInWorld)
+    {
+        if(wantsToTick)
+            subscribeForTicking();
+        else
+            unsubscribeForTicking();
+    }
+}
+
+void Actor::subscribeForTicking()
+{
+    world.lock()->getActorTickSubsystem()->subscribe(shared_from_this());
+}
+
+void Actor::unsubscribeForTicking()
+{
+    world.lock()->getActorTickSubsystem()->unsubscribe(shared_from_this());
 }
 
 } // End of namespace GameFramework
