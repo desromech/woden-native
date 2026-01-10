@@ -1,5 +1,6 @@
 #include "Woden/Physics/PhysicsWorld.hpp"
 #include "Woden/Physics/CollisionShape.hpp"
+#include "Woden/Physics/ForceGenerator.hpp"
 #include "Woden/Physics/RigidBody.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 #include "Woden/Rendering/LightSource.hpp"
@@ -19,6 +20,14 @@ void PhysicsWorld::addCollisionObject(const CollisionObjectPtr &collisionObject)
     
     collisionObject->owner = shared_from_this();
     collisionObjects.push_back(collisionObject);
+}
+
+void PhysicsWorld::addForceGenerator(const ForceGeneratorPtr &forceGenerator)
+{
+    assert(!forceGenerator->owner.lock());
+
+    forceGenerator->owner = shared_from_this();
+    forceGenerators.push_back(forceGenerator);
 }
 
 void PhysicsWorld::update(Math::Scalar delta, Math::Scalar fixedTimeStep)
@@ -119,6 +128,7 @@ void DiscreteDynamicsPhysicsWorld::update(Math::Scalar delta, Math::Scalar fixed
         accumulatedTime -= fixedTimeStep;
 
         resetNetForces();
+        evaluateForceGenerators(fixedTimeStep);
         integrateMovement(fixedTimeStep);
         detectAndResolveCollisions();
     }
@@ -129,6 +139,12 @@ void DiscreteDynamicsPhysicsWorld::resetNetForces()
 {
     for(auto &object : collisionObjects)
         object->resetNetForces();
+}
+
+void DiscreteDynamicsPhysicsWorld::evaluateForceGenerators(Math::Scalar delta)
+{
+    for(auto &generator : forceGenerators)
+        generator->evaluateWithDeltaTime(delta);
 }
 
 void DiscreteDynamicsPhysicsWorld::integrateMovement(Math::Scalar delta)

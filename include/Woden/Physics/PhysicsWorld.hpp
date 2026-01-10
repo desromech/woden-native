@@ -16,7 +16,7 @@ typedef std::shared_ptr<class Scene> ScenePtr;
 namespace Physics
 {
 typedef std::shared_ptr<class CollisionObject> CollisionObjectPtr;
-typedef std::weak_ptr<class PhysicsWorld> PhysicsWorldWeakPtr;
+typedef std::shared_ptr<class ForceGenerator> ForceGeneratorPtr;
 
 /**
  * I am an object that participates in colliosions.
@@ -25,6 +25,7 @@ class PhysicsWorld : public std::enable_shared_from_this<PhysicsWorld>
 {
 public:
     void addCollisionObject(const CollisionObjectPtr &collisionObject);
+    void addForceGenerator(const ForceGeneratorPtr &forceGenerator);
 
     virtual void update(Math::Scalar delta, Math::Scalar fixedTimeStep = 1.0f/120.0f);
 
@@ -45,6 +46,7 @@ public:
 
 protected:
     std::vector<CollisionObjectPtr> collisionObjects;
+    std::vector<ForceGeneratorPtr> forceGenerators;
     ContactManifoldCache contactManifoldCache;
 };
 
@@ -59,6 +61,7 @@ protected:
     Math::Scalar accumulatedTime = 0;
 
     void resetNetForces();
+    void evaluateForceGenerators(Math::Scalar delta);
     void integrateMovement(Math::Scalar delta);
     
     void detectAndResolveCollisions();
