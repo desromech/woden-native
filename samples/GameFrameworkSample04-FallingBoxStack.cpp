@@ -57,7 +57,7 @@ int woden_main(int argc, const char **argv)
         actor->addComponent(meshComponent);
 
         auto collisionShapeComponent = std::make_shared<BoxCollisionShapeComponent> ();
-        collisionShapeComponent->halfExtent = Vector3(5, 0.1, 20);
+        collisionShapeComponent->halfExtent = Vector3(20, 0.1, 20);
         actor->addComponent(collisionShapeComponent);
 
         auto collisionObject = std::make_shared<CollisionObjectComponent> ();
