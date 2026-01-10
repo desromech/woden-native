@@ -1,6 +1,6 @@
 #include "Woden/GameFramework/Actor.hpp"
 #include "Woden/GameFramework/ActorComponent.hpp"
-#include "Woden/GameFramework/ActorSceneComponent.hpp"
+#include "Woden/GameFramework/ActorSceneComponents.hpp"
 #include "Woden/GameFramework/ActorTickSubsystem.hpp"
 #include "Woden/GameFramework/World.hpp"
 
@@ -32,7 +32,7 @@ void Actor::registerWithSubsystemsInWorld(const WorldPtr &world)
     if(isRegisteredInWorld)
         return;
     isRegisteredInWorld = true;
-    
+
     if(wantsToTick)
         subscribeForTicking();
     

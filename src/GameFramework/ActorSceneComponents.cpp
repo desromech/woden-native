@@ -1,4 +1,4 @@
-#include "Woden/GameFramework/ActorSceneComponent.hpp"
+#include "Woden/GameFramework/ActorSceneComponents.hpp"
 #include "Woden/GameFramework/Actor.hpp"
 #include "Woden/GameFramework/SceneSubsystem.hpp"
 #include "Woden/GameFramework/World.hpp"

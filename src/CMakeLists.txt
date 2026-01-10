@@ -8,7 +8,7 @@ set(WodenEngine_Sources
 
     GameFramework/Actor.cpp
     GameFramework/ActorComponent.cpp
-    GameFramework/ActorSceneComponent.cpp
+    GameFramework/ActorSceneComponents.cpp
     GameFramework/ActorTickSubsystem.cpp
     GameFramework/SceneSubsystem.cpp
     GameFramework/World.cpp
