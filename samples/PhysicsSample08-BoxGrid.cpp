@@ -36,7 +36,7 @@ int woden_main(int argc, const char **argv)
     // Floor
     {
         auto shape = std::make_shared<BoxCollisionShape> ();
-        shape->setHalfExtent(Vector3(4, 0.1f, 4));
+        shape->setHalfExtent(Vector3(20, 0.1f, 20));
 
         auto floor = std::make_shared<RigidBody> ();
         floor->shape = shape;

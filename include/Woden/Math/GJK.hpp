@@ -95,7 +95,7 @@ template<typename FS, typename SS>
 GJKVoronoiSimplexSolver computeGJKSimplex(FS&& firstSupportFunction, SS&& secondSupportFunction, const Vector3 &startingDirectionHint)
 {
     const int MaxNumberOfIterations = 32;
-    const Scalar Epsilon = 0.00001f;
+    const Scalar Epsilon = 0.0001f;
     GJKVoronoiSimplexSolver simplex;
 
     auto nextDirection = startingDirectionHint;
