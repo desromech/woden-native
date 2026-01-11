@@ -56,6 +56,7 @@ void Morph::processEvent(const MorphicEventPtr &event)
 
 void Morph::handleUnknownEvent(const MorphicEventPtr &event)
 {
+    (void)event;
 }
 
 void Morph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)

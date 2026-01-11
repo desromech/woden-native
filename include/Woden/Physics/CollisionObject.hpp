@@ -110,6 +110,7 @@ public:
     virtual void wakeUp();
 
     PhysicsWorldWeakPtr owner;
+    uint32_t id = 0;
     CollisionShapePtr shape;
     CollisionObjectModel *model = nullptr;
     

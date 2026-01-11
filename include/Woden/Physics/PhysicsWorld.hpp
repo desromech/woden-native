@@ -55,6 +55,8 @@ public:
     void worldAnchorPointsDo(const std::function<void (Math::Vector3)> &aBlock);
 
 protected:
+    uint32_t collisionObjectIdCount;
+    
     std::vector<CollisionObjectPtr> collisionObjects;
     std::vector<ForceGeneratorPtr> forceGenerators;
     std::vector<RigidBodyPtr> awakeRigidBodies;

@@ -63,7 +63,7 @@ Math::Vector2 GUIRenderer::drawTextWithFaceAndColor(const Math::Vector2 &initial
         if(c < ' ')
             continue;
 
-        stbtt_aligned_quad quadToDraw = {0};
+        stbtt_aligned_quad quadToDraw = {};
         stbtt_GetBakedQuad(fontFace->bakedChars.data(), fontFace->image->width, fontFace->image->height, c - 31, &currentBaseline.x, &currentBaseline.y, &quadToDraw, true);
 
         GuiElement quad = {};

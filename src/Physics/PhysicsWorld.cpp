@@ -22,6 +22,7 @@ void PhysicsWorld::addCollisionObject(const CollisionObjectPtr &collisionObject)
     collisionObject->owner = shared_from_this();
     collisionObjects.push_back(collisionObject);
 
+    collisionObject->id = collisionObjectIdCount++;
     collisionObject->resetSleepingState();
     collisionObject->wakeUp();
 }
@@ -225,23 +226,31 @@ void DiscreteDynamicsPhysicsWorld::detectAndResolveCollisions()
 std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsPhysicsWorld::computeBroadphaseCandidatePairs()
 {
     std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> candidatePairs;
-    for(size_t i = 0; i < collisionObjects.size(); ++i)
+    
+    for(auto &firstRigidBody : awakeRigidBodies)
     {
-        auto &firstCollisionObject = collisionObjects[i];
-        auto firstBoundingBox = firstCollisionObject->getWorldBoundingBoxWithMargin();
-        for(size_t j = i + 1; j < collisionObjects.size(); ++j)
-        {
-            auto &secondCollisionObject = collisionObjects[j];
-            auto secondBoundingBox = secondCollisionObject->getWorldBoundingBoxWithMargin();
+        auto rigidBodyId = firstRigidBody->id;
+        auto rigidBodyBoundingBox = firstRigidBody->getWorldBoundingBoxWithMargin();
 
-            // Filter objects that do not need collision detection.
-            if(!firstCollisionObject->needsCollisionDetection() && !secondCollisionObject->needsCollisionDetection())
+        // TODO: use a BVH.
+        for(auto &collisionObject : collisionObjects)
+        {
+            auto collisionObjectId = collisionObject->id;
+            // To avoid duplicated pairs.
+            if(rigidBodyId >= collisionObjectId)
                 continue;
 
-            if(firstBoundingBox.hasIntersectionWithBox(secondBoundingBox))
-                candidatePairs.push_back(std::make_pair(firstCollisionObject, secondCollisionObject));
-        }
+            auto firstObject = firstRigidBody;
+            auto secondObject = collisionObject;
 
+            // Filter objects that do not need collision detection.
+            if(!firstRigidBody->needsCollisionDetection() && !secondObject->needsCollisionDetection())
+                continue;
+
+            auto secondBoundingBox = secondObject->getWorldBoundingBoxWithMargin();
+            if(rigidBodyBoundingBox.hasIntersectionWithBox(secondBoundingBox))
+                candidatePairs.push_back(std::make_pair(firstObject, secondObject));
+        }
     }
 
     return candidatePairs;
