@@ -14,9 +14,9 @@ int woden_main(int argc, const char **argv)
     auto world = std::make_shared<DiscreteDynamicsPhysicsWorld> ();
 
     // Box grid
-    for(int x = -2; x <= 2; ++x)
+    for(int x = -5; x <= 5; ++x)
     {
-        for(int z = -2; z <= 2; ++z)
+        for(int z = -5; z <= 5; ++z)
         {
             auto shape = std::make_shared<BoxCollisionShape> ();
             shape->setHalfExtent(Vector3(0.5));

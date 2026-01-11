@@ -48,7 +48,7 @@ public:
 class SceneRenderer
 {
 public:
-    static const size_t MaxSceneObjectStateCapacity = 1024;
+    static const size_t MaxSceneObjectStateCapacity = 16384;
     static const size_t MaxSceneCameraStateCapacity = 32;
     static const size_t MaxSceneLightSourceCapacity = 1024;
     static const size_t MaxMaterialCapacity = 1024;
