@@ -20,6 +20,8 @@ typedef std::weak_ptr<class World> WorldWeakPtr;
 class Actor : public std::enable_shared_from_this<Actor>
 {
 public:
+    virtual void setupComponents();
+
     void addComponent(const ActorComponentPtr &component);
     virtual void beginPlay();
     virtual void endPlay();
@@ -52,6 +54,14 @@ protected:
     bool isRegisteredInWorld = false;
     bool wantsToTick = false;
 };
+
+template<typename AT>
+std::shared_ptr<AT> MakeActor()
+{
+    auto actor = std::make_shared<AT> ();
+    actor->setupComponents();
+    return actor;
+}
 
 } // End of namespace GameFramework
 } // End of namespace Woden

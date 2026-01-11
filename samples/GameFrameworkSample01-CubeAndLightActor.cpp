@@ -57,7 +57,7 @@ int woden_main(int argc, const char **argv)
         auto lightComponent = std::make_shared<ActorLightSourceComponent> ();
         lightComponent->light = pointLightSource;
 
-        auto lightSourceActor = std::make_shared<Actor> ();
+        auto lightSourceActor = MakeActor<Actor> ();
         lightSourceActor->addComponent(lightComponent);
         lightSourceActor->setPosition(Vector3(0, 1.5, 2));
         world->spawnActor(lightSourceActor);
@@ -65,7 +65,7 @@ int woden_main(int argc, const char **argv)
 
     // Camera actor
     {
-        auto cameraActor = std::make_shared<Actor> ();
+        auto cameraActor = MakeActor<Actor> ();
         auto cameraComponent = std::make_shared<ActorCameraComponent> ();
         cameraComponent->isActive = true;
         cameraActor->addComponent(cameraComponent);

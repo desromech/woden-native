@@ -8,6 +8,12 @@ namespace Woden
 {
 namespace GameFramework
 {
+
+void Actor::setupComponents()
+{
+	// This is a place for setting up different actor components
+}
+
 void Actor::addComponent(const ActorComponentPtr &component)
 {
     component->addedToActor(shared_from_this());

@@ -54,7 +54,7 @@ int woden_main(int argc, const char **argv)
             .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
             .finishMesh();
 
-        auto actor = std::make_shared<Actor> ();
+        auto actor = MakeActor<Actor> ();
         auto meshComponent = std::make_shared<ActorMeshSceneComponent> ();
         meshComponent->mesh = wallMesh;
         actor->addComponent(meshComponent);
@@ -81,7 +81,7 @@ int woden_main(int argc, const char **argv)
         auto lightComponent = std::make_shared<ActorLightSourceComponent> ();
         lightComponent->light = pointLightSource;
 
-        auto lightSourceActor = std::make_shared<Actor> ();
+        auto lightSourceActor = MakeActor<Actor> ();
         lightSourceActor->addComponent(lightComponent);
         lightSourceActor->setPosition(Vector3(0, 1.5, 0));
         world->spawnActor(lightSourceActor);
@@ -89,7 +89,7 @@ int woden_main(int argc, const char **argv)
     
     // Camera actor
     {
-        auto cameraActor = std::make_shared<Actor> ();
+        auto cameraActor = MakeActor<Actor> ();
         auto cameraComponent = std::make_shared<ActorCameraComponent> ();
         cameraComponent->isActive = true;
         cameraActor->addComponent(cameraComponent);
