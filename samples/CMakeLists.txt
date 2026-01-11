@@ -67,3 +67,6 @@ target_link_libraries(GameFrameworkSample03-FallingBoxAndFloor WodenEngine)
 
 add_executable(GameFrameworkSample04-FallingBoxStack SampleCommon.cpp GameFrameworkSample04-FallingBoxStack.cpp)
 target_link_libraries(GameFrameworkSample04-FallingBoxStack WodenEngine)
+
+add_executable(GameFrameworkSample05-Room SampleCommon.cpp GameFrameworkSample05-Room.cpp)
+target_link_libraries(GameFrameworkSample05-Room WodenEngine)
