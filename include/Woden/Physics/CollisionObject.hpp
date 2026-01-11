@@ -106,6 +106,9 @@ public:
     void loadStateFromModel();
     void saveStateIntoModel();
 
+    virtual void resetSleepingState();
+    virtual void wakeUp();
+
     PhysicsWorldWeakPtr owner;
     CollisionShapePtr shape;
     CollisionObjectModel *model = nullptr;

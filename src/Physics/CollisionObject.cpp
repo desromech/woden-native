@@ -122,5 +122,14 @@ void CollisionObject::saveStateIntoModel()
         model->saveCollisionStateFrom(shared_from_this());
 }
 
+void CollisionObject::resetSleepingState()
+{
+}
+
+void CollisionObject::wakeUp()
+{
+}
+
+
 } // End of namespace Physics
 } // End of namespace Woden

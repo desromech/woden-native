@@ -13,6 +13,8 @@ namespace Physics
 class RigidBody : public CollisionObject
 {
 public:
+    RigidBody();
+    ~RigidBody();
 
     virtual Math::Scalar getMass() const override
     {
@@ -63,6 +65,23 @@ public:
     void wakeUpForTranslationBy(const Math::Vector3 &linearTranslation);
     void wakeUpForTranslationByAndRotateByAngularIncrement(const Math::Vector3 &linearIncrement, const Math::Vector3 &angularIncrement);
 
+    void setSleepingStateFactors();
+
+    virtual void resetSleepingState();
+    virtual void wakeUp() override;
+
+    void checkTimeToSleep(Math::Scalar weight);
+
+    bool isSleeping()
+    {
+        return !isAwake;
+    }
+    
+    Math::Scalar computeMovementAmount() const
+    {
+        return linearVelocity.length2() + angularVelocity.length2();
+    }
+
     Math::Scalar linearDamping = 0.2f;
     Math::Scalar angularDamping = 0.2f;
 
@@ -83,6 +102,9 @@ protected:
 
     Math::Vector3 netForce = Math::Vector3::Zeros();
     Math::Vector3 netTorque = Math::Vector3::Zeros();
+
+    bool isAwake = false;
+    Math::Scalar averageMovementAmount = 0;
 };
 
 } // End of namespace Physics

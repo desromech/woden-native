@@ -6,6 +6,21 @@ namespace Woden
 {
 namespace Physics
 {
+
+const Math::Scalar WakeUpMovementThreshold = 0.001f;
+const Math::Scalar WakingUpAverageMovementAmount = 2.0f;
+const Math::Scalar AverageMovementAmountSleepingThreshold = 0.01;
+
+RigidBody::RigidBody()
+{
+    setSleepingStateFactors();
+}
+
+RigidBody::~RigidBody()
+{
+
+}
+
 void RigidBody::computeMassDistribution()
 {
     if(mass == 0)
@@ -69,7 +84,10 @@ void RigidBody::resetNetForces()
 void RigidBody::integrateMovement(Math::Scalar deltaTime)
 {
     if(mass == 0)
+    {
+        setSleepingStateFactors();
         return;
+    }
     
     // Compute the linear acceleration
     auto linearAcceleration = owner.lock()->gravity + netForce*Math::Vector3(inverseMass) - linearVelocity*Math::Vector3(linearDamping) + internalLinearAcceleration;
@@ -137,14 +155,68 @@ void RigidBody::applyMovementAtRelativePoint(Math::Scalar movement, const Math::
 
 void RigidBody::wakeUpForTranslationBy(const Math::Vector3 &linearTranslation)
 {
-    // TODO: Wake up
+    if(!isAwake)
+    {
+        auto movementAmount = linearTranslation.length2();
+        if(movementAmount < WakeUpMovementThreshold)
+            return;
+
+        wakeUp();
+    }
+    
     translateBy(linearTranslation);
 }
 
 void RigidBody::wakeUpForTranslationByAndRotateByAngularIncrement(const Math::Vector3 &linearIncrement, const Math::Vector3 &angularIncrement)
 {
-    // TODO: Wake up
+    if(!isAwake)
+    {
+        auto movementAmount = linearIncrement.length2() + angularIncrement.length2();
+        if(movementAmount < WakeUpMovementThreshold)
+            return;
+
+        wakeUp();
+    }
+    
     translateByAndRotateBy(linearIncrement, angularIncrement);
+}
+
+void RigidBody::setSleepingStateFactors()
+{
+	isAwake = false;
+	angularVelocityIntegrationDelta = linearVelocityIntegrationDelta = Math::Vector3::Zeros();
+	linearVelocity = angularVelocity = Math::Vector3::Zeros();
+	averageMovementAmount = 0.;
+}
+
+void RigidBody::resetSleepingState()
+{
+    isAwake = false;
+}
+
+void RigidBody::wakeUp()
+{
+    if(isAwake)
+        return;
+    if(inverseMass == 0)
+        return;
+
+    isAwake = true;
+    averageMovementAmount = WakingUpAverageMovementAmount;
+    auto world = owner.lock();
+    if(world)
+        world->addAwakeRigidBody(std::static_pointer_cast<RigidBody> (shared_from_this()));
+}
+
+void RigidBody::checkTimeToSleep(Math::Scalar weight)
+{
+    if(!isAwake)
+        return;
+
+    auto movementAmount = computeMovementAmount();
+    averageMovementAmount = Math::mix(averageMovementAmount, movementAmount, weight);
+    if(averageMovementAmount < AverageMovementAmountSleepingThreshold)
+        setSleepingStateFactors();
 }
 
 void RigidBody::applyImpulse(const Math::Vector3 &impulse)

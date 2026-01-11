@@ -1,4 +1,5 @@
 #include "Woden/Physics/PhysicsWorld.hpp"
+#include "Woden/Physics/CollisionObject.hpp"
 #include "Woden/Physics/CollisionShape.hpp"
 #include "Woden/Physics/ForceGenerator.hpp"
 #include "Woden/Physics/RigidBody.hpp"
@@ -20,6 +21,9 @@ void PhysicsWorld::addCollisionObject(const CollisionObjectPtr &collisionObject)
     
     collisionObject->owner = shared_from_this();
     collisionObjects.push_back(collisionObject);
+
+    collisionObject->resetSleepingState();
+    collisionObject->wakeUp();
 }
 
 void PhysicsWorld::addForceGenerator(const ForceGeneratorPtr &forceGenerator)
@@ -28,6 +32,11 @@ void PhysicsWorld::addForceGenerator(const ForceGeneratorPtr &forceGenerator)
 
     forceGenerator->owner = shared_from_this();
     forceGenerators.push_back(forceGenerator);
+}
+
+void PhysicsWorld::addAwakeRigidBody(const RigidBodyPtr &rigidBody)
+{
+    awakeRigidBodies.push_back(rigidBody);
 }
 
 void PhysicsWorld::loadCollisionStateFromModels()
@@ -185,6 +194,7 @@ void DiscreteDynamicsPhysicsWorld::updateSingleTimeStep(Math::Scalar delta)
     evaluateForceGenerators(delta);
     integrateMovement(delta);
     detectAndResolveCollisions();
+    sendRestingObjectsToSleep(delta);
 }
 
 void DiscreteDynamicsPhysicsWorld::resetNetForces()
@@ -201,7 +211,7 @@ void DiscreteDynamicsPhysicsWorld::evaluateForceGenerators(Math::Scalar delta)
 
 void DiscreteDynamicsPhysicsWorld::integrateMovement(Math::Scalar delta)
 {
-    for(auto &object : collisionObjects)
+    for(auto &object : awakeRigidBodies)
         object->integrateMovement(delta);
 }
 
@@ -416,6 +426,24 @@ void DiscreteDynamicsPhysicsWorld::resolveContactConstraint(ContactPoint &contac
         firstCollisionObject->applyMovementAtRelativePoint(penetrationDelta, contact.getRelativeFirstPoint(), contact.normal);
     if(contact.secondHasCollisionResponse())
         secondCollisionObject->applyMovementAtRelativePoint(penetrationDelta, contact.getRelativeSecondPoint(), -contact.normal);
+}
+
+void DiscreteDynamicsPhysicsWorld::sendRestingObjectsToSleep(Math::Scalar delta)
+{
+    Math::Scalar MovementAverageTau = 0.15;
+    auto weight = exp(-MovementAverageTau * delta) * MovementAverageTau;
+    for(auto &awakeBody : awakeRigidBodies)
+        awakeBody->checkTimeToSleep(weight);
+
+    size_t destIndex = 0;
+    for(size_t i = 0; i < awakeRigidBodies.size(); ++i)
+    {
+        auto &rigidBody = awakeRigidBodies[i];
+        if(!rigidBody->isSleeping())
+            awakeRigidBodies[destIndex++] = rigidBody;
+    }
+
+    awakeRigidBodies.resize(destIndex);
 }
 
 } // End of namespace Physics

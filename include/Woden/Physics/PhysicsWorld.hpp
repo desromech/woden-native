@@ -17,6 +17,7 @@ typedef std::shared_ptr<class Scene> ScenePtr;
 namespace Physics
 {
 typedef std::shared_ptr<class CollisionObject> CollisionObjectPtr;
+typedef std::shared_ptr<class RigidBody> RigidBodyPtr;
 typedef std::shared_ptr<class ForceGenerator> ForceGeneratorPtr;
 typedef std::shared_ptr<class PhysicsWorld> PhysicsWorldPtr;
 
@@ -28,6 +29,7 @@ class PhysicsWorld : public std::enable_shared_from_this<PhysicsWorld>
 public:
     void addCollisionObject(const CollisionObjectPtr &collisionObject);
     void addForceGenerator(const ForceGeneratorPtr &forceGenerator);
+    void addAwakeRigidBody(const RigidBodyPtr &rigidBody);
 
     void loadCollisionStateFromModels();
     void saveCollisionStateIntoModels();
@@ -55,6 +57,7 @@ public:
 protected:
     std::vector<CollisionObjectPtr> collisionObjects;
     std::vector<ForceGeneratorPtr> forceGenerators;
+    std::vector<RigidBodyPtr> awakeRigidBodies;
     ContactManifoldCache contactManifoldCache;
 };
 
@@ -72,7 +75,7 @@ protected:
     void resetNetForces();
     void evaluateForceGenerators(Math::Scalar delta);
     void integrateMovement(Math::Scalar delta);
-    
+
     void detectAndResolveCollisions();
     
     std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> computeBroadphaseCandidatePairs();
@@ -83,6 +86,8 @@ protected:
     void solveCollisionContactConstraintList(std::vector<ContactPoint> &contactList);
     void resolveContactCollisionResponse(ContactPoint &contact);
     void resolveContactConstraint(ContactPoint &contact, Math::Scalar relaxationFactor);
+
+    void sendRestingObjectsToSleep(Math::Scalar delta);
 };
 
 } // End of namespace Physics
