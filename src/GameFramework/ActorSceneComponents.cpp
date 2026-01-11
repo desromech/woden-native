@@ -106,6 +106,24 @@ void ActorMeshSceneComponent::registerInWorld(const WorldPtr &world)
         sceneNode->addRenderable(mesh);
 }
 
+ActorCameraComponent::ActorCameraComponent()
+{
+    camera = std::make_shared<Rendering::Camera> ();
+}
+
+ActorCameraComponent::~ActorCameraComponent()
+{
+}
+
+void ActorCameraComponent::registerInWorld(const WorldPtr &world)
+{
+    ActorSceneComponent::registerInWorld(world);
+    if(camera)
+        sceneNode->addCamera(camera);
+
+    world->getSceneSubsystem()->addCameraComponent(std::static_pointer_cast<ActorCameraComponent> (shared_from_this()));
+}
+
 void ActorLightSourceComponent::registerInWorld(const WorldPtr &world)
 {
     ActorSceneComponent::registerInWorld(world);

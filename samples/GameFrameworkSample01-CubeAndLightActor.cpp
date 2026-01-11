@@ -62,6 +62,16 @@ int woden_main(int argc, const char **argv)
         lightSourceActor->setPosition(Vector3(0, 1.5, 2));
         world->spawnActor(lightSourceActor);
     }
+
+    // Camera actor
+    {
+        auto cameraActor = std::make_shared<Actor> ();
+        auto cameraComponent = std::make_shared<ActorCameraComponent> ();
+        cameraComponent->isActive = true;
+        cameraActor->addComponent(cameraComponent);
+        cameraActor->setPosition(Vector3(0, 0, 3));
+        world->spawnActor(cameraActor);
+    }
     
     world->playInSystemWindow();
     return 0;

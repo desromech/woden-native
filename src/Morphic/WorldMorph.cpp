@@ -1,4 +1,5 @@
 #include "Woden/Morphic/WorldMorph.hpp"
+#include "Woden/GameFramework/ActorSceneComponents.hpp"
 #include "Woden/GameFramework/World.hpp"
 #include "Woden/GameFramework/SceneSubsystem.hpp"
 #include "Woden/Rendering/Camera.hpp"
@@ -18,7 +19,7 @@ WorldMorph::WorldMorph()
     cameraNode = std::make_shared<SceneGraph::SceneNode> ();
     auto cameraState = std::make_shared<Rendering::Camera> ();
     cameraNode->addCamera(cameraState);
-    cameraNode->transform.translation = Math::Vector3(0, 0, 3);
+    cameraNode->transform.translation = Math::Vector3(0, 0, 0);
 
     sceneRenderer = std::make_shared<Rendering::SceneRenderer> ();
 }
@@ -35,7 +36,9 @@ void WorldMorph::update(Math::Scalar deltaTime)
         // Get the scene.
         auto sceneSubsystem = world->getSceneSubsystem();
         scene = sceneSubsystem->scene;
-
+        auto activeCameraComponent = sceneSubsystem->findActiveCameraComponent();
+        if(activeCameraComponent)
+            sceneCameraNode = activeCameraComponent->sceneNode;
     }
 
 }
@@ -47,7 +50,7 @@ void WorldMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
     auto extent = getExtent();
     sceneRenderer->setupWithScreenSize(int(extent.x + 0.5), int(extent.y + 0.5));
 
-    sceneRenderer->renderScene(renderer->renderingCommandList, scene, cameraNode);
+    sceneRenderer->renderScene(renderer->renderingCommandList, scene, sceneCameraNode ? sceneCameraNode : cameraNode);
     auto guiTextureBinding = sceneRenderer->screen->getValidGuiTextureBinding();
     {
         Rendering::GuiElement screenQuad = {};

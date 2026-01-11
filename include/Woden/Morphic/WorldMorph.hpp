@@ -38,6 +38,7 @@ public:
 
     SceneGraph::ScenePtr scene;
     SceneGraph::SceneNodePtr cameraNode;
+    SceneGraph::SceneNodePtr sceneCameraNode;
 
     GameFramework::WorldPtr world;
     Rendering::SceneRendererPtr sceneRenderer;

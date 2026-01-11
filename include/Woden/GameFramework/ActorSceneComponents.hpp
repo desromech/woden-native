@@ -4,6 +4,7 @@
 #include "ActorComponent.hpp"
 #include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Rendering/Renderable.hpp"
+#include "Woden/Rendering/Camera.hpp"
 #include "Woden/Math/TRSTransform3D.hpp"
 #include <vector>
 
@@ -13,6 +14,7 @@ namespace GameFramework
 {
 typedef std::shared_ptr<class ActorSceneComponent> ActorSceneComponentPtr;
 typedef std::weak_ptr<class ActorSceneComponent> ActorSceneComponentWeakPtr;
+typedef std::shared_ptr<class ActorCameraComponent> ActorCameraComponentPtr;
 
 class ActorSceneComponent : public ActorComponent
 {
@@ -51,6 +53,19 @@ public:
     virtual void registerInWorld(const WorldPtr &world) override;
 
     Rendering::RenderablePtr mesh;
+
+};
+
+class ActorCameraComponent : public ActorSceneComponent
+{
+public:
+    ActorCameraComponent();
+    ~ActorCameraComponent();
+    
+    virtual void registerInWorld(const WorldPtr &world) override;
+
+    Rendering::CameraPtr camera;
+    bool isActive = false;
 
 };
 

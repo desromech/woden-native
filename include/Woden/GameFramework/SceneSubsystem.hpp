@@ -9,6 +9,8 @@ namespace Woden
 namespace GameFramework
 {
 
+typedef std::shared_ptr<class ActorCameraComponent> ActorCameraComponentPtr;
+
 /**
  * I am a subsystem that deals with scene presentations
  */
@@ -18,7 +20,12 @@ public:
     SceneSubsystem();
     ~SceneSubsystem();
     
+    void addCameraComponent(const ActorCameraComponentPtr &component);
+    void removeCameraComponent(const ActorCameraComponentPtr &component);
+    ActorCameraComponentPtr findActiveCameraComponent();
+
     SceneGraph::ScenePtr scene;
+    std::vector<ActorCameraComponentPtr> cameraComponents;
 };
 
 } // End of namespace GameFramework
