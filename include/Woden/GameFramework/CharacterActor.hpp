@@ -11,7 +11,12 @@ namespace GameFramework
 class CharacterActor : public Actor
 {
 public:
+    CharacterActor();
+    ~CharacterActor();
+
     virtual void setupComponents() override;
+
+    virtual void tick(Math::Scalar delta) override;
 };
 
 } // End of namespace GameFramework

@@ -8,6 +8,10 @@ namespace GameFramework
 void PlayerActor::setupComponents()
 {
     CharacterActor::setupComponents();
+
+    cameraComponent = std::make_shared<ActorCameraComponent> ();
+    cameraComponent->isActive = true;
+    addComponent(cameraComponent);
 }
 
 } // End of namespace GameFramework

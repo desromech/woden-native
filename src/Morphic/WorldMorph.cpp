@@ -40,7 +40,6 @@ void WorldMorph::update(Math::Scalar deltaTime)
         if(activeCameraComponent)
             sceneCameraNode = activeCameraComponent->sceneNode;
     }
-
 }
 
 void WorldMorph::drawWith(const Rendering::GUIRendererPtr &renderer)

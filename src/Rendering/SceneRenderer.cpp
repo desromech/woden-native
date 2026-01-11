@@ -209,8 +209,9 @@ void SceneRenderer::gatherRenderingSceneStates()
             cameraState.nearDistance = camera->nearDistance;
             cameraState.farDistance = camera->farDistance;
 
-            cameraState.transformationMatrix = currentCameraNode->transform.asMatrix();
-            cameraState.inverseTransformationMatrix = currentCameraNode->transform.asInverseMatrix();
+            
+            cameraState.transformationMatrix = currentCameraNode->computeGlobalTransformMatrix();
+            cameraState.inverseTransformationMatrix = cameraState.transformationMatrix.inverse();
 
             cameraState.projectionMatrix = cameraStateObject->computeProjectionMatrix(aspect);
         }
@@ -387,8 +388,9 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
 
     currentRenderingScene = std::make_shared<RenderingScene> ();
     currentCameraNode = cameraNode;
-    currentRenderingScene->currentInverseViewMatrix = currentCameraNode->transform.asMatrix();
-    currentRenderingScene->currentViewMatrix = currentCameraNode->transform.asInverseMatrix();
+
+    currentRenderingScene->currentInverseViewMatrix = currentCameraNode->computeGlobalTransformMatrix();
+    currentRenderingScene->currentViewMatrix = currentRenderingScene->currentInverseViewMatrix.inverse();
 
     if(!currentCameraNode->cameras.empty())
     {

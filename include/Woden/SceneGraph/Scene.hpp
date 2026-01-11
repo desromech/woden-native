@@ -45,6 +45,8 @@ public:
     virtual void addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene);
     virtual ScenePtr getScene();
 
+    virtual Math::Matrix4x4 computeGlobalTransformMatrix();
+
     std::string name;
 };
 
@@ -86,6 +88,7 @@ public:
     virtual void addedToSceneElement(const SceneElementPtr &newParent) override;
     virtual void removedFromSceneElement(const SceneElementPtr &oldParent) override;
     virtual ScenePtr getScene() override;
+    virtual Math::Matrix4x4 computeGlobalTransformMatrix() override;
 
     SceneElementWeakPtr parent;
 };
@@ -114,6 +117,7 @@ public:
     void addLightSource(const Rendering::LightSourcePtr &lightSource);
     void addRenderable(const Rendering::RenderablePtr &renderable);
     virtual void addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene) override;
+    virtual Math::Matrix4x4 computeGlobalTransformMatrix() override;
 
     Math::TRSTransform3D transform;
     std::vector<Rendering::CameraPtr> cameras;

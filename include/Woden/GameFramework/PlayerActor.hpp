@@ -2,6 +2,7 @@
 #define WODEN_GAME_FRAMEWORK_PLAYER_ACTOR_HPP
 
 #include "CharacterActor.hpp"
+#include "ActorSceneComponents.hpp"
 
 namespace Woden
 {
@@ -12,6 +13,8 @@ class PlayerActor : public CharacterActor
 {
 public:
     virtual void setupComponents() override;
+
+    ActorCameraComponentPtr cameraComponent;
 };
 
 } // End of namespace GameFramework

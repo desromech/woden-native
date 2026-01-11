@@ -33,6 +33,11 @@ ScenePtr SceneElement::getScene()
     return nullptr;
 }
 
+Math::Matrix4x4 SceneElement::computeGlobalTransformMatrix()
+{
+    return Math::Matrix4x4();
+}
+
 // Scene
 Scene::Scene()
 {
@@ -109,6 +114,15 @@ ScenePtr SceneTreeElement::getScene()
     return p->getScene();
 }
 
+Math::Matrix4x4 SceneTreeElement::computeGlobalTransformMatrix()
+{
+    auto p = parent.lock();
+    if(p)
+        return p->computeGlobalTransformMatrix();
+    else
+        return Math::Matrix4x4::Identity();
+}
+
 // SceneTreeElementWithChildren
 void SceneTreeElementWithChildren::addChild(SceneElementPtr child)
 {
@@ -154,6 +168,11 @@ void SceneNode::addIntoRenderingScene(const Rendering::RenderingScenePtr &render
             lightSource->addIntoRenderingScene(renderingScene);
         SceneTreeElementWithChildren::addIntoRenderingScene(renderingScene);
     });
+}
+
+Math::Matrix4x4 SceneNode::computeGlobalTransformMatrix()
+{
+    return SceneTreeElementWithChildren::computeGlobalTransformMatrix() * transform.asMatrix();
 }
 
 } // End of namespace SceneGraph
