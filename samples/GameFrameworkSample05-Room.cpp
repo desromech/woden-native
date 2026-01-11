@@ -3,6 +3,7 @@
 #include "Woden/GameFramework/ActorSceneComponents.hpp"
 #include "Woden/GameFramework/CollisionObjectComponents.hpp"
 #include "Woden/GameFramework/CollisionShapeComponents.hpp"
+#include "Woden/GameFramework/PlayerActor.hpp"
 #include "Woden/GameFramework/World.hpp"
 #include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
@@ -87,14 +88,11 @@ int woden_main(int argc, const char **argv)
         world->spawnActor(lightSourceActor);
     }
     
-    // Camera actor
+    // Player actor
     {
-        auto cameraActor = MakeActor<Actor> ();
-        auto cameraComponent = std::make_shared<ActorCameraComponent> ();
-        cameraComponent->isActive = true;
-        cameraActor->addComponent(cameraComponent);
-        cameraActor->setPosition(Vector3(0, 1, 0));
-        world->spawnActor(cameraActor);
+        auto playerActor = MakeActor<PlayerActor> ();
+        playerActor->setPosition(Vector3(0, 2, 0));
+        world->spawnActor(playerActor);
     }
 
     world->playInSystemWindow();

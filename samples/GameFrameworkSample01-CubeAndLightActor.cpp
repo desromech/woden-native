@@ -41,7 +41,7 @@ int woden_main(int argc, const char **argv)
             .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
             .finishMesh();
         
-        auto actor = std::make_shared<MovingCubeActor> ();
+        auto actor = MakeActor<MovingCubeActor> ();
         auto meshComponent = std::make_shared<ActorMeshSceneComponent> ();
         meshComponent->mesh = cubeMesh;
         actor->addComponent(meshComponent);

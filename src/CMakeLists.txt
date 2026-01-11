@@ -10,8 +10,10 @@ set(WodenEngine_Sources
     GameFramework/ActorComponent.cpp
     GameFramework/ActorSceneComponents.cpp
     GameFramework/ActorTickSubsystem.cpp
+    GameFramework/CharacterActor.cpp
     GameFramework/CollisionObjectComponents.cpp
     GameFramework/CollisionShapeComponents.cpp
+    GameFramework/PlayerActor.cpp
     GameFramework/PhysicsSubsystem.cpp
     GameFramework/SceneSubsystem.cpp
     GameFramework/World.cpp
