@@ -111,6 +111,36 @@ protected:
     Math::Vector3 halfExtent = Math::Vector3(1, 1, 1);
 };
 
+// Abstract capsule shape shape
+class AbstractCapsuleCollisionShape : public ConvexCollisionShape
+{
+public:
+
+    void setHeightAndRadius(Math::Scalar newHeight, Math::Scalar newRadius)
+    {
+        height = newHeight;
+        halfHeight = newHeight*0.5f;
+        radius = newRadius;
+        computeLocalBoundingBox();
+    }
+
+    virtual void computeLocalBoundingBox() = 0;
+
+protected:
+    Math::Scalar radius = 1;
+    Math::Scalar halfHeight = 0.5f;
+    Math::Scalar height = 1;
+};
+
+// Capsule y shape
+class CapsuleYCollisionShape : public AbstractCapsuleCollisionShape
+{
+public:
+    virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode() override;
+    virtual void computeLocalBoundingBox() override;
+    virtual Math::Vector3 localSupportInDirection(const Math::Vector3 &D) override;
+};
+
 } // End of namespace Physics
 } // End of namespace Woden
 #endif //WODEN_PHYSICS_COLLISION_SHAPE

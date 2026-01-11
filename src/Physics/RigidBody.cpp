@@ -9,7 +9,7 @@ namespace Physics
 
 const Math::Scalar WakeUpMovementThreshold = 0.001f;
 const Math::Scalar WakingUpAverageMovementAmount = 2.0f;
-const Math::Scalar AverageMovementAmountSleepingThreshold = 0.01;
+const Math::Scalar AverageMovementAmountSleepingThreshold = 0.01f;
 
 RigidBody::RigidBody()
 {

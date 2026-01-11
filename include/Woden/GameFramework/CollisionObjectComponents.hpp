@@ -29,6 +29,10 @@ public:
     virtual void loadCollisionStateInto(const Physics::CollisionObjectPtr &collisionObject) override;
     virtual void saveCollisionStateFrom(const Physics::CollisionObjectPtr &collisionObject) override;
 
+    Math::Scalar restitutionCoefficient = 0.2f;
+	Math::Scalar dynamicFrictionCoefficient = 0.5f;
+	Math::Scalar staticFrictionCoefficient = 0.6f;
+
     Physics::CollisionObjectPtr collisionObject;
 
 protected:
@@ -53,10 +57,16 @@ public:
         mass = newMass;
     }
 
+    void withoutTorque()
+    {
+        noTorque = true;
+    }
+
 protected:
     virtual Physics::CollisionObjectPtr makeCollisionObjectInstance() override;
 
     Math::Scalar mass = 0.0f;
+    bool noTorque = false;
 };
 
 } // End of namespace GameFramework

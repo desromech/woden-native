@@ -165,5 +165,26 @@ SceneGraph::SceneNodePtr BoxCollisionShape::constructVisualizationSceneNode()
             ->asSceneNode();
 }
 
+// Capsule collision shape
+void CapsuleYCollisionShape::computeLocalBoundingBox()
+{
+    localBoundingBox = Math::AABox::WithHalfExtent(Math::Vector3(radius, halfHeight + radius, radius));
+    localBoundingBoxWithMargin = localBoundingBox.expandedBy(margin);
+}
+
+SceneGraph::SceneNodePtr CapsuleYCollisionShape::constructVisualizationSceneNode()
+{
+    return Woden::Rendering::MeshBuilder()
+            .addCubeWithHalfExtent(Math::Vector3(radius, halfHeight + radius, radius))
+            .generateTexcoordsWithFacePlanarTransformWithScale(Math::Vector2(1, 1))
+            .finishMesh()
+            ->asSceneNode();
+}
+
+Math::Vector3 CapsuleYCollisionShape::localSupportInDirection(const Math::Vector3 &D)
+{
+    return Math::Vector3(0, Math::sign(D.y)*halfHeight, 0) + (D.normalized() * Math::Vector3(radius));
+}
+
 } // End of namespace Physics
 } // End of namespace Woden

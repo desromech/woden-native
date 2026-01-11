@@ -73,7 +73,10 @@ Physics::CollisionObjectPtr RigidBodyComponent::makeCollisionObjectInstance()
     auto body = std::make_shared<Physics::RigidBody> ();
     setupCollisionObject(body);
     body->setMass(mass);
-    body->computeMassDistribution();
+    if(noTorque)
+        body->setInertiaTensor(Math::Matrix3x3::Zeros());
+    else
+        body->computeMassDistribution();
     return body;
 }
 

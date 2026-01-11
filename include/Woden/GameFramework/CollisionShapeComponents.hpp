@@ -39,6 +39,25 @@ public:
     virtual Woden::Physics::CollisionShapePtr asValidCollisionShapeWithoutTransform() override;
 };
 
+/**
+ * I am a capsule collision shape.
+ */
+class AbstractCapsuleCollisionShapeComponent : public AbstractCollisionShapeComponent
+{
+public:
+    Math::Scalar height = 1;
+    Math::Scalar radius = 1;
+};
+
+/**
+ * I am a capsule collision shape.
+ */
+class CapsuleYCollisionShapeComponent : public AbstractCapsuleCollisionShapeComponent
+{
+public:
+    virtual Woden::Physics::CollisionShapePtr asValidCollisionShapeWithoutTransform() override;
+};
+
 } // End of namespace GameFramework
 } // End of namespace Woden
 

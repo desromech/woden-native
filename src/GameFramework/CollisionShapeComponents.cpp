@@ -39,5 +39,12 @@ Woden::Physics::CollisionShapePtr BoxCollisionShapeComponent::asValidCollisionSh
     return shape;
 }
 
+Woden::Physics::CollisionShapePtr CapsuleYCollisionShapeComponent::asValidCollisionShapeWithoutTransform()
+{
+    auto shape = std::make_shared<Physics::CapsuleYCollisionShape> ();
+    shape->setHeightAndRadius(height, radius);
+    return shape;
+}
+
 } // End of namespace GameFramework
 } // End of namespace Woden

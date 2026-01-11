@@ -124,8 +124,8 @@ public:
         size_t sourceIndex = 0;
         while(sourceIndex + 1 < nodes.size())
         {
-            uint32_t leftNodeIndex = sourceIndex;
-            uint32_t rightNodeIndex = sourceIndex + 1;
+            size_t leftNodeIndex = sourceIndex;
+            size_t rightNodeIndex = sourceIndex + 1;
             auto &leftNode = nodes[leftNodeIndex];
             auto &rightNode = nodes[rightNodeIndex];
 

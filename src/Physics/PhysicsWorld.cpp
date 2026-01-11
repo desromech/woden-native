@@ -462,7 +462,7 @@ void DiscreteDynamicsPhysicsWorld::resolveContactConstraint(ContactPoint &contac
 
 void DiscreteDynamicsPhysicsWorld::sendRestingObjectsToSleep(Math::Scalar delta)
 {
-    Math::Scalar MovementAverageTau = 0.15;
+    Math::Scalar MovementAverageTau = 0.15f;
     auto weight = exp(-MovementAverageTau * delta) * MovementAverageTau;
     for(auto &awakeBody : awakeRigidBodies)
         awakeBody->checkTimeToSleep(weight);
