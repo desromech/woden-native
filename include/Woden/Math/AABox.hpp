@@ -78,6 +78,12 @@ public:
         return minCorner.x > maxCorner.x;
     }
 
+    void insertBox(const AABox &box)
+    {
+        minCorner = min(minCorner, box.minCorner);
+        maxCorner = max(maxCorner, box.maxCorner);
+    }
+
     void insertPoint(const Vector3 &point)
     {
         minCorner = min(minCorner, point);
@@ -92,6 +98,11 @@ public:
     Vector3 center() const
     {
         return minCorner + halfExtent();
+    }
+
+    Vector3 extent() const
+    {
+        return maxCorner - minCorner;
     }
 
     Vector3 computeNormalForPoint(const Vector3 &point) const

@@ -7,6 +7,7 @@
 #include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
 #include "Woden/Rendering/MetallicRoughnessMaterial.hpp"
+#include "Woden/Math/BVH.hpp"
 #include <assert.h>
 #include <unordered_map>
 
@@ -14,6 +15,8 @@ namespace Woden
 {
 namespace Physics
 {
+
+typedef Math::BoundingVolumeHierachy<CollisionObjectPtr> CollisionObjectBVH;
 
 void PhysicsWorld::addCollisionObject(const CollisionObjectPtr &collisionObject)
 {
@@ -225,6 +228,26 @@ void DiscreteDynamicsPhysicsWorld::detectAndResolveCollisions()
 
 std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsPhysicsWorld::computeBroadphaseCandidatePairs()
 {
+    if(collisionObjects.empty())
+        return std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>>();
+
+    CollisionObjectBVH bvh;
+    // Bottom up construction
+    {
+        std::vector<CollisionObjectBVH::NodePtrType> bvhLeaves;
+        bvhLeaves.reserve(collisionObjects.size());
+        for(auto &collisionObject : collisionObjects)
+        {
+            auto leaf = std::make_shared<CollisionObjectBVH::NodeType> ();
+            leaf->isLeaf = true;
+            leaf->volume = collisionObject->getWorldBoundingBoxWithMargin();
+            leaf->payload = collisionObject;
+            bvhLeaves.push_back(leaf);
+        }
+
+        bvh.buildBottomUp(bvhLeaves);
+    }
+
     std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> candidatePairs;
     
     for(auto &firstRigidBody : awakeRigidBodies)
@@ -233,24 +256,24 @@ std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsP
         auto rigidBodyBoundingBox = firstRigidBody->getWorldBoundingBoxWithMargin();
 
         // TODO: use a BVH.
-        for(auto &collisionObject : collisionObjects)
-        {
+        //for(auto &collisionObject : collisionObjects)
+        bvh.leavesIntersectingBoxDo(rigidBodyBoundingBox, [&](const CollisionObjectPtr &collisionObject) {
             auto collisionObjectId = collisionObject->id;
             // To avoid duplicated pairs.
             if(rigidBodyId >= collisionObjectId)
-                continue;
+                return;
 
             auto firstObject = firstRigidBody;
             auto secondObject = collisionObject;
 
             // Filter objects that do not need collision detection.
             if(!firstRigidBody->needsCollisionDetection() && !secondObject->needsCollisionDetection())
-                continue;
+                return;
 
             auto secondBoundingBox = secondObject->getWorldBoundingBoxWithMargin();
             if(rigidBodyBoundingBox.hasIntersectionWithBox(secondBoundingBox))
                 candidatePairs.push_back(std::make_pair(firstObject, secondObject));
-        }
+        });
     }
 
     return candidatePairs;
