@@ -25,6 +25,8 @@ public:
     virtual bool activateOpaqueWithRenderer(SceneRenderer *sceneRenderer) override;
     virtual bool activateTranslucentWithRenderer(SceneRenderer *sceneRenderer) override;
 
+    virtual void loadWithContext(Assets::ResourceLoadingContext &loadingContext) override;
+
     Math::Vector4 baseColorFactor = Math::Vector4(1, 1, 1, 1);
     Math::Vector3 emissiveFactor = Math::Vector3(0, 0, 0);
 

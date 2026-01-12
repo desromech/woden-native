@@ -1,4 +1,5 @@
 #include "Woden/Rendering/MetallicRoughnessMaterial.hpp"
+#include "Woden/Assets/ResourceLoadingContext.hpp"
 #include "Woden/Rendering/Context.hpp"
 #include "Woden/Rendering/SceneRenderer.hpp"
 #include "Woden/Rendering/SceneShaderCommon.hpp"
@@ -7,6 +8,8 @@ namespace Woden
 {
 namespace Rendering
 {
+static MaterialFactory<MetallicRoughnessMaterial> metallicRoughnessMaterialFactory("MetallicRoughness");
+
 bool MetallicRoughnessMaterial::activateDepthOnlyWithRenderer(SceneRenderer *sceneRenderer)
 {
     if(alphaMode == SurfaceAlphaMode::Blend)
@@ -48,6 +51,29 @@ bool MetallicRoughnessMaterial::activateTranslucentWithRenderer(SceneRenderer *s
 
     // TODO: use translucent metallic-roughness pipeline.
     return false;
+}
+
+void MetallicRoughnessMaterial::loadWithContext(Assets::ResourceLoadingContext &context)
+{
+    SurfaceMaterial::loadWithContext(context);
+
+    baseColorFactor = context.getVector4("baseColorFactor", baseColorFactor);
+    emissiveFactor  = context.getVector3("emissiveFactor", emissiveFactor);
+
+    occlusionFactor  = context.getFloat("occlusionFactor", occlusionFactor);
+    roughnessFactor  = context.getFloat("roughnessFactor", roughnessFactor);
+    metallicFactor   = context.getFloat("metallicFactor",  metallicFactor);
+
+    texcoordOffset         = context.getVector2("texcoordOffset",         texcoordOffset);
+    texcoordScale          = context.getVector2("texcoordScale",          texcoordScale);
+    texcoordOffsetVelocity = context.getVector2("texcoordOffsetVelocity", texcoordOffsetVelocity);
+
+    
+    baseColorTexture         = context.getTextureMember("baseColorTexture",         Assets::TextureUsageMode::Color);
+    emissiveTexture          = context.getTextureMember("emissiveTexture",          Assets::TextureUsageMode::Color);
+    normalTexture            = context.getTextureMember("normalTexture",            Assets::TextureUsageMode::Normal);
+    occlusionTexture         = context.getTextureMember("occlusionTexture",         Assets::TextureUsageMode::Data);
+    metallicRoughnessTexture = context.getTextureMember("metallicRoughnessTexture", Assets::TextureUsageMode::Data);    
 }
 
 agpu_shader_resource_binding_ref MetallicRoughnessMaterial::getValidResourceBinding(SceneRenderer *sceneRenderer)

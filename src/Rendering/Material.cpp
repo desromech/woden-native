@@ -6,6 +6,12 @@ namespace Woden
 namespace Rendering
 {
 
+static MaterialFactoryRegistry materialFactoryRegistry;
+MaterialFactoryRegistry *MaterialFactoryRegistry::Get()
+{
+    return &materialFactoryRegistry;
+}
+
 static MaterialPtr defaultMaterial;
 
 MaterialPtr Material::getDefaultMaterial()

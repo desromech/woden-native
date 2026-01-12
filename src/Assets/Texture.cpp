@@ -5,6 +5,21 @@ namespace Woden
 {
 namespace Assets
 {
+void Texture::generateMipmaps()
+{
+    switch(usageMode)
+    {
+    case TextureUsageMode::Color:
+        generateColorMipmaps();
+        break;
+    case TextureUsageMode::Data:
+        generateDataMipmaps();
+        break;
+    case TextureUsageMode::Normal:
+        generateNormalMipmaps();
+        break;
+    }
+}
 
 void Texture::generateColorMipmaps()
 {

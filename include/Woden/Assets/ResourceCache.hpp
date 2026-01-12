@@ -3,6 +3,7 @@
 
 #include "Texture.hpp"
 #include "Woden/Rendering/Material.hpp"
+#include <unordered_map>
 
 namespace Woden
 {
@@ -10,7 +11,7 @@ namespace Assets
 {
 typedef std::shared_ptr<class ResourceCache> ResourceCachePtr;
 
-class ResourceCache
+class ResourceCache : public std::enable_shared_from_this<ResourceCache>
 {
 public:
     static ResourceCachePtr Get();
@@ -22,10 +23,17 @@ public:
     TexturePtr getOrCreateCheckboardNormalTexture();
     Rendering::MaterialPtr getOrCreateCheckboardMaterial();
 
+    TexturePtr getOrLoadTexture(const std::string &path, TextureUsageMode usageMode);
+    Rendering::MaterialPtr getOrLoadMaterial(const std::string &path);
+
+
 private:
     TexturePtr checkboardTexture;
     TexturePtr checkboardNormalTexture;
     Rendering::MaterialPtr checkboardMaterial;
+
+    std::unordered_map<std::string, Rendering::MaterialWeakPtr> loadedMaterials;
+    std::unordered_map<std::string, TextureWeakPtr> loadedTextures;
 };
 
 } // End of namespace Assets

@@ -1,6 +1,9 @@
 #include "Woden/Assets/ResourceCache.hpp"
+#include "Woden/Assets/ResourceLoadingContext.hpp"
 #include "Woden/Math/Scalar.hpp"
 #include "Woden/Rendering/MetallicRoughnessMaterial.hpp"
+#include "Woden/Utility/ReadWholeFile.hpp"
+#include "Woden/Utility/FileSystem.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -49,7 +52,8 @@ TexturePtr ResourceCache::getOrCreateCheckboardTexture()
     });
 
     checkboardTexture = image->asTexture();
-    checkboardTexture->generateColorMipmaps();
+    checkboardTexture->usageMode = TextureUsageMode::Color;
+    checkboardTexture->generateMipmaps();
     return checkboardTexture;
 }
 
@@ -60,7 +64,8 @@ TexturePtr ResourceCache::getOrCreateCheckboardNormalTexture()
     
     auto normalImage = checkboardTexture->miplevels[0]->intoNormalMap();
     checkboardNormalTexture = normalImage->asTexture();
-    checkboardNormalTexture->generateNormalMipmaps();
+    checkboardNormalTexture->usageMode = TextureUsageMode::Normal;
+    checkboardNormalTexture->generateMipmaps();
     return checkboardNormalTexture;
 }
 
@@ -77,6 +82,75 @@ Rendering::MaterialPtr ResourceCache::getOrCreateCheckboardMaterial()
     }
 
     return checkboardMaterial;
+}
+
+TexturePtr ResourceCache::getOrLoadTexture(const std::string &path, TextureUsageMode usageMode)
+{
+    auto it = loadedTextures.find(path);
+    if(it != loadedTextures.end())
+    {
+        auto existent = it->second.lock();
+        if(existent)
+            return existent;
+    }
+
+    printf("TODO: load texture %s\n", path.c_str());
+    return nullptr;
+}
+
+Rendering::MaterialPtr ResourceCache::getOrLoadMaterial(const std::string &path)
+{
+    auto it = loadedMaterials.find(path);
+    if(it != loadedMaterials.end())
+    {
+        auto existent = it->second.lock();
+        if(existent)
+            return existent;
+    }
+
+    auto materialText = Utility::readWholeTextFile(path);
+    if(materialText.empty())
+    {
+        fprintf(stderr, "Failed to load material %s\n", path.c_str());
+        return nullptr;
+    }
+
+    rapidjson::Document document;
+    document.Parse(materialText.c_str());
+    if(!document.IsObject())
+    {
+        fprintf(stderr, "Failed to load material %s: expected a json object\n", path.c_str());
+        return nullptr;
+    }
+
+    if(!document.HasMember("type") || !document["type"].IsString())
+    {
+        fprintf(stderr, "Failed to load material %s: expected a string with the material type\n", path.c_str());
+        return nullptr;
+
+    }
+
+    std::string typeName = document["type"].GetString();
+
+    auto materialFactory = Rendering::MaterialFactoryRegistry::Get()->findFactory(typeName);
+    if(!materialFactory)
+    {
+        fprintf(stderr, "Failed to load material %s: unsupported material type %s\n", path.c_str(), typeName.c_str());
+        return nullptr;
+
+    }
+
+    auto material = materialFactory->makeInstance();
+    assert(material);
+
+    ResourceLoadingContext context;
+    context.jsonObject = document.GetObj();
+    context.directory = Utility::dirname(path);
+    context.resourceCache = shared_from_this();
+
+    material->loadWithContext(context);
+
+    return material;
 }
 
 

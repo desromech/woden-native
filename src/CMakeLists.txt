@@ -4,6 +4,7 @@ set(WodenEngine_Sources
     Assets/Image.cpp
     Assets/PixelFormat.cpp
     Assets/ResourceCache.cpp
+    Assets/ResourceLoadingContext.cpp
     Assets/Texture.cpp
 
     Events/Events.cpp
@@ -51,6 +52,7 @@ set(WodenEngine_Sources
     Rendering/RenderingScene.cpp
     Rendering/SceneRenderer.cpp
     Rendering/StaticMeshRenderable.cpp
+    Rendering/SurfaceMaterial.cpp
     Rendering/VertexBinding.cpp
 
     SceneGraph/Scene.cpp

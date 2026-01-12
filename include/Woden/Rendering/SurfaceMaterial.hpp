@@ -28,6 +28,8 @@ public:
     float alphaCutoff = 0.5;
     bool doubleSided = false;
 
+    virtual void loadWithContext(Assets::ResourceLoadingContext &loadingContext) override;
+
 };
 
 } // End of namespace Rendering

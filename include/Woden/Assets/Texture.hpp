@@ -9,17 +9,26 @@ namespace Woden
 namespace Assets
 {
 typedef std::shared_ptr<class Texture> TexturePtr;
+typedef std::weak_ptr<class Texture> TextureWeakPtr;
+
+enum class TextureUsageMode {
+    Color,
+    Data,
+    Normal,
+};
 
 class Texture
 {
 public:
     agpu_texture_ref getValidTextureHandle();
+    void generateMipmaps();
     void generateColorMipmaps();
     void generateNormalMipmaps();
     void generateDataMipmaps();
     
     std::vector<ImagePtr> miplevels;
     agpu_texture_ref textureHandle;
+    TextureUsageMode usageMode = TextureUsageMode::Color;
 
 };
 
