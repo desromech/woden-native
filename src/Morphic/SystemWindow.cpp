@@ -39,6 +39,8 @@ static void onKeyboardDown(const SDL_KeyboardEvent &event)
         return;
 
     auto morphicEvent = std::make_shared<KeyboardDownEvent> ();
+    morphicEvent->keySymbol = event.keysym.sym;
+    morphicEvent->isKeyRepeat =  event.repeat ? true : false;
     window->processKeyboardEvent(morphicEvent);
 }
 
@@ -49,6 +51,8 @@ static void onKeyboardUp(const SDL_KeyboardEvent &event)
         return;
 
     auto morphicEvent = std::make_shared<KeyboardUpEvent> ();
+    morphicEvent->keySymbol = event.keysym.sym;
+    morphicEvent->isKeyRepeat =  event.repeat ? true : false;
     window->processKeyboardEvent(morphicEvent);
 }
 

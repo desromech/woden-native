@@ -27,12 +27,54 @@ void PlayerActor::tick(Math::Scalar delta)
 
 void PlayerActor::handleKeyboardDownEvent(const KeyboardDownEventPtr &event)
 {
-    printf("PlayerActor::handleKeyboardDownEvent\n");
+    if(event->isKeyRepeat)
+        return;
+
+    switch(event->keySymbol)
+    {
+    case SDLK_w:
+        walkingDirection.z = -1;
+        break;
+    case SDLK_a:
+        walkingDirection.x = -1;
+        break;
+    case SDLK_s:
+        walkingDirection.z = 1;
+        break;
+    case SDLK_d:
+        walkingDirection.x = 1;
+        break;
+    }
+
+    //printf("walkingDirection: %f %f %f\n", walkingDirection.x, walkingDirection.y, walkingDirection.z);
 }
 
 void PlayerActor::handleKeyboardUpEvent(const KeyboardUpEventPtr &event)
 {
-    printf("PlayerActor::handleKeyboardUpEvent\n");
+    if(event->isKeyRepeat)
+        return;
+
+    switch(event->keySymbol)
+    {
+    case SDLK_w:
+        if (walkingDirection.z < 0)
+            walkingDirection.z = 0;
+        break;
+    case SDLK_a:
+        if (walkingDirection.x < 0)
+            walkingDirection.x = 0;
+        break;
+    case SDLK_s:
+        if (walkingDirection.z > 0)
+            walkingDirection.z = 0;
+        break;
+    case SDLK_d:
+        if (walkingDirection.x > 0)
+            walkingDirection.x = 0;
+        break;
+    }
+
+    //printf("walkingDirection: %f %f %f\n", walkingDirection.x, walkingDirection.y, walkingDirection.z);
 }
 
 void PlayerActor::handleMouseMotionEvent(const MouseMotionEventPtr &event)

@@ -2,6 +2,7 @@
 #define WODEN_MORPHIC_EVENT_HPP
 
 #include "Woden/Math/Vector2.hpp"
+#include "SDL2/SDL_keycode.h"
 #include <memory>
 
 namespace Woden
@@ -46,7 +47,8 @@ public:
 class KeyboardEvent : public Event
 {
 public:
-
+    bool isKeyRepeat = false;
+    SDL_Keycode keySymbol;
 };
 
 class KeyboardDownEvent : public KeyboardEvent
