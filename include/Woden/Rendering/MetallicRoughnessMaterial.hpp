@@ -12,6 +12,8 @@ namespace Woden
 namespace Rendering
 {
 
+typedef std::shared_ptr<class MetallicRoughnessMaterial> MetallicRoughnessMaterialPtr;
+
 /**
  * I am a metallic-roughness material
  */

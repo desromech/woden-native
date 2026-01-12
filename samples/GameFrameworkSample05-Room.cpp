@@ -6,6 +6,7 @@
 #include "Woden/GameFramework/PlayerActor.hpp"
 #include "Woden/GameFramework/World.hpp"
 #include "Woden/Rendering/LightSource.hpp"
+#include "Woden/Rendering/MetallicRoughnessMaterial.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
 #include "Woden/Rendering/Renderable.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
@@ -28,8 +29,15 @@ int woden_main(int argc, const char **argv)
     auto world = std::make_shared<World> ();
 
     Woden::Rendering::MaterialPtr floorMaterial = Woden::Assets::ResourceCache::Get()->getOrCreateCheckboardMaterial();
-    Woden::Rendering::MaterialPtr ceilingMaterial;
-    Woden::Rendering::MaterialPtr wallMaterial;
+    Woden::Rendering::MetallicRoughnessMaterialPtr ceilingMaterial = std::make_shared<Woden::Rendering::MetallicRoughnessMaterial> ();
+    ceilingMaterial->baseColorFactor = Woden::Math::Vector4(0.05, 0.05, 0.05, 1.0);
+    ceilingMaterial->roughnessFactor = 0.8f;
+    ceilingMaterial->metallicFactor = 0.0f;
+
+    Woden::Rendering::MetallicRoughnessMaterialPtr wallMaterial = std::make_shared<Woden::Rendering::MetallicRoughnessMaterial> ();
+    wallMaterial->baseColorFactor = Woden::Math::Vector4(0.8f, 0.8f, 0.8f, 1.0);
+    wallMaterial->roughnessFactor = 0.8f;
+    wallMaterial->metallicFactor = 0.0f;
 
     Wall walls[] = {
         {AABox(Vector3(-10, -0.5, -10), Vector3(10, 0.0, 10)), floorMaterial},
