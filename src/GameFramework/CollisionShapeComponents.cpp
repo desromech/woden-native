@@ -35,6 +35,7 @@ Woden::Physics::CollisionShapePtr AbstractCollisionShapeComponent::asValidCollis
 Woden::Physics::CollisionShapePtr BoxCollisionShapeComponent::asValidCollisionShapeWithoutTransform()
 {
     auto shape = std::make_shared<Physics::BoxCollisionShape> ();
+    shape->margin = margin;
     shape->setHalfExtent(halfExtent);
     return shape;
 }
@@ -42,6 +43,7 @@ Woden::Physics::CollisionShapePtr BoxCollisionShapeComponent::asValidCollisionSh
 Woden::Physics::CollisionShapePtr CapsuleYCollisionShapeComponent::asValidCollisionShapeWithoutTransform()
 {
     auto shape = std::make_shared<Physics::CapsuleYCollisionShape> ();
+    shape->margin = margin;
     shape->setHeightAndRadius(height, radius);
     return shape;
 }

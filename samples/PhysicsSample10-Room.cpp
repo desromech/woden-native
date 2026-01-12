@@ -54,11 +54,12 @@ int woden_main(int argc, const char **argv)
     {
         auto halfExtent = Vector3(0.25);
         auto shape = std::make_shared<BoxCollisionShape> ();
+        shape->margin = 0.1;
         shape->setHalfExtent(halfExtent);
 
         auto rigidBody = std::make_shared<RigidBody> ();
         rigidBody->shape = shape;
-        rigidBody->setMass(1);
+        rigidBody->setMass(50);
         rigidBody->computeMassDistribution();
         rigidBody->setPosition(boxPosition);
 

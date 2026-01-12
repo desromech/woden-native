@@ -25,6 +25,7 @@ public:
     virtual Woden::Physics::CollisionShapePtr asValidCollisionShapeWithoutTransform() = 0;
     virtual Woden::Physics::CollisionShapePtr asValidCollisionShape();
 
+    Math::Scalar margin = 0.01f;
     Math::TRSTransform3D transform;
 };
 

@@ -87,9 +87,9 @@ int woden_main(int argc, const char **argv)
     };
     for(auto &boxPosition : boxPositions)
     {
-        auto halfExtent = Vector3(0.25);
+        auto halfExtent = Vector3(0.125);
         auto cubeMesh = Woden::Rendering::MeshBuilder()
-            .addCubeWithHalfExtent(halfExtent)
+            .addCubeWithHalfExtent(halfExtent + 0.1)
             .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
             .finishMesh();
         
@@ -99,11 +99,12 @@ int woden_main(int argc, const char **argv)
         actor->addComponent(meshComponent);
 
         auto collisionShapeComponent = std::make_shared<BoxCollisionShapeComponent> ();
+        collisionShapeComponent->margin = 0.1;
         collisionShapeComponent->halfExtent = halfExtent;
         actor->addComponent(collisionShapeComponent);
 
         auto rigidBody = std::make_shared<RigidBodyComponent> ();
-        rigidBody->setMass(1);
+        rigidBody->setMass(50);
         actor->addComponent(rigidBody);
 
         actor->setPosition(boxPosition);
@@ -113,6 +114,7 @@ int woden_main(int argc, const char **argv)
     
     {
         auto pointLightSource = std::make_shared<Woden::Rendering::PointLightSource> ();
+        pointLightSource->castShadows = true;
         pointLightSource->color = Vector3(0.8f, 0.8f, 0.5f).normalized();
         pointLightSource->intensity = 10;
         pointLightSource->influenceRadius = 20;
