@@ -69,6 +69,11 @@ void Morph::handleKeyboardUpEvent(const KeyboardUpEventPtr &event)
     (void)event;
 }
 
+void Morph::handleTextInputEvent(const TextInputEventPtr &event)
+{
+    (void)event;
+}
+
 void Morph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
 {
     event->withTranslationInverseDo(getOrigin(), [&](){

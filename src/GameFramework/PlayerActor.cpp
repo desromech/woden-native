@@ -35,7 +35,6 @@ void PlayerActor::handleKeyboardUpEvent(const KeyboardUpEventPtr &event)
     printf("PlayerActor::handleKeyboardUpEvent\n");
 }
 
-
 void PlayerActor::handleMouseMotionEvent(const MouseMotionEventPtr &event)
 {
     if(event->hasLeftButtonDown())

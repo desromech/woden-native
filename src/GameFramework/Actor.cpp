@@ -127,6 +127,11 @@ void Actor::handleKeyboardUpEvent(const KeyboardUpEventPtr &event)
     (void)event;
 }
 
+void Actor::handleTextInputEvent(const TextInputEventPtr &event)
+{
+    (void)event;
+}
+
 void Actor::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
 {
     (void)event;

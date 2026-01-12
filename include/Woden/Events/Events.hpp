@@ -29,6 +29,7 @@ typedef std::shared_ptr<class MouseButtonDownEvent> MouseButtonDownEventPtr;
 typedef std::shared_ptr<class MouseButtonUpEvent>   MouseButtonUpEventPtr;
 typedef std::shared_ptr<class MouseMotionEvent>     MouseMotionEventPtr;
 typedef std::shared_ptr<class MouseWheelEvent>      MouseWheelEventPtr;
+typedef std::shared_ptr<class TextInputEvent>       TextInputEventPtr;
 
 using GameFramework::ActorPtr;
 using Morphic::MorphPtr;
@@ -149,6 +150,15 @@ public:
     virtual void sentToMorph(const MorphPtr &morph) override;
 
     Math::Vector2 scrollAmount;
+};
+
+class TextInputEvent : public Event
+{
+public:
+    std::string text;
+
+    virtual void sentToActor(const ActorPtr &actor) override;
+    virtual void sentToMorph(const MorphPtr &morph) override;
 };
 
 }

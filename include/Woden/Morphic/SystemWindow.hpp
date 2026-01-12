@@ -26,7 +26,7 @@ public:
     void swapBuffers();
     void recreateSwapChain();
 
-    void processKeyboardEvent(const KeyboardEventPtr &event);
+    void processKeyboardEvent(const EventPtr &event);
     virtual void setNewKeyboardFocus(const MorphPtr &newKeyboardFocus);
 
     virtual void fullDrawWith(const Rendering::GUIRendererPtr &renderer) override;

@@ -52,6 +52,18 @@ static void onKeyboardUp(const SDL_KeyboardEvent &event)
     window->processKeyboardEvent(morphicEvent);
 }
 
+static void onTextInput(const SDL_TextInputEvent &event)
+{
+    auto window = getWindowWithID(event.windowID);
+    if(!window)
+        return;
+
+    auto morphicEvent = std::make_shared<TextInputEvent> ();
+    morphicEvent->text = event.text;
+    window->processKeyboardEvent(morphicEvent);
+}
+
+
 static void onMouseButtonDown(const SDL_MouseButtonEvent &event)
 {
     auto window = getWindowWithID(event.windowID);
@@ -116,6 +128,9 @@ void processEvent(const SDL_Event *event)
         break;
     case SDL_KEYUP:
         onKeyboardUp(event->key);
+        break;
+    case SDL_TEXTINPUT:
+        onTextInput(event->text);
         break;
     case SDL_MOUSEBUTTONDOWN:
         onMouseButtonDown(event->button);
@@ -358,7 +373,7 @@ void SystemWindow::recreateSwapChain()
     bounds = Rectangle(Vector2(0, 0), Vector2(windowWidth, windowHeight));
 }
 
-void SystemWindow::processKeyboardEvent(const KeyboardEventPtr &event)
+void SystemWindow::processKeyboardEvent(const EventPtr &event)
 {
     if(currentKeyboardFocus)
         currentKeyboardFocus->processEvent(event);

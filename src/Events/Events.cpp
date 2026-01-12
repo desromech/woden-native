@@ -83,5 +83,15 @@ void MouseWheelEvent::sentToMorph(const MorphPtr &morph)
     morph->handleMouseWheelEvent(std::static_pointer_cast<MouseWheelEvent> (shared_from_this()));
 }
 
+// Text input event
+void TextInputEvent::sentToActor(const ActorPtr &actor)
+{
+    actor->handleTextInputEvent(std::static_pointer_cast<TextInputEvent> (shared_from_this()));
+}
+void TextInputEvent::sentToMorph(const MorphPtr &morph)
+{
+    morph->handleTextInputEvent(std::static_pointer_cast<TextInputEvent> (shared_from_this()));
+}
+
 }
 }

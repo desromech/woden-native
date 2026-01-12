@@ -16,8 +16,8 @@ public:
     
     virtual void tick(Math::Scalar delta) override;
 
-    virtual void handleKeyboardDownEvent(const KeyboardDownEventPtr &event);
-    virtual void handleKeyboardUpEvent(const KeyboardUpEventPtr &event);
+    virtual void handleKeyboardDownEvent(const KeyboardDownEventPtr &event) override;
+    virtual void handleKeyboardUpEvent(const KeyboardUpEventPtr &event) override;
 
     virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event) override;
 
