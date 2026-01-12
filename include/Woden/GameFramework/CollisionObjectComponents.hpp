@@ -75,7 +75,11 @@ protected:
 class CharacterBodyObjectComponent : public RigidBodyComponent
 {
 public:
+    virtual void loadCollisionStateInto(const Physics::CollisionObjectPtr &collisionObject) override;
+
     Math::Vector3 jumpVelocity = Math::Vector3(0, 1, 0);
+    Math::Vector3 walkingVelocity = Math::Vector3::Zeros();
+    Math::Scalar walkAccelerationTime = 0.05;
 };
 
 } // End of namespace GameFramework

@@ -20,6 +20,9 @@ CharacterActor::~CharacterActor()
 void CharacterActor::tick(Math::Scalar deltaTime)
 {
     (void)deltaTime;
+    auto walkingVelocity = walkingDirection.normalized() * Math::Vector3(walkingSpeed);
+    auto bodyComponent = std::static_pointer_cast<CharacterBodyObjectComponent> (collisionObjectComponent);
+    bodyComponent->walkingVelocity = walkingVelocity;
 }
 
 void CharacterActor::setupComponents()

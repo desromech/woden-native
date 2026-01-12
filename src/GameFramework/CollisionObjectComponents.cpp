@@ -83,6 +83,23 @@ Physics::CollisionObjectPtr RigidBodyComponent::makeCollisionObjectInstance()
     return body;
 }
 
+void CharacterBodyObjectComponent::loadCollisionStateInto(const Physics::CollisionObjectPtr &collisionObject)
+{
+    RigidBodyComponent::loadCollisionStateInto(collisionObject);
+    auto ownerActor = owner.lock();
+    if(!ownerActor)
+        return;
+
+    auto targetVelocity = ownerActor->getOrientation().rotateVector(walkingVelocity);
+    auto gravity = collisionObject->owner.lock()->gravity;
+    auto gravityMask = Math::Vector3::Ones() - gravity.normalized().abs();
+
+	auto currentWalkingVelocity = collisionObject->linearVelocity * gravityMask;
+    auto walkingVelocityDelta = targetVelocity - currentWalkingVelocity;
+	auto walkingAcceleration = walkingVelocityDelta / walkAccelerationTime;
+
+	collisionObject->setInternalLinearAcceleration(walkingAcceleration);
+}
 
 } // End of namespace GameFramework
 } // End of namespace Woden

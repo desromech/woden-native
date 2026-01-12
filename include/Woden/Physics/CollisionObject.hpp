@@ -105,6 +105,8 @@ public:
 
     void loadStateFromModel();
     void saveStateIntoModel();
+ 
+    virtual void setInternalLinearAcceleration(Math::Vector3 &acceleration);
 
     virtual void resetSleepingState();
     virtual void wakeUp();
@@ -116,6 +118,9 @@ public:
     
     Math::Vector3 linearVelocity = Math::Vector3(0);
     Math::Vector3 angularVelocity = Math::Vector3(0);
+
+    Math::Vector3 internalLinearAcceleration = Math::Vector3(0);
+    Math::Vector3 internalAngularAcceleration = Math::Vector3(0);
 
     Math::Vector3 linearVelocityIntegrationDelta = Math::Vector3::Zeros();
     Math::Vector3 angularVelocityIntegrationDelta = Math::Vector3::Zeros();

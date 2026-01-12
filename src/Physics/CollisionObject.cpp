@@ -126,6 +126,13 @@ void CollisionObject::resetSleepingState()
 {
 }
 
+void CollisionObject::setInternalLinearAcceleration(Math::Vector3 &acceleration)
+{
+    internalLinearAcceleration = acceleration;
+    if(internalLinearAcceleration.length2() > 0)
+        wakeUp();
+}
+
 void CollisionObject::wakeUp()
 {
 }

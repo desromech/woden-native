@@ -85,9 +85,6 @@ public:
     Math::Scalar linearDamping = 0.2f;
     Math::Scalar angularDamping = 0.2f;
 
-    Math::Vector3 internalLinearAcceleration = Math::Vector3(0);
-    Math::Vector3 internalAngularAcceleration = Math::Vector3(0);
-
     Math::Scalar angularMovementLimit = 0.2f;
 
 protected:
