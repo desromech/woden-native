@@ -80,6 +80,37 @@ int woden_main(int argc, const char **argv)
         world->spawnActor(actor);
 
     }
+    Woden::Math::Vector3 boxPositions[] = {
+        Woden::Math::Vector3(-1, 0.5, -3),
+		Woden::Math::Vector3( 0, 0.5, -3),
+		Woden::Math::Vector3( 1, 0.5, -3),
+    };
+    for(auto &boxPosition : boxPositions)
+    {
+        auto halfExtent = Vector3(0.25);
+        auto cubeMesh = Woden::Rendering::MeshBuilder()
+            .addCubeWithHalfExtent(halfExtent)
+            .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
+            .finishMesh();
+        
+        auto actor = MakeActor<Actor> ();
+        auto meshComponent = std::make_shared<ActorMeshSceneComponent> ();
+        meshComponent->mesh = cubeMesh;
+        actor->addComponent(meshComponent);
+
+        auto collisionShapeComponent = std::make_shared<BoxCollisionShapeComponent> ();
+        collisionShapeComponent->halfExtent = halfExtent;
+        actor->addComponent(collisionShapeComponent);
+
+        auto rigidBody = std::make_shared<RigidBodyComponent> ();
+        rigidBody->setMass(1);
+        actor->addComponent(rigidBody);
+
+        actor->setPosition(boxPosition);
+
+        world->spawnActor(actor);
+    }
+    
     {
         auto pointLightSource = std::make_shared<Woden::Rendering::PointLightSource> ();
         pointLightSource->color = Vector3(0.8f, 0.8f, 0.5f).normalized();
