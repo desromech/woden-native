@@ -81,6 +81,7 @@ include_directories(
 .
 "${PROJECT_SOURCE_DIR}/include"
 "${PROJECT_SOURCE_DIR}/thirdparty/abstract-gpu/include"
+"${PROJECT_SOURCE_DIR}/thirdparty/rapidjson/include"
 "${PROJECT_SOURCE_DIR}/thirdparty/unittest-cpp"
 )
 
