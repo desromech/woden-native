@@ -34,12 +34,7 @@ void CharacterActor::setupComponents()
         capsuleShape->radius = getDefaultBroadness() * 0.5f;
         addComponent(capsuleShape);
     }
-    /*{
-        auto shape = std::make_shared<BoxCollisionShapeComponent> ();
-        shape->halfExtent = Math::Vector3(0.5f);
-        addComponent(shape);
-    }*/
-
+    
     {
         auto bodyComponent = std::make_shared<RigidBodyComponent> ();
         bodyComponent->setMass(getDefaultMass());

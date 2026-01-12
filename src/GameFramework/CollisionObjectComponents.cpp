@@ -37,6 +37,9 @@ void CollisionObjectComponent::setupCollisionObject(const Physics::CollisionObje
 
     collisionObject->shape = ownerActor->collisionShapeComponent->asValidCollisionShape();
     collisionObject->model = this;
+    collisionObject->restitutionCoefficient = restitutionCoefficient;
+	collisionObject->dynamicFrictionCoefficient = dynamicFrictionCoefficient;
+	collisionObject->staticFrictionCoefficient = staticFrictionCoefficient;
 }
 
 Physics::CollisionObjectPtr CollisionObjectComponent::makeCollisionObjectInstance()

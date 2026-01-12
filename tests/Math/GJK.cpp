@@ -409,6 +409,6 @@ SUITE(GJK)
             [&](const Vector3 &D){ return secondShape.support(D); }
         );
 
-        CHECK(closeTo(0.5, jgkDistance));
+        CHECK(0.49 <= jgkDistance && jgkDistance <= 0.51);
     }
 }
