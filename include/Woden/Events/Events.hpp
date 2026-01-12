@@ -6,11 +6,19 @@
 
 namespace Woden
 {
+namespace GameFramework
+{
+typedef std::shared_ptr<class Actor> ActorPtr;
+}
+
 namespace Morphic
 {
 typedef std::shared_ptr<class Morph> MorphPtr;
+}
 
-typedef std::shared_ptr<class MorphicEvent>         MorphicEventPtr;
+namespace Events
+{
+typedef std::shared_ptr<class Event>                EventPtr;
 typedef std::shared_ptr<class MouseEvent>           MouseEventPtr;
 typedef std::shared_ptr<class MouseButtonEvent>     MouseButtonEventPtr;
 typedef std::shared_ptr<class MouseButtonDownEvent> MouseButtonDownEventPtr;
@@ -18,15 +26,19 @@ typedef std::shared_ptr<class MouseButtonUpEvent>   MouseButtonUpEventPtr;
 typedef std::shared_ptr<class MouseMotionEvent>     MouseMotionEventPtr;
 typedef std::shared_ptr<class MouseWheelEvent>      MouseWheelEventPtr;
 
-class MorphicEvent : public std::enable_shared_from_this<MorphicEvent>
+using GameFramework::ActorPtr;
+using Morphic::MorphPtr;
+
+class Event : public std::enable_shared_from_this<Event>
 {
 public:
-    virtual void sentTo(const MorphPtr &morph);
+    virtual void sentToActor(const ActorPtr &morph);
+    virtual void sentToMorph(const MorphPtr &morph);
 
     bool wasHandled = false;
 };
 
-class MouseEvent : public MorphicEvent
+class MouseEvent : public Event
 {
 public:
 
@@ -70,19 +82,22 @@ public:
 class MouseButtonDownEvent : public MouseButtonEvent
 {
 public:
-    virtual void sentTo(const MorphPtr &morph) override;
+    virtual void sentToActor(const ActorPtr &morph) override;
+    virtual void sentToMorph(const MorphPtr &morph) override;
 };
 
 class MouseButtonUpEvent : public MouseButtonEvent
 {
 public:
-    virtual void sentTo(const MorphPtr &morph) override;
+    virtual void sentToActor(const ActorPtr &morph) override;
+    virtual void sentToMorph(const MorphPtr &morph) override;
 };
 
 class MouseMotionEvent : public MouseEvent
 {
 public:
-    virtual void sentTo(const MorphPtr &morph) override;
+    virtual void sentToActor(const ActorPtr &morph) override;
+    virtual void sentToMorph(const MorphPtr &morph) override;
 
     bool hasLeftButtonDown() const
     {
@@ -106,7 +121,8 @@ public:
 class MouseWheelEvent : public MouseEvent
 {
 public:
-    virtual void sentTo(const MorphPtr &morph) override;
+    virtual void sentToActor(const ActorPtr &morph) override;
+    virtual void sentToMorph(const MorphPtr &morph) override;
 
     Math::Vector2 scrollAmount;
 };

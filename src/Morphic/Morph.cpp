@@ -49,12 +49,12 @@ void Morph::drawChildrenWith(const Rendering::GUIRendererPtr &renderer)
         submorph->fullDrawWith(renderer);
 }
 
-void Morph::processEvent(const MorphicEventPtr &event)
+void Morph::processEvent(const EventPtr &event)
 {
-    event->sentTo(shared_from_this());
+    event->sentToMorph(shared_from_this());
 }
 
-void Morph::handleUnknownEvent(const MorphicEventPtr &event)
+void Morph::handleUnknownEvent(const EventPtr &event)
 {
     (void)event;
 }

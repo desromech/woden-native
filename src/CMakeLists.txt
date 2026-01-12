@@ -6,6 +6,8 @@ set(WodenEngine_Sources
     Assets/ResourceCache.cpp
     Assets/Texture.cpp
 
+    Events/Events.cpp
+
     GameFramework/Actor.cpp
     GameFramework/ActorComponent.cpp
     GameFramework/ActorSceneComponents.cpp
@@ -22,7 +24,7 @@ set(WodenEngine_Sources
     Math/Matrix3x3.cpp
     Math/Vector3.cpp
 
-    Morphic/Event.cpp
+    
     Morphic/Morph.cpp
     Morphic/SceneMorph.cpp
     Morphic/StringMorph.cpp

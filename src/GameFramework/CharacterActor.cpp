@@ -36,10 +36,11 @@ void CharacterActor::setupComponents()
     }
     
     {
-        auto bodyComponent = std::make_shared<RigidBodyComponent> ();
+        auto bodyComponent = std::make_shared<CharacterBodyObjectComponent> ();
         bodyComponent->setMass(getDefaultMass());
         bodyComponent->restitutionCoefficient = 0.0f;
         bodyComponent->withoutTorque();
+        bodyComponent->jumpVelocity = getDefaultJumpVelocity();
         addComponent(bodyComponent);
     }
 

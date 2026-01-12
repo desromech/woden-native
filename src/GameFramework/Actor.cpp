@@ -107,5 +107,26 @@ void Actor::unsubscribeForTicking()
     world.lock()->getActorTickSubsystem()->unsubscribe(shared_from_this());
 }
 
+void Actor::handleUnknownEvent(const EventPtr &event)
+{
+    (void)event;
+}
+void Actor::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
+{
+    (void)event;
+}
+void Actor::handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event)
+{
+    (void)event;
+}
+void Actor::handleMouseMotionEvent(const MouseMotionEventPtr &event)
+{
+    (void)event;
+}
+void Actor::handleMouseWheelEvent(const MouseWheelEventPtr &event)
+{
+    (void)event;
+}
+
 } // End of namespace GameFramework
 } // End of namespace Woden

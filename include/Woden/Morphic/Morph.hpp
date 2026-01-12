@@ -1,7 +1,7 @@
 #ifndef WODEN_MORPHIC_MORPH_HPP
 #define WODEN_MORPHIC_MORPH_HPP
 
-#include "Event.hpp"
+#include "Woden/Events/Events.hpp"
 #include "Woden/Math/Rectangle.hpp"
 #include "Woden/Math/Vector4.hpp"
 #include <assert.h>
@@ -18,6 +18,7 @@ typedef std::shared_ptr<class GUIRenderer> GUIRendererPtr;
 namespace Morphic
 {
 using namespace Woden::Math;
+using namespace Woden::Events;
 
 typedef std::shared_ptr<class Morph> MorphPtr;
 typedef std::weak_ptr<class Morph> MorphWeakPtr;
@@ -75,9 +76,9 @@ public:
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer);
     virtual void drawChildrenWith(const Rendering::GUIRendererPtr &renderer);
 
-    virtual void processEvent(const MorphicEventPtr &event);
+    virtual void processEvent(const EventPtr &event);
 
-    virtual void handleUnknownEvent(const MorphicEventPtr &event);
+    virtual void handleUnknownEvent(const EventPtr &event);
     virtual void handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event);
     virtual void handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event);
     virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event);

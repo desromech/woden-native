@@ -75,6 +75,7 @@ protected:
 class CharacterBodyObjectComponent : public RigidBodyComponent
 {
 public:
+    Math::Vector3 jumpVelocity = Math::Vector3(0, 1, 0);
 };
 
 } // End of namespace GameFramework

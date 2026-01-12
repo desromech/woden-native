@@ -1,6 +1,7 @@
 #ifndef WODEN_GAME_FRAMEWORK_ACTOR_HPP
 #define WODEN_GAME_FRAMEWORK_ACTOR_HPP
 
+#include "Woden/Events/Events.hpp"
 #include "Woden/Math/TRSTransform3D.hpp"
 #include <memory>
 #include <vector>
@@ -9,6 +10,8 @@ namespace Woden
 {
 namespace GameFramework
 {
+using namespace Woden::Events;
+
 typedef std::shared_ptr<class Actor> ActorPtr;
 typedef std::shared_ptr<class ActorComponent> ActorComponentPtr;
 typedef std::shared_ptr<class AbstractCollisionShapeComponent> AbstractCollisionShapeComponentPtr;
@@ -40,6 +43,12 @@ public:
     void setTransform(const Math::TRSTransform3D &newTransform);
 
     void setWantsToTick(bool newWantsToTick);
+
+    virtual void handleUnknownEvent(const EventPtr &event);
+    virtual void handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event);
+    virtual void handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event);
+    virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event);
+    virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event);
 
     WorldWeakPtr world;
     std::vector<ActorComponentPtr> components;
