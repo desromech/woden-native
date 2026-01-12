@@ -14,5 +14,13 @@ void PlayerActor::setupComponents()
     addComponent(cameraComponent);
 }
 
+void PlayerActor::tick(Math::Scalar delta)
+{
+    (void)delta;
+    cameraAngles.x = Math::clamp(cameraAngles.x, Math::Scalar(-M_PI_2), Math::Scalar(M_PI_2));
+    cameraComponent->setOrientation(Math::Quaternion::XRotation(cameraAngles.x));
+    setOrientation(Math::Quaternion::YRotation(cameraAngles.y));
+}
+
 } // End of namespace GameFramework
 } // End of namespace Woden

@@ -13,8 +13,12 @@ class PlayerActor : public CharacterActor
 {
 public:
     virtual void setupComponents() override;
+    
+    virtual void tick(Math::Scalar delta) override;
 
     ActorCameraComponentPtr cameraComponent;
+
+    Math::Vector3 cameraAngles = Math::Vector3::Zeros();
 };
 
 } // End of namespace GameFramework
