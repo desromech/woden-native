@@ -37,6 +37,9 @@ public:
     virtual void setupComponents() override;
 
     virtual void tick(Math::Scalar delta) override;
+
+    Math::Vector3 walkingDirection = Math::Vector3::Zeros();
+    Math::Scalar walkingSpeed = 3.0f;
 };
 
 } // End of namespace GameFramework

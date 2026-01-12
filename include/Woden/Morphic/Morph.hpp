@@ -79,10 +79,20 @@ public:
     virtual void processEvent(const EventPtr &event);
 
     virtual void handleUnknownEvent(const EventPtr &event);
+
+    virtual void handleKeyboardDownEvent(const KeyboardDownEventPtr &event);
+    virtual void handleKeyboardUpEvent(const KeyboardUpEventPtr &event);
+
     virtual void handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event);
     virtual void handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event);
     virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event);
     virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event);
+
+    virtual void gotKeyboardFocus();
+    virtual void lostKeyboardFocus();
+
+    virtual void takeKeyboardFocus();
+    virtual void setNewKeyboardFocus(const MorphPtr &newKeyboardFocus);
 
     MorphWeakPtr owner;
     Rectangle bounds = Rectangle(Vector2(0, 0), Vector2(50, 40));

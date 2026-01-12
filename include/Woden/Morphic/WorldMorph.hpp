@@ -37,6 +37,7 @@ public:
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
 
     virtual void processEvent(const EventPtr &event) override;
+    virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event) override;
 
     SceneGraph::ScenePtr scene;
     SceneGraph::SceneNodePtr cameraNode;

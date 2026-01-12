@@ -32,6 +32,26 @@ static SystemWindowPtr getWindowWithID(uint32_t id)
     return it->second;
 }
 
+static void onKeyboardDown(const SDL_KeyboardEvent &event)
+{
+    auto window = getWindowWithID(event.windowID);
+    if(!window)
+        return;
+
+    auto morphicEvent = std::make_shared<KeyboardDownEvent> ();
+    window->processKeyboardEvent(morphicEvent);
+}
+
+static void onKeyboardUp(const SDL_KeyboardEvent &event)
+{
+    auto window = getWindowWithID(event.windowID);
+    if(!window)
+        return;
+
+    auto morphicEvent = std::make_shared<KeyboardUpEvent> ();
+    window->processKeyboardEvent(morphicEvent);
+}
+
 static void onMouseButtonDown(const SDL_MouseButtonEvent &event)
 {
     auto window = getWindowWithID(event.windowID);
@@ -91,6 +111,12 @@ void processEvent(const SDL_Event *event)
 {
     switch(event->type)
     {
+    case SDL_KEYDOWN:
+        onKeyboardDown(event->key);
+        break;
+    case SDL_KEYUP:
+        onKeyboardUp(event->key);
+        break;
     case SDL_MOUSEBUTTONDOWN:
         onMouseButtonDown(event->button);
         break;
@@ -330,6 +356,23 @@ void SystemWindow::recreateSwapChain()
     windowHeight = swapChain->getHeight();
 
     bounds = Rectangle(Vector2(0, 0), Vector2(windowWidth, windowHeight));
+}
+
+void SystemWindow::processKeyboardEvent(const KeyboardEventPtr &event)
+{
+    if(currentKeyboardFocus)
+        currentKeyboardFocus->processEvent(event);
+}
+
+void SystemWindow::setNewKeyboardFocus(const MorphPtr &newKeyboardFocus)
+{
+    if(currentKeyboardFocus)
+        currentKeyboardFocus->lostKeyboardFocus();
+
+    currentKeyboardFocus = newKeyboardFocus;
+
+    if(currentKeyboardFocus)
+        currentKeyboardFocus->gotKeyboardFocus();
 }
 
 } // End of namespace Morphic

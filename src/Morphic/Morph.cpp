@@ -59,6 +59,16 @@ void Morph::handleUnknownEvent(const EventPtr &event)
     (void)event;
 }
 
+void Morph::handleKeyboardDownEvent(const KeyboardDownEventPtr &event)
+{
+    (void)event;
+}
+
+void Morph::handleKeyboardUpEvent(const KeyboardUpEventPtr &event)
+{
+    (void)event;
+}
+
 void Morph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
 {
     event->withTranslationInverseDo(getOrigin(), [&](){
@@ -102,6 +112,27 @@ void Morph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
         }
     });
 }
+
+void Morph::gotKeyboardFocus()
+{
+}
+
+void Morph::lostKeyboardFocus()
+{
+}
+
+void Morph::takeKeyboardFocus()
+{
+    setNewKeyboardFocus(shared_from_this());
+}
+
+void Morph::setNewKeyboardFocus(const MorphPtr &newKeyboardFocus)
+{
+    auto ownerMorph = owner.lock();
+    if(ownerMorph)
+        ownerMorph->setNewKeyboardFocus(newKeyboardFocus);
+}
+
 
 } // End of namespace Morphic
 } // End of namespace Woden

@@ -116,18 +116,32 @@ void Actor::handleUnknownEvent(const EventPtr &event)
 {
     (void)event;
 }
+
+void Actor::handleKeyboardDownEvent(const KeyboardDownEventPtr &event)
+{
+    (void)event;
+}
+
+void Actor::handleKeyboardUpEvent(const KeyboardUpEventPtr &event)
+{
+    (void)event;
+}
+
 void Actor::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
 {
     (void)event;
 }
+
 void Actor::handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event)
 {
     (void)event;
 }
+
 void Actor::handleMouseMotionEvent(const MouseMotionEventPtr &event)
 {
     (void)event;
 }
+
 void Actor::handleMouseWheelEvent(const MouseWheelEventPtr &event)
 {
     (void)event;

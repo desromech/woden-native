@@ -16,6 +16,9 @@ public:
     
     virtual void tick(Math::Scalar delta) override;
 
+    virtual void handleKeyboardDownEvent(const KeyboardDownEventPtr &event);
+    virtual void handleKeyboardUpEvent(const KeyboardUpEventPtr &event);
+
     virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event) override;
 
     ActorCameraComponentPtr cameraComponent;

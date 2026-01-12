@@ -19,6 +19,26 @@ void Event::sentToMorph(const MorphPtr &morph)
     morph->handleUnknownEvent(shared_from_this());
 }
 
+// Keyboard down event.
+void KeyboardDownEvent::sentToActor(const ActorPtr &actor)
+{
+    actor->handleKeyboardDownEvent(std::static_pointer_cast<KeyboardDownEvent> (shared_from_this()));
+}
+void KeyboardDownEvent::sentToMorph(const MorphPtr &morph)
+{
+    morph->handleKeyboardDownEvent(std::static_pointer_cast<KeyboardDownEvent> (shared_from_this()));
+}
+
+// Keyboard up event.
+void KeyboardUpEvent::sentToActor(const ActorPtr &actor)
+{
+    actor->handleKeyboardUpEvent(std::static_pointer_cast<KeyboardUpEvent> (shared_from_this()));
+}
+void KeyboardUpEvent::sentToMorph(const MorphPtr &morph)
+{
+    morph->handleKeyboardUpEvent(std::static_pointer_cast<KeyboardUpEvent> (shared_from_this()));
+}
+
 // Mouse button down event
 void MouseButtonDownEvent::sentToActor(const ActorPtr &actor)
 {
