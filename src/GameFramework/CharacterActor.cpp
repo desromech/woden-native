@@ -1,5 +1,7 @@
 #include "Woden/GameFramework/CharacterActor.hpp"
 #include "Woden/GameFramework/ActorSceneComponents.hpp"
+#include "Woden/GameFramework/CollisionShapeComponents.hpp"
+#include "Woden/GameFramework/CollisionObjectComponents.hpp"
 
 namespace Woden
 {
@@ -25,6 +27,26 @@ void CharacterActor::setupComponents()
     Actor::setupComponents();
 
     addComponent(std::make_shared<ActorSceneComponent> ());
+
+    {
+        auto capsuleShape = std::make_shared<CapsuleYCollisionShapeComponent> ();
+        capsuleShape->height = getDefaultHeight() - getDefaultBroadness();
+        capsuleShape->radius = getDefaultBroadness() * 0.5f;
+        addComponent(capsuleShape);
+    }
+    /*{
+        auto shape = std::make_shared<BoxCollisionShapeComponent> ();
+        shape->halfExtent = Math::Vector3(0.5f);
+        addComponent(shape);
+    }*/
+
+    {
+        auto bodyComponent = std::make_shared<RigidBodyComponent> ();
+        bodyComponent->setMass(getDefaultMass());
+        bodyComponent->restitutionCoefficient = 0.0f;
+        bodyComponent->withoutTorque();
+        addComponent(bodyComponent);
+    }
 
 }
 

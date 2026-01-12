@@ -69,6 +69,14 @@ protected:
     bool noTorque = false;
 };
 
+/**
+ * I am a rigid body physical object.
+ */
+class CharacterBodyObjectComponent : public RigidBodyComponent
+{
+public:
+};
+
 } // End of namespace GameFramework
 } // End of namespace Woden
 

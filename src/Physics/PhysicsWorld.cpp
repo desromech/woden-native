@@ -10,6 +10,7 @@
 #include "Woden/Math/BVH.hpp"
 #include <assert.h>
 #include <unordered_map>
+#include <set>
 
 namespace Woden
 {
@@ -249,19 +250,27 @@ std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsP
     }
 
     std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> candidatePairs;
+    std::set<std::pair<uint32_t, uint32_t>> candidatePairSet;
     
     for(auto &firstRigidBody : awakeRigidBodies)
     {
         auto rigidBodyId = firstRigidBody->id;
         auto rigidBodyBoundingBox = firstRigidBody->getWorldBoundingBoxWithMargin();
 
-        // TODO: use a BVH.
-        //for(auto &collisionObject : collisionObjects)
         bvh.leavesIntersectingBoxDo(rigidBodyBoundingBox, [&](const CollisionObjectPtr &collisionObject) {
             auto collisionObjectId = collisionObject->id;
-            // To avoid duplicated pairs.
-            if(rigidBodyId >= collisionObjectId)
+            if(rigidBodyId == collisionObjectId)
                 return;
+        
+            // Avoid duplicates
+            auto minId = std::min(rigidBodyId, collisionObjectId);
+            auto maxId = std::max(rigidBodyId, collisionObjectId);
+            auto idPair = std::make_pair(minId, maxId);
+            auto it = candidatePairSet.find(idPair);
+            if(it != candidatePairSet.end())
+                return;
+
+            candidatePairSet.insert(idPair);
 
             auto firstObject = firstRigidBody;
             auto secondObject = collisionObject;

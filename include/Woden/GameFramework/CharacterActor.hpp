@@ -14,6 +14,26 @@ public:
     CharacterActor();
     ~CharacterActor();
 
+    virtual Math::Scalar getDefaultHeight() const
+    {
+        return 1.6f;
+    }
+
+    virtual Math::Scalar getDefaultBroadness() const
+    {
+        return 0.5f;
+    }
+
+    virtual Math::Scalar getDefaultMass() const
+    {
+        return 70.0f;
+    }
+
+    virtual Math::Vector3 getDefaultJumpVelocity() const
+    {
+        return Math::Vector3(0, 2, 0);
+    }
+
     virtual void setupComponents() override;
 
     virtual void tick(Math::Scalar delta) override;

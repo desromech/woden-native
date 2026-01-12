@@ -72,7 +72,6 @@ int woden_main(int argc, const char **argv)
         world->spawnActor(actor);
 
     }
-
     {
         auto pointLightSource = std::make_shared<Woden::Rendering::PointLightSource> ();
         pointLightSource->color = Vector3(0.8f, 0.8f, 0.5f).normalized();
@@ -87,7 +86,7 @@ int woden_main(int argc, const char **argv)
         lightSourceActor->setPosition(Vector3(0, 1.5, 0));
         world->spawnActor(lightSourceActor);
     }
-    
+
     // Player actor
     {
         auto playerActor = MakeActor<PlayerActor> ();
