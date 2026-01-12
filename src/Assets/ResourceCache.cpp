@@ -84,6 +84,24 @@ Rendering::MaterialPtr ResourceCache::getOrCreateCheckboardMaterial()
     return checkboardMaterial;
 }
 
+ImagePtr ResourceCache::getOrLoadImage(const std::string &path, TextureUsageMode usageMode)
+{
+    auto it = loadedImages.find(path);
+    if(it != loadedImages.end())
+    {
+        auto existent = it->second.lock();
+        if(existent)
+            return existent;
+    }
+
+    auto image = Image::loadFromFilenamed(path, usageMode);
+    if(!image)
+        return nullptr;
+
+    loadedImages.insert(std::make_pair(path, image));
+    return image;
+}
+
 TexturePtr ResourceCache::getOrLoadTexture(const std::string &path, TextureUsageMode usageMode)
 {
     auto it = loadedTextures.find(path);
@@ -94,8 +112,16 @@ TexturePtr ResourceCache::getOrLoadTexture(const std::string &path, TextureUsage
             return existent;
     }
 
-    printf("TODO: load texture %s\n", path.c_str());
-    return nullptr;
+    auto image = getOrLoadImage(path, usageMode);
+    if(!image)
+        return nullptr;
+
+    auto texture = image->asTexture();
+    texture->usageMode = usageMode;
+    texture->generateMipmaps();
+
+    loadedTextures.insert(std::make_pair(path, texture));
+    return texture;
 }
 
 Rendering::MaterialPtr ResourceCache::getOrLoadMaterial(const std::string &path)

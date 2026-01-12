@@ -11,12 +11,6 @@ namespace Assets
 typedef std::shared_ptr<class Texture> TexturePtr;
 typedef std::weak_ptr<class Texture> TextureWeakPtr;
 
-enum class TextureUsageMode {
-    Color,
-    Data,
-    Normal,
-};
-
 class Texture
 {
 public:

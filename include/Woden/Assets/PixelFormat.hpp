@@ -22,6 +22,9 @@ enum class PixelFormat
     
     B8G8R8A8_UNorm,
     B8G8R8A8_UNorm_SRGB,
+    
+    R8G8B8A8_UNorm,
+    R8G8B8A8_UNorm_SRGB,
 };
 
 agpu_texture_format mapPixelFormat(PixelFormat format);

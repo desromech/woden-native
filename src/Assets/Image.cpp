@@ -3,6 +3,8 @@
 #include "Woden/Rendering/Context.hpp"
 #include "Woden/Math/Vector3.hpp"
 #include <stdio.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 namespace Woden
 {
@@ -47,6 +49,26 @@ inline uint32_t encodeDataPixel32(const Math::Vector4 &data)
     auto a = uint8_t(data.w*255);
 
     return b | (g << 8) | (r << 16) | (a << 24);
+}
+
+ImagePtr Image::loadFromFilenamed(const std::string &filename, TextureUsageMode usageMode)
+{
+    int x,y,n;
+    unsigned char *data = stbi_load(filename.c_str(), &x, &y, &n, 4);
+    if(!data)
+        return nullptr;
+
+    auto image = std::make_shared<Image> ();
+    image->width = x;
+    image->height = y;
+    image->pitch = x*4;
+    image->format = usageMode == TextureUsageMode::Color ? PixelFormat::R8G8B8A8_UNorm_SRGB : PixelFormat::R8G8B8A8_UNorm;
+    image->pixels.resize(image->pitch*image->height);
+    memcpy(image->pixels.data(), data, image->pitch*image->height);
+
+    stbi_image_free(data);
+
+    return image;
 }
 
 bool Image::saveToTGA(const std::string &filename)
@@ -213,7 +235,7 @@ ImagePtr Image::computeNextNormalMipLevel()
     nextLevel->width = std::max(uint32_t(1), width/2);
     nextLevel->height = std::max(uint32_t(1), height/2);
     nextLevel->pitch = nextLevel->width*4;
-    nextLevel->format = PixelFormat::B8G8R8A8_UNorm;
+    nextLevel->format = format;
     nextLevel->pixels.resize(nextLevel->pitch*nextLevel->height);
 
     nextLevel->renderPixels32([&](uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
@@ -237,7 +259,7 @@ ImagePtr Image::computeNextDataMipLevel()
     nextLevel->width = std::max(uint32_t(1), width/2);
     nextLevel->height = std::max(uint32_t(1), height/2);
     nextLevel->pitch = nextLevel->width*4;
-    nextLevel->format = PixelFormat::B8G8R8A8_UNorm;
+    nextLevel->format = format;
     nextLevel->pixels.resize(nextLevel->pitch*nextLevel->height);
 
     nextLevel->renderPixels32([&](uint32_t x, uint32_t y, uint32_t w, uint32_t h) {

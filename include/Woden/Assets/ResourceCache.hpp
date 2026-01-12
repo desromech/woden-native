@@ -23,6 +23,7 @@ public:
     TexturePtr getOrCreateCheckboardNormalTexture();
     Rendering::MaterialPtr getOrCreateCheckboardMaterial();
 
+    ImagePtr getOrLoadImage(const std::string &path, TextureUsageMode usageMode);
     TexturePtr getOrLoadTexture(const std::string &path, TextureUsageMode usageMode);
     Rendering::MaterialPtr getOrLoadMaterial(const std::string &path);
 
@@ -32,6 +33,7 @@ private:
     TexturePtr checkboardNormalTexture;
     Rendering::MaterialPtr checkboardMaterial;
 
+    std::unordered_map<std::string, ImageWeakPtr> loadedImages;
     std::unordered_map<std::string, Rendering::MaterialWeakPtr> loadedMaterials;
     std::unordered_map<std::string, TextureWeakPtr> loadedTextures;
 };

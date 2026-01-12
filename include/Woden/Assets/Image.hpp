@@ -15,7 +15,14 @@ namespace Assets
 {
 
 typedef std::shared_ptr<class Image> ImagePtr;
+typedef std::weak_ptr<class Image> ImageWeakPtr;
 typedef std::shared_ptr<class Texture> TexturePtr;
+
+enum class TextureUsageMode {
+    Color,
+    Data,
+    Normal,
+};
 
 class Image : public std::enable_shared_from_this<Image>
 {
@@ -64,6 +71,7 @@ public:
     ImagePtr computeNextNormalMipLevel();
     ImagePtr computeNextDataMipLevel();
 
+    static ImagePtr loadFromFilenamed(const std::string &filename, TextureUsageMode usageMode);
     bool saveToTGA(const std::string &filename);
 
     TexturePtr asTexture();

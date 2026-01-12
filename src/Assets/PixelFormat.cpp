@@ -15,7 +15,10 @@ agpu_texture_format mapPixelFormat(PixelFormat format)
     case PixelFormat::R16_SNorm: return AGPU_TEXTURE_FORMAT_R16_SNORM;
     case PixelFormat::R16_UNorm: return AGPU_TEXTURE_FORMAT_R16_UNORM;
     case PixelFormat::R32_Float: return AGPU_TEXTURE_FORMAT_R32_FLOAT;
-    
+
+    case PixelFormat::R8G8B8A8_UNorm: return AGPU_TEXTURE_FORMAT_R8G8B8A8_UNORM;
+    case PixelFormat::R8G8B8A8_UNorm_SRGB: return AGPU_TEXTURE_FORMAT_R8G8B8A8_UNORM_SRGB;
+
     case PixelFormat::B8G8R8A8_UNorm: return AGPU_TEXTURE_FORMAT_B8G8R8A8_UNORM;
     case PixelFormat::B8G8R8A8_UNorm_SRGB: return AGPU_TEXTURE_FORMAT_B8G8R8A8_UNORM_SRGB;
     
