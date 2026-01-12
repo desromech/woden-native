@@ -36,6 +36,8 @@ public:
     virtual void update(Math::Scalar deltaTime) override;
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
 
+    virtual void processEvent(const EventPtr &event) override;
+
     SceneGraph::ScenePtr scene;
     SceneGraph::SceneNodePtr cameraNode;
     SceneGraph::SceneNodePtr sceneCameraNode;

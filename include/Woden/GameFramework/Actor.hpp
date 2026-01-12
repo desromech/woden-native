@@ -44,6 +44,7 @@ public:
 
     void setWantsToTick(bool newWantsToTick);
 
+    virtual void processEvent(const EventPtr &event);
     virtual void handleUnknownEvent(const EventPtr &event);
     virtual void handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event);
     virtual void handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event);

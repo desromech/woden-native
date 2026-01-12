@@ -16,6 +16,8 @@ public:
     
     virtual void tick(Math::Scalar delta) override;
 
+    virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event) override;
+
     ActorCameraComponentPtr cameraComponent;
 
     Math::Vector3 cameraAngles = Math::Vector3::Zeros();

@@ -1,6 +1,7 @@
 #include "Woden/Morphic/WorldMorph.hpp"
 #include "Woden/GameFramework/ActorSceneComponents.hpp"
 #include "Woden/GameFramework/World.hpp"
+#include "Woden/GameFramework/InputSubsystem.hpp"
 #include "Woden/GameFramework/SceneSubsystem.hpp"
 #include "Woden/Rendering/Camera.hpp"
 #include "Woden/Rendering/GuiRenderer.hpp"
@@ -58,6 +59,13 @@ void WorldMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
         screenQuad.sourceImageRectangleMax = Vector2(1.0, 1.0);
         renderer->addGuiElementWithBinding(screenQuad, guiTextureBinding);
     }
+}
+
+void WorldMorph::processEvent(const EventPtr &event)
+{
+    Morph::processEvent(event);
+    if(world)
+        world->getInputSubsystem()->dispatchEvent(event);
 }
 
 

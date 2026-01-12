@@ -8,6 +8,7 @@ namespace Events
 {
 using namespace Woden::Morphic;
 
+// Event
 void Event::sentToActor(const ActorPtr &actor)
 {
     actor->handleUnknownEvent(shared_from_this());
@@ -18,6 +19,7 @@ void Event::sentToMorph(const MorphPtr &morph)
     morph->handleUnknownEvent(shared_from_this());
 }
 
+// Mouse button down event
 void MouseButtonDownEvent::sentToActor(const ActorPtr &actor)
 {
     actor->handleMouseButtonDownEvent(std::static_pointer_cast<MouseButtonDownEvent> (shared_from_this()));
@@ -28,6 +30,7 @@ void MouseButtonDownEvent::sentToMorph(const MorphPtr &morph)
     morph->handleMouseButtonDownEvent(std::static_pointer_cast<MouseButtonDownEvent> (shared_from_this()));
 }
 
+// Mouse button up event
 void MouseButtonUpEvent::sentToActor(const ActorPtr &actor)
 {
     actor->handleMouseButtonUpEvent(std::static_pointer_cast<MouseButtonUpEvent> (shared_from_this()));
@@ -38,6 +41,7 @@ void MouseButtonUpEvent::sentToMorph(const MorphPtr &morph)
     morph->handleMouseButtonUpEvent(std::static_pointer_cast<MouseButtonUpEvent> (shared_from_this()));
 }
 
+// Mouse motion event
 void MouseMotionEvent::sentToActor(const ActorPtr &actor)
 {
     actor->handleMouseMotionEvent(std::static_pointer_cast<MouseMotionEvent> (shared_from_this()));
@@ -48,6 +52,7 @@ void MouseMotionEvent::sentToMorph(const MorphPtr &morph)
     morph->handleMouseMotionEvent(std::static_pointer_cast<MouseMotionEvent> (shared_from_this()));
 }
 
+// Mouse wheel event.
 void MouseWheelEvent::sentToActor(const ActorPtr &actor)
 {
     actor->handleMouseWheelEvent(std::static_pointer_cast<MouseWheelEvent> (shared_from_this()));

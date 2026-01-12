@@ -107,6 +107,11 @@ void Actor::unsubscribeForTicking()
     world.lock()->getActorTickSubsystem()->unsubscribe(shared_from_this());
 }
 
+void Actor::processEvent(const EventPtr &event)
+{
+    event->sentToActor(shared_from_this());
+}
+
 void Actor::handleUnknownEvent(const EventPtr &event)
 {
     (void)event;

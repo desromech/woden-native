@@ -15,8 +15,10 @@ set(WodenEngine_Sources
     GameFramework/CharacterActor.cpp
     GameFramework/CollisionObjectComponents.cpp
     GameFramework/CollisionShapeComponents.cpp
-    GameFramework/PlayerActor.cpp
+    GameFramework/InputComponents.cpp
+    GameFramework/InputSubsystem.cpp
     GameFramework/PhysicsSubsystem.cpp
+    GameFramework/PlayerActor.cpp
     GameFramework/SceneSubsystem.cpp
     GameFramework/World.cpp
 

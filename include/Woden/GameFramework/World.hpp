@@ -17,6 +17,7 @@ namespace GameFramework
 {
 typedef std::shared_ptr<class Actor> ActorPtr;
 typedef std::shared_ptr<class Subsystem> SubsystemPtr;
+typedef std::shared_ptr<class InputSubsystem> InputSubsystemPtr;
 typedef std::shared_ptr<class ActorTickSubsystem> ActorTickSubsystemPtr;
 typedef std::shared_ptr<class PhysicsSubsystem> PhysicsSubsystemPtr;
 typedef std::shared_ptr<class SceneSubsystem> SceneSubsystemPtr;
@@ -39,6 +40,7 @@ public:
     Morphic::SystemWindowPtr playInSystemWindow();
 
     void addSubsystem(const SubsystemPtr &subsystem);
+    const InputSubsystemPtr &getInputSubsystem();
     const ActorTickSubsystemPtr &getActorTickSubsystem();
     const PhysicsSubsystemPtr &getPhysicsSubsystem();
     const SceneSubsystemPtr &getSceneSubsystem();
@@ -52,6 +54,7 @@ public:
 protected:
     std::vector<ActorPtr> actors;
     std::vector<SubsystemPtr> subsystems;
+    InputSubsystemPtr inputSubsystem;
     ActorTickSubsystemPtr actorTickSubsystem;
     PhysicsSubsystemPtr physicsSubsystem;
     SceneSubsystemPtr sceneSubsystem;
