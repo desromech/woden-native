@@ -6,10 +6,12 @@ namespace Woden
 namespace Rendering
 {
 
-static MaterialFactoryRegistry materialFactoryRegistry;
+static std::unique_ptr<MaterialFactoryRegistry> materialFactoryRegistry;
 MaterialFactoryRegistry *MaterialFactoryRegistry::Get()
 {
-    return &materialFactoryRegistry;
+    if(!materialFactoryRegistry)
+        materialFactoryRegistry.reset(new MaterialFactoryRegistry);
+    return materialFactoryRegistry.get();
 }
 
 static MaterialPtr defaultMaterial;

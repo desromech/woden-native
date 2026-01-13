@@ -2,7 +2,8 @@
 #define WODEN_MORPHIC_EVENT_HPP
 
 #include "Woden/Math/Vector2.hpp"
-#include "SDL2/SDL_keycode.h"
+
+#include "SDL_keycode.h"
 #include <memory>
 
 namespace Woden
