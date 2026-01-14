@@ -39,7 +39,7 @@ void HorizontalPackingLayout::applyWithLocalBounds(const Math::Rectangle &localB
         if(element->proportion != 0)
             totalProportion += element->proportion;
         else
-            fixedWidth = element->getFixedExtent().x;
+            fixedWidth += element->getFixedExtent().x;
     }
 
     auto localBoundsExtent = localBounds.extent();
@@ -92,7 +92,7 @@ void VerticalPackingLayout::applyWithLocalBounds(const Math::Rectangle &localBou
         if(element->proportion != 0)
             totalProportion += element->proportion;
         else
-            fixedHeight = element->getFixedExtent().y;
+            fixedHeight += element->getFixedExtent().y;
     }
 
     auto localBoundsExtent = localBounds.extent();
