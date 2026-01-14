@@ -3,6 +3,7 @@
 
 #include "BorderedMorph.hpp"
 #include "StringMorph.hpp"
+#include <functional>
 
 namespace Woden
 {
@@ -26,6 +27,8 @@ public:
     Vector4 clickColor = Vector4(0.9f, 0.9f, 0.9f, 1.0f);
     bool hasButtonDown = false;
     StringMorphPtr label;
+
+    std::function<void (MorphPtr)> onClickAction;
 
 };
 

@@ -9,6 +9,11 @@ int woden_main(int argc, const char **argv)
     (void)argv;
     auto morph = std::make_shared<SimpleButtonMorph> ();
     morph->setLabel("Click me");
+    morph->onClickAction = [](const MorphPtr &morph){
+        (void)morph;
+        printf("Clicked button\n");
+    };
+
     morph->setExtent(Vector2(128, 50));
     morph->openInSystemWindow();
     return 0;

@@ -55,6 +55,9 @@ void SimpleButtonMorph::handleMouseButtonUpEvent(const MouseButtonUpEventPtr &ev
     {
         hasButtonDown = false;
         event->wasHandled = true;
+
+        if(onClickAction)
+            onClickAction(shared_from_this());
     }
 
 }
