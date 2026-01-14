@@ -65,12 +65,30 @@ void LevelEditorMorph::createMenuBar()
 
         menuBar->addItem("Edit", menu);
     }
+    {
+        auto menu = std::make_shared<MenuMorph> ();
+        menu->addItem("Play Level", [=](const MorphPtr &eventSource){
+            (void)eventSource;
+            printf("TODO: Play Level\n");
+        });
 
+        menuBar->addItem("Game", menu);
+    }
 
-    menuBar->addItem("Edit", nullptr);
-    menuBar->addItem("Game", nullptr);
-    menuBar->addItem("View", nullptr);
-    menuBar->addItem("Help", nullptr);
+    {
+        auto menu = std::make_shared<MenuMorph> ();
+        menuBar->addItem("View", menu);
+    }
+    
+    {
+        auto menu = std::make_shared<MenuMorph> ();
+        menu->addItem("About", [=](const MorphPtr &eventSource){
+            (void)eventSource;
+            printf("TODO: About window\n");
+        });
+
+        menuBar->addItem("Help", menu);
+    }
 }
 
 } // End of namespace LevelEditor
