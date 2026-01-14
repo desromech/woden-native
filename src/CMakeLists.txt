@@ -31,6 +31,7 @@ set(WodenEngine_Sources
     Morphic/BorderedMorph.cpp
     Morphic/Morph.cpp
     Morphic/Layout.cpp
+    Morphic/MenuBarMorph.cpp
     Morphic/SceneMorph.cpp
     Morphic/SimpleButtonMorph.cpp
     Morphic/StringMorph.cpp

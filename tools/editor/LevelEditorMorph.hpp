@@ -19,6 +19,8 @@ public:
     
     bool initialize();
 
+    void createMenuBar();
+
     MenuBarMorphPtr menuBar;
     ToolBarMorphPtr toolBar;
     MorphPtr sceneView;

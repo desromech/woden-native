@@ -70,6 +70,10 @@ public:
         return Rectangle(minCorner.floorRounded(), maxCorner.floorRounded());
     }
 
+    Rectangle translatedBy(const Vector2 &translation) const
+    {
+        return Rectangle(minCorner + translation, maxCorner + translation);
+    }
 
     Vector2 minCorner;
     Vector2 maxCorner;

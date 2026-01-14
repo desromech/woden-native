@@ -13,12 +13,12 @@ LevelEditorMorph::LevelEditorMorph()
 
 bool LevelEditorMorph::initialize()
 {
-    menuBar = std::make_shared<MenuBarMorph> ();
+    createMenuBar();
     toolBar = std::make_shared<ToolBarMorph> ();
     sceneView = std::make_shared<Morph> ();
     statusBar = std::make_shared<StatusBarMorph> ();
 
-    sceneView->color = Vector4(0, 1, 0, 1);
+    sceneView->color = Vector4(0.1, 1, 0.1, 1);
 
     addMorph(menuBar);
     addMorph(toolBar);
@@ -34,6 +34,16 @@ bool LevelEditorMorph::initialize()
     setLayout(layout);
 
     return true;
+}
+
+void LevelEditorMorph::createMenuBar()
+{
+    menuBar = std::make_shared<MenuBarMorph> ();
+    menuBar->addItem("File", nullptr);
+    menuBar->addItem("Edit", nullptr);
+    menuBar->addItem("Game", nullptr);
+    menuBar->addItem("View", nullptr);
+    menuBar->addItem("Help", nullptr);
 }
 
 } // End of namespace LevelEditor
