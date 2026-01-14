@@ -193,6 +193,11 @@ bool Morph::hasMouseFocus() const
     return getMouseFocus() == shared_from_this();
 }
 
+void Morph::fitSize()
+{
+    // By default do nothing.
+}
+
 void Morph::updateLayout()
 {
     if(!layout)

@@ -18,6 +18,7 @@ public:
     StringMorph();
 
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
+    virtual void fitSize() override;
 
     std::string label;
 };

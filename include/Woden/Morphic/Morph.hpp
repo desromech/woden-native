@@ -131,6 +131,7 @@ public:
         updateLayout();
     }
 
+    virtual void fitSize();
     virtual void updateLayout();
 
     MorphWeakPtr owner;

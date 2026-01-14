@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include "Woden/Math/Vector2.hpp"
 #include "stb_truetype.h"
 
 namespace Woden
@@ -32,6 +33,8 @@ public:
     float ascent = 0;
     float descent = 0;
     float linegap = 0;
+
+    Math::Vector2 measureTextExtent(const std::string &text);
 
     ImagePtr image;
     std::vector<stbtt_bakedchar> bakedChars;

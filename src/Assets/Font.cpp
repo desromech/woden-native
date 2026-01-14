@@ -44,5 +44,31 @@ FontFacePtr Font::getOrCreateFaceWithHeight(uint32_t height)
     return face;
 }
 
+Math::Vector2 FontFace::measureTextExtent(const std::string &text)
+{
+    auto extent = Math::Vector2(0, 0);
+
+    auto currentBaseline = Math::Vector2(0, ascent);
+
+    // TODO: Decode UTF8
+    for(size_t i = 0; i < text.size(); ++i)
+    {
+        auto c = text[i];
+        if(c < ' ')
+            continue;
+
+        stbtt_aligned_quad quadToDraw = {};
+        stbtt_GetBakedQuad(bakedChars.data(), image->width, image->height, c - 31, &currentBaseline.x, &currentBaseline.y, &quadToDraw, true);
+
+        extent.x = Math::max(extent.x, quadToDraw.x0);
+        extent.y = Math::max(extent.y, quadToDraw.y0);
+
+        extent.x = Math::max(extent.x, quadToDraw.x1);
+        extent.y = Math::max(extent.y, quadToDraw.y1);
+    }
+
+    return extent;
+}
+
 }// End of namespace Assets
 }// End of namespace Woden
