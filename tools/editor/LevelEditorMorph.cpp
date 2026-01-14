@@ -1,6 +1,11 @@
 #include "LevelEditorMorph.hpp"
 #include "Woden/Morphic/Layout.hpp"
 
+#include "Woden/Rendering/LightSource.hpp"
+#include "Woden/Rendering/MeshBuilder.hpp"
+#include "Woden/Rendering/Renderable.hpp"
+#include "Woden/SceneGraph/Scene.hpp"
+
 namespace Woden
 {
 namespace LevelEditor
@@ -15,10 +20,8 @@ bool LevelEditorMorph::initialize()
 {
     createMenuBar();
     toolBar = std::make_shared<ToolBarMorph> ();
-    sceneView = std::make_shared<Morph> ();
+    sceneView = std::make_shared<SceneMorph> ();
     statusBar = std::make_shared<StatusBarMorph> ();
-
-    sceneView->color = Vector4(0.1, 1, 0.1, 1);
 
     addMorph(menuBar);
     addMorph(toolBar);
@@ -32,6 +35,25 @@ bool LevelEditorMorph::initialize()
     layout->addMorph(statusBar, 0, true);
 
     setLayout(layout);
+
+    auto scene = SceneGraph::MakeScene();
+    {
+        scene->normalLayer->addChild(Woden::Rendering::MeshBuilder()
+            .addCubeWithExtent(Vector3(1, 1, 1))
+            .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
+            .finishMesh()->asSceneNode()
+        );
+    }
+
+    {
+        auto pointLightSource = std::make_shared<Woden::Rendering::PointLightSource> ();
+        pointLightSource->color = Vector3(0.8f, 0.8f, 0.2f);
+        pointLightSource->intensity = 5;
+        pointLightSource->influenceRadius = 4;
+
+        scene->normalLayer->addChild(pointLightSource->asSceneNodeWithPosition(Vector3(-1.5f, 1.5f, 1.6f)));
+    }
+    sceneView->scene = scene;
 
     return true;
 }
