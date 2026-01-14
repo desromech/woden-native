@@ -27,11 +27,15 @@ public:
     void recreateSwapChain();
 
     void processKeyboardEvent(const EventPtr &event);
-    virtual void setNewKeyboardFocus(const MorphPtr &newKeyboardFocus);
+    virtual void setNewKeyboardFocus(const MorphPtr &newKeyboardFocus) override;
+
+    virtual void setNewMouseFocus(const MorphPtr &newMouseFocus);
+    virtual MorphPtr getMouseFocus()const override;
 
     virtual void fullDrawWith(const Rendering::GUIRendererPtr &renderer) override;
 
     MorphPtr currentKeyboardFocus;
+    MorphPtr currentMouseFocus;
 
     SDL_Window *handle = nullptr;
     std::string title;

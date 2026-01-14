@@ -402,5 +402,22 @@ void SystemWindow::setNewKeyboardFocus(const MorphPtr &newKeyboardFocus)
         currentKeyboardFocus->gotKeyboardFocus();
 }
 
+void SystemWindow::setNewMouseFocus(const MorphPtr &newMouseFocus)
+{
+    if(currentMouseFocus)
+        currentMouseFocus->lostMouseFocus();
+
+    currentMouseFocus = newMouseFocus;
+
+    if(currentMouseFocus)
+        currentMouseFocus->gotMouseFocus();
+}
+
+MorphPtr SystemWindow::getMouseFocus() const
+{
+    return currentMouseFocus;
+}
+
+
 } // End of namespace Morphic
 } // End of namespace Woden

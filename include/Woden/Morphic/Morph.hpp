@@ -109,7 +109,16 @@ public:
     virtual void lostKeyboardFocus();
 
     virtual void takeKeyboardFocus();
-    virtual void setNewKeyboardFocus(const MorphPtr &newKeyboardFocus);
+    virtual void setNewKeyboardFocus(const MorphPtr &newMouseFocus);
+
+    virtual void gotMouseFocus();
+    virtual void lostMouseFocus();
+
+    virtual void takeMouseFocus();
+    virtual void setNewMouseFocus(const MorphPtr &newKeyboardFocus);
+    virtual MorphPtr getMouseFocus() const;
+    virtual bool hasMouseFocus() const;
+
 
     const MorphicLayoutPtr &getLayout() const
     {

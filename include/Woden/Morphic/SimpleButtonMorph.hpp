@@ -18,8 +18,13 @@ public:
 
     void setLabel(const std::string &labelText);
 
+    virtual void handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event);
+    virtual void handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event);
+    virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event);
+
     Vector4 focusColor = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
     Vector4 clickColor = Vector4(0.9f, 0.9f, 0.9f, 1.0f);
+    bool hasButtonDown = false;
     StringMorphPtr label;
 
 };

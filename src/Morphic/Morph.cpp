@@ -158,6 +158,39 @@ void Morph::setNewKeyboardFocus(const MorphPtr &newKeyboardFocus)
         ownerMorph->setNewKeyboardFocus(newKeyboardFocus);
 }
 
+void Morph::gotMouseFocus()
+{
+}
+
+void Morph::lostMouseFocus()
+{
+}
+
+void Morph::takeMouseFocus()
+{
+    setNewMouseFocus(shared_from_this());
+}
+
+void Morph::setNewMouseFocus(const MorphPtr &newMouseFocus)
+{
+    auto ownerMorph = owner.lock();
+    if(ownerMorph)
+        ownerMorph->setNewMouseFocus(newMouseFocus);
+}
+
+MorphPtr Morph::getMouseFocus() const
+{
+    auto ownerMorph = owner.lock();
+    if(ownerMorph)
+        return ownerMorph->getMouseFocus();
+    return nullptr;
+}
+
+bool Morph::hasMouseFocus() const
+{
+    return getMouseFocus() == shared_from_this();
+}
+
 void Morph::updateLayout()
 {
     if(!layout)
