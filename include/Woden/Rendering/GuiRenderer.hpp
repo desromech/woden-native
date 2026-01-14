@@ -30,6 +30,7 @@ public:
     Math::Vector2 drawTextWithColor(const Math::Vector2 &initialBaseline, const std::string &text, const Math::Vector4 &color);
 
     void fillRectangleWithColor(const Math::Rectangle &rectangle, const Math::Vector4 &color);
+    void fillRectangleWithColorAndBorder(const Math::Rectangle &rectangle, const Math::Vector4 &color, const Math::Vector4 &borderColor, const Math::Scalar borderWidth);
 
     void uploadDataWithCommandList(const agpu_command_list_ref &commandList);
     void drawOnCommandList(const agpu_command_list_ref &commandList);

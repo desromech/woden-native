@@ -5,6 +5,9 @@ target_link_libraries(Sample01-Empty WodenEngine)
 add_executable(Sample02-String SampleCommon.cpp Sample02-String.cpp)
 target_link_libraries(Sample02-String WodenEngine)
 
+add_executable(Sample03-Button SampleCommon.cpp Sample03-Button.cpp)
+target_link_libraries(Sample03-Button WodenEngine)
+
 ## Scene rendering samples.
 add_executable(SceneSample01-Empty SampleCommon.cpp SceneSample01-Empty.cpp)
 target_link_libraries(SceneSample01-Empty WodenEngine)

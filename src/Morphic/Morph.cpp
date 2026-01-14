@@ -15,6 +15,25 @@ Morph::~Morph()
 {
 }
 
+void Morph::removeSubmorph(const MorphPtr &morph)
+{
+    for(size_t i = 0; i < submorphs.size(); ++i)
+    {
+        if(submorphs[i] == morph)
+        {
+            submorphs.erase(submorphs.begin() + i);
+            return;
+        }
+    }
+}
+
+void Morph::deleteMorph()
+{
+    auto ownerMorph = owner.lock();
+    if(ownerMorph)
+        ownerMorph->removeSubmorph(shared_from_this());
+}
+
 void Morph::fullUpdate(Math::Scalar deltaTime)
 {
     updateChildren(deltaTime);
@@ -41,7 +60,7 @@ void Morph::fullDrawWith(const Rendering::GUIRendererPtr &renderer)
 
 void Morph::drawWith(const Rendering::GUIRendererPtr &renderer)
 {
-    renderer->fillRectangleWithColor(getLocalBounds(), color);
+    renderer->fillRectangleWithColor(getLocalBounds(), getCurrentColor());
 }
 
 void Morph::drawChildrenWith(const Rendering::GUIRendererPtr &renderer)

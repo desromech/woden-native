@@ -28,9 +28,11 @@ set(WodenEngine_Sources
     Math/Vector3.cpp
 
     
+    Morphic/BorderedMorph.cpp
     Morphic/Morph.cpp
     Morphic/Layout.cpp
     Morphic/SceneMorph.cpp
+    Morphic/SimpleButtonMorph.cpp
     Morphic/StringMorph.cpp
     Morphic/SystemWindow.cpp
     Morphic/WorldMorph.cpp

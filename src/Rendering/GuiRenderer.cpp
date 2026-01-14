@@ -108,6 +108,19 @@ void GUIRenderer::fillRectangleWithColor(const Math::Rectangle &rectangle, const
     addGuiElement(element);
 }
 
+void GUIRenderer::fillRectangleWithColorAndBorder(const Math::Rectangle &rectangle, const Math::Vector4 &color, const Math::Vector4 &borderColor, const Math::Scalar borderWidth)
+{
+    
+    GuiElement element = {};
+    element.type = GuiElementType::SolidRectangle;
+    element.rectangleMin = rectangle.minCorner;
+    element.rectangleMax = rectangle.maxCorner;
+    element.firstColor = color;
+    element.borderColor = borderColor;
+    element.borderSize = borderWidth;
+    addGuiElement(element);
+}
+
 void GUIRenderer::uploadDataWithCommandList(const agpu_command_list_ref &commandList)
 {
     (void)commandList;

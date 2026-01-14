@@ -76,6 +76,9 @@ public:
         submorphs.push_back(morph);
     }
 
+    void removeSubmorph(const MorphPtr &morph);
+    virtual void deleteMorph();
+
     virtual void fullUpdate(Math::Scalar deltaTime);
     virtual void updateChildren(Math::Scalar deltaTime);
     virtual void update(Math::Scalar deltaTime);
@@ -83,6 +86,11 @@ public:
     virtual void fullDrawWith(const Rendering::GUIRendererPtr &renderer);
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer);
     virtual void drawChildrenWith(const Rendering::GUIRendererPtr &renderer);
+
+    virtual Vector4 getCurrentColor() const
+    {
+        return color;
+    }
 
     virtual void processEvent(const EventPtr &event);
 
