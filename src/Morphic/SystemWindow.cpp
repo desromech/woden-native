@@ -189,7 +189,7 @@ SystemWindowPtr Morph::openInSystemWindow()
 {
     auto systemWindow = std::make_shared<SystemWindow> ();
     systemWindow->bounds = Rectangle(Vector2(0, 0), bounds.extent());
-    systemWindow->addSubmorph(shared_from_this());
+    systemWindow->addMorph(shared_from_this());
 
     auto layout = std::make_shared<FillMorphicLayout> ();
     layout->morph = shared_from_this();

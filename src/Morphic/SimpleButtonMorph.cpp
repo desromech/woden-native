@@ -32,7 +32,7 @@ void SimpleButtonMorph::setLabel(const std::string &labelText)
     label = std::make_shared<StringMorph> ();
     label->label = labelText;
     label->fitSize();
-    addSubmorph(label);
+    addMorph(label);
 
     auto layout = std::make_shared<CenterMorphicLayout> ();
     layout->morph = label;

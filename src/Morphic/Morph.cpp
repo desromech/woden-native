@@ -15,7 +15,7 @@ Morph::~Morph()
 {
 }
 
-void Morph::removeSubmorph(const MorphPtr &morph)
+void Morph::removeMorph(const MorphPtr &morph)
 {
     for(size_t i = 0; i < submorphs.size(); ++i)
     {
@@ -31,7 +31,7 @@ void Morph::deleteMorph()
 {
     auto ownerMorph = owner.lock();
     if(ownerMorph)
-        ownerMorph->removeSubmorph(shared_from_this());
+        ownerMorph->removeMorph(shared_from_this());
 }
 
 void Morph::fullUpdate(Math::Scalar deltaTime)

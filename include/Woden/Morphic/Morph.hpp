@@ -69,14 +69,14 @@ public:
         return Rectangle(Vector2(0), getExtent());
     }
 
-    void addSubmorph(const MorphPtr &morph)
+    void addMorph(const MorphPtr &morph)
     {
         assert(!morph->owner.lock());
         morph->owner = shared_from_this();
         submorphs.push_back(morph);
     }
 
-    void removeSubmorph(const MorphPtr &morph);
+    void removeMorph(const MorphPtr &morph);
     virtual void deleteMorph();
 
     virtual void fullUpdate(Math::Scalar deltaTime);
