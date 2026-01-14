@@ -22,6 +22,7 @@ using namespace Woden::Events;
 
 typedef std::shared_ptr<class Morph> MorphPtr;
 typedef std::weak_ptr<class Morph> MorphWeakPtr;
+typedef std::shared_ptr<class MorphicLayout> MorphicLayoutPtr;
 typedef std::shared_ptr<class SystemWindow> SystemWindowPtr;
 
 /**
@@ -54,6 +55,7 @@ public:
     void setExtent(const Vector2 &newExtent)
     {
         bounds = Rectangle(bounds.minCorner, newExtent);
+        updateLayout();
     }
 
     Rectangle getLocalBounds() const
@@ -95,10 +97,26 @@ public:
     virtual void takeKeyboardFocus();
     virtual void setNewKeyboardFocus(const MorphPtr &newKeyboardFocus);
 
+    const MorphicLayoutPtr &getLayout() const
+    {
+        return layout;
+    }
+
+    void setLayout(const MorphicLayoutPtr &newLayout)
+    {
+        layout = newLayout;
+        updateLayout();
+    }
+
+    virtual void updateLayout();
+
     MorphWeakPtr owner;
     Rectangle bounds = Rectangle(Vector2(0, 0), Vector2(50, 40));
     Vector4 color = Vector4(0, 0, 1, 1);
     std::vector<MorphPtr> submorphs;
+    
+protected:
+    MorphicLayoutPtr layout;
 };
 
 } // End of namespace Morphic

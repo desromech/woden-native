@@ -1,4 +1,5 @@
 #include "Woden/Morphic/SystemWindow.hpp"
+#include "Woden/Morphic/Layout.hpp"
 #include "Woden/Rendering/Context.hpp"
 #include "Woden/Rendering/GuiRenderer.hpp"
 #include "Woden/Utility/Time.hpp"
@@ -189,6 +190,10 @@ SystemWindowPtr Morph::openInSystemWindow()
     auto systemWindow = std::make_shared<SystemWindow> ();
     systemWindow->bounds = Rectangle(Vector2(0, 0), bounds.extent());
     systemWindow->addSubmorph(shared_from_this());
+
+    auto layout = std::make_shared<FillMorphicLayout> ();
+    layout->morph = shared_from_this();
+    systemWindow->setLayout(layout);
     systemWindow->open();
 
     return systemWindow;
@@ -207,9 +212,8 @@ void SystemWindow::open()
     ensureSDLInitialization();
 
     auto extent = bounds.extent();
-    windowWidth = int(extent.x + 0.5);
-    windowHeight = int(extent.y + 0.5);
-    handle = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight,
+    windowPixelSize = extent;
+    handle = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, int(windowPixelSize.x), int(windowPixelSize.y),
         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 
     auto windowId = SDL_GetWindowID(handle);
@@ -244,8 +248,8 @@ void SystemWindow::open()
     }
 
     currentSwapChainCreateInfo.colorbuffer_format = Rendering::RenderingContext::WindowColorBufferFormat;
-    currentSwapChainCreateInfo.width = windowWidth;
-    currentSwapChainCreateInfo.height = windowHeight;
+    currentSwapChainCreateInfo.width  = agpu_uint(windowPixelSize.x);
+    currentSwapChainCreateInfo.height = agpu_uint(windowPixelSize.y);
     currentSwapChainCreateInfo.buffer_count = 3;
     currentSwapChainCreateInfo.flags = AGPU_SWAP_CHAIN_FLAG_APPLY_SCALE_FACTOR_FOR_HI_DPI;
     auto renderingContext = Woden::Rendering::RenderingContext::getMainContext();
@@ -265,8 +269,10 @@ void SystemWindow::open()
         abort();
     }
 
-    windowWidth = swapChain->getWidth();
-    windowHeight = swapChain->getHeight();
+    windowPixelSize = Vector2(swapChain->getWidth(), swapChain->getHeight());
+    int windowWidth, windowHeight;
+    SDL_GetWindowSize(handle, &windowWidth, &windowHeight);
+    setExtent(Math::Vector2(windowWidth, windowHeight));
 
     commandAllocator = device->createCommandAllocator(AGPU_COMMAND_LIST_TYPE_DIRECT, commandQueue);
     commandList = device->createCommandList(AGPU_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr);
@@ -308,9 +314,12 @@ void SystemWindow::updateAndRender(Scalar deltaTime)
     commandAllocator->reset();
     commandList->reset(commandAllocator, nullptr);
 
+    auto scaleFactor = windowPixelSize / getExtent();
+
     // GUI rendering
     guiRenderer->reset();
-    guiRenderer->framebufferExtent = Vector2(windowWidth, windowHeight);
+    guiRenderer->framebufferExtent = windowPixelSize;
+    guiRenderer->scaleFactor = scaleFactor;
     guiRenderer->renderingCommandList = commandList;
     fullDrawWith(guiRenderer);
     guiRenderer->uploadDataWithCommandList(commandList);
@@ -321,8 +330,8 @@ void SystemWindow::updateAndRender(Scalar deltaTime)
     // Begin the rendering pass.
     commandList->beginRenderPass(renderingContext->windowRenderPass, backBuffer, false);
 
-    commandList->setViewport(0, 0, windowWidth, windowHeight);
-    commandList->setScissor(0, 0, windowWidth, windowHeight);
+    commandList->setViewport(0, 0, windowPixelSize.x, windowPixelSize.y);
+    commandList->setScissor(0, 0, windowPixelSize.x, windowPixelSize.y);
 
     guiRenderer->drawOnCommandList(commandList);
 
@@ -371,10 +380,9 @@ void SystemWindow::recreateSwapChain()
     newSwapChainCreateInfo.old_swap_chain = swapChain.get();
     swapChain = renderingContext->device->createSwapChain(renderingContext->defaultCommandQueue, &newSwapChainCreateInfo);
 
-    windowWidth = swapChain->getWidth();
-    windowHeight = swapChain->getHeight();
-
-    bounds = Rectangle(Vector2(0, 0), Vector2(windowWidth, windowHeight));
+    windowPixelSize = Vector2(swapChain->getWidth(), swapChain->getHeight());
+    bounds = Rectangle(Vector2(0, 0), Vector2(w, h));
+    updateLayout();
 }
 
 void SystemWindow::processKeyboardEvent(const EventPtr &event)

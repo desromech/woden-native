@@ -1,4 +1,5 @@
 #include "Woden/Morphic/Morph.hpp"
+#include "Woden/Morphic/Layout.hpp"
 #include "Woden/Rendering/GuiRenderer.hpp"
 
 namespace Woden
@@ -138,6 +139,13 @@ void Morph::setNewKeyboardFocus(const MorphPtr &newKeyboardFocus)
         ownerMorph->setNewKeyboardFocus(newKeyboardFocus);
 }
 
+void Morph::updateLayout()
+{
+    if(!layout)
+        return;
+
+    printf("TODO: apply layout\n");
+}
 
 } // End of namespace Morphic
 } // End of namespace Woden

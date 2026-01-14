@@ -110,6 +110,7 @@ void GUIRenderer::fillRectangleWithColor(const Math::Rectangle &rectangle, const
 
 void GUIRenderer::uploadDataWithCommandList(const agpu_command_list_ref &commandList)
 {
+    (void)commandList;
     if(guiElements.empty())
         return;
 

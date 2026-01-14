@@ -35,8 +35,7 @@ public:
 
     SDL_Window *handle = nullptr;
     std::string title;
-    int windowWidth = 640;
-    int windowHeight = 480;
+    Vector2 windowPixelSize;
 
     agpu_swap_chain_create_info currentSwapChainCreateInfo;
     agpu_swap_chain_ref swapChain;

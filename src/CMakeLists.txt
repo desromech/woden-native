@@ -29,6 +29,7 @@ set(WodenEngine_Sources
 
     
     Morphic/Morph.cpp
+    Morphic/Layout.cpp
     Morphic/SceneMorph.cpp
     Morphic/StringMorph.cpp
     Morphic/SystemWindow.cpp

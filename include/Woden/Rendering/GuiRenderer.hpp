@@ -40,6 +40,7 @@ public:
     agpu_shader_resource_binding_ref guiElementsBinding;
     agpu_shader_resource_binding_ref currentTextureBinding;
     Math::Vector2 framebufferExtent;
+    Math::Vector2 scaleFactor;
 
     agpu_command_list_ref renderingCommandList;
 };
