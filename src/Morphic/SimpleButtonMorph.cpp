@@ -10,7 +10,6 @@ namespace Morphic
 SimpleButtonMorph::SimpleButtonMorph()
 {
     color = Vector4(0.7f, 0.7f, 0.7f, 1.0f);
-
 }
 
 Vector4 SimpleButtonMorph::getCurrentColor() const
