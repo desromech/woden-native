@@ -32,6 +32,17 @@ public:
     MorphPtr morph;
 };
 
+/**
+ * I am a layout that centers a single morph with its parent
+ */
+class CenterMorphicLayout : public MorphicLayout
+{
+public:
+    virtual void applyWithLocalBounds(const Math::Rectangle &localBounds);
+
+    MorphPtr morph;
+};
+
 } // End of namespace Morphic
 } // End of namespace Woden
 

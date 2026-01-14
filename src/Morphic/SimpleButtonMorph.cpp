@@ -1,4 +1,6 @@
 #include "Woden/Morphic/SimpleButtonMorph.hpp"
+#include "Woden/Morphic/Layout.hpp"
+
 
 namespace Woden
 {
@@ -25,11 +27,16 @@ void SimpleButtonMorph::setLabel(const std::string &labelText)
         label->deleteMorph();
         label.reset();
         label.reset();
+        setLayout(nullptr);
     }
 
     label = std::make_shared<StringMorph> ();
     label->label = labelText;
     addSubmorph(label);
+
+    auto layout = std::make_shared<CenterMorphicLayout> ();
+    layout->morph = label;
+    setLayout(layout);
 }
 
 void SimpleButtonMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)

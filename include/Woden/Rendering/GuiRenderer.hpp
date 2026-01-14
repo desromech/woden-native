@@ -35,6 +35,15 @@ public:
     void uploadDataWithCommandList(const agpu_command_list_ref &commandList);
     void drawOnCommandList(const agpu_command_list_ref &commandList);
 
+    template<typename FT>
+    void withTranslationDo(const Math::Vector2 &translation, FT&& aBlock)
+    {
+        auto oldTranslation = currentTranslation;
+        currentTranslation = translation;
+        aBlock();
+        currentTranslation = oldTranslation;
+    }
+
     std::vector<GuiElement> guiElements;
 
     agpu_buffer_ref guiElementsBuffer;
@@ -44,6 +53,9 @@ public:
     Math::Vector2 scaleFactor;
 
     agpu_command_list_ref renderingCommandList;
+
+    Math::Vector2 currentTranslation = Math::Vector2(0, 0);
+
 };
 
 } // End of namespace Rendering

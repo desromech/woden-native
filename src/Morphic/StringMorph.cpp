@@ -13,6 +13,7 @@ StringMorph::StringMorph()
 
 void StringMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
 {
+    renderer->fillRectangleWithColor(getLocalBounds(), Vector4(0, 1, 0, 1));
     renderer->drawTextInRectangleWithColor(getLocalBounds(), label, color);
 }
 

@@ -39,7 +39,11 @@ void GUIRenderer::addGuiElement(const GuiElement &element)
         return;
     }
 
-    guiElements.push_back(element);
+    auto transformedElement = element;
+    transformedElement.rectangleMax += currentTranslation;
+    transformedElement.rectangleMin += currentTranslation;
+
+    guiElements.push_back(transformedElement);
 }
 
 void GUIRenderer::addGuiElementWithImage(const GuiElement &element, const Assets::ImagePtr &image)

@@ -54,8 +54,10 @@ void Morph::update(Math::Scalar deltaTime)
 
 void Morph::fullDrawWith(const Rendering::GUIRendererPtr &renderer)
 {
-    drawWith(renderer);
-    drawChildrenWith(renderer);
+    renderer->withTranslationDo(getOrigin(), [&](){
+        drawWith(renderer);
+        drawChildrenWith(renderer);
+    });
 }
 
 void Morph::drawWith(const Rendering::GUIRendererPtr &renderer)
