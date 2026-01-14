@@ -28,6 +28,11 @@ public:
         return Rectangle(-halfExtent, halfExtent);
     }
 
+    static Rectangle WithOriginAndExtent(const Vector2 &origin, const Vector2 &extent)
+    {
+        return Rectangle(origin, origin + extent);
+    }
+
     bool isEmpty() const
     {
         return minCorner.x > maxCorner.x;
@@ -58,6 +63,11 @@ public:
     Vector2 center() const
     {
         return minCorner + halfExtent();
+    }
+
+    Rectangle floorRounded() const
+    {
+        return Rectangle(minCorner.floorRounded(), maxCorner.floorRounded());
     }
 
 

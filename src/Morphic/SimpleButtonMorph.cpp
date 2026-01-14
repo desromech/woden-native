@@ -34,6 +34,8 @@ void SimpleButtonMorph::setLabel(const std::string &labelText)
     label->fitSize();
     addMorph(label);
 
+    setExtent(label->getExtent() + Vector2(20, 20));
+
     auto layout = std::make_shared<CenterMorphicLayout> ();
     layout->morph = label;
     setLayout(layout);

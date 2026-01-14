@@ -75,6 +75,11 @@ public:
         return Vector2(::floor(x), ::floor(y));
     }
 
+    Vector2 floorRounded() const
+    {
+        return (*this + Vector2(0.5f)).floor();
+    }
+
     bool operator==(const Vector2 &o) const
     {
         return x == o.x && y == o.y;

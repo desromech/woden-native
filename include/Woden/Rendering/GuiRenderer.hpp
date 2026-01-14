@@ -39,7 +39,7 @@ public:
     void withTranslationDo(const Math::Vector2 &translation, FT&& aBlock)
     {
         auto oldTranslation = currentTranslation;
-        currentTranslation = translation;
+        currentTranslation += translation;
         aBlock();
         currentTranslation = oldTranslation;
     }
