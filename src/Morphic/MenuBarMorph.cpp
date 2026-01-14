@@ -17,7 +17,10 @@ void MenuItemMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
 {
     if(hasMouseFocus())
     {
-        renderer->fillRectangleWithColor(getLocalBounds(), Vector4(0.6f, 0.6f, 0.6f, 1.0f));
+        if(owner.lock()->isMenuBar())
+            renderer->fillRectangleWithColor(getLocalBounds(), Vector4(0.6f, 0.6f, 0.6f, 1.0f));
+        else
+            renderer->fillRectangleWithColor(getLocalBounds(), Vector4(0.2f, 0.2f, 0.8f, 1.0f));
     }
 
     renderer->drawTextInRectangleWithColor(getLocalBounds().translatedBy(Vector2(5, 5)), label, Vector4(0, 0, 0, 1));
@@ -40,12 +43,14 @@ void MenuItemMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &ev
 void MenuItemMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
 {
     takeMouseFocus();
+    event->wasHandled = true;
 }
 
 
 MenuBarMorph::MenuBarMorph()
 {
     color = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
+    borderWidth = 0;
     barLayout = std::make_shared<HorizontalPackingLayout> ();
     setLayout(barLayout);
     setExtent(Vector2(100, 30));
@@ -60,6 +65,41 @@ void MenuBarMorph::addItem(const std::string &label, const MenuMorphPtr &submenu
     addMorph(item);
     barLayout->addMorph(item, 0, false);
     //updateLayout();
+}
+
+
+bool MenuBarMorph::isMenuBar() const
+{
+    return true;
+}
+
+MenuMorph::MenuMorph()
+{
+    color = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
+    menuLayout = std::make_shared<VerticalPackingLayout> ();
+    setLayout(menuLayout);
+    setExtent(Vector2(100, 30));
+}
+
+void MenuMorph::addItem(const std::string &label, const MenuMorphPtr &submenu)
+{
+    auto item = std::make_shared<MenuItemMorph> ();
+    item->setLabel(label);
+    item->submenu = submenu;
+
+    addMorph(item);
+    menuLayout->addMorph(item, 0, false);
+}
+
+void MenuMorph::addItem(const std::string &label, const ClickedAction &onClickAction)
+{
+    auto item = std::make_shared<MenuItemMorph> ();
+    item->setLabel(label);
+    item->onClickAction = onClickAction;
+
+    addMorph(item);
+    menuLayout->addMorph(item, 0, false);
+
 }
 
 } // End of namespace Morphic

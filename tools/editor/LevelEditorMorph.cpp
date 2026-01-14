@@ -39,7 +39,20 @@ bool LevelEditorMorph::initialize()
 void LevelEditorMorph::createMenuBar()
 {
     menuBar = std::make_shared<MenuBarMorph> ();
-    menuBar->addItem("File", nullptr);
+    {
+        auto menu = std::make_shared<MenuMorph> ();
+        menu->addItem("Open File...", [=](const MorphPtr &eventSource){
+            (void)eventSource;
+            printf("TODO: Open file");
+        });
+        menu->addItem("Exit", [=](const MorphPtr &eventSource){
+            (void)eventSource;
+            printf("TODO: Exit");
+        });
+
+        menuBar->addItem("File", menu);
+    }
+
     menuBar->addItem("Edit", nullptr);
     menuBar->addItem("Game", nullptr);
     menuBar->addItem("View", nullptr);

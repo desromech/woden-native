@@ -2,6 +2,7 @@
 #define WODEN_MORPHIC_MENU_BAR_MORPH_HPP
 
 #include "BorderedMorph.hpp"
+#include <functional>
 
 namespace Woden
 {
@@ -12,6 +13,9 @@ typedef std::shared_ptr<class MenuMorph> MenuMorphPtr;
 typedef std::shared_ptr<class MenuBarMorph> MenuBarMorphPtr;
 
 typedef std::shared_ptr<class HorizontalPackingLayout> HorizontalPackingLayoutPtr;
+typedef std::shared_ptr<class VerticalPackingLayout> VerticalPackingLayoutPtr;
+
+typedef std::function<void (MorphPtr)> ClickedAction;
 
 class MenuItemMorph : public Morph
 {
@@ -26,6 +30,7 @@ public:
     void setLabel(const std::string &newLabel);
 
     MenuMorphPtr submenu;
+    ClickedAction onClickAction;
 protected:
     std::string label;
 };
@@ -37,6 +42,8 @@ public:
 
     void addItem(const std::string &label, const MenuMorphPtr &submenu);
 
+    virtual bool isMenuBar() const override;
+
     HorizontalPackingLayoutPtr barLayout;
     std::vector<MenuItemMorphPtr> items;
 };
@@ -44,11 +51,13 @@ public:
 class MenuMorph : public BorderedMorph
 {
 public:
-    MenuMorph()
-    {
-        color = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
-        setExtent(Vector2(100, 30));
-    }
+    MenuMorph();
+
+    void addItem(const std::string &label, const MenuMorphPtr &submenu);
+    void addItem(const std::string &label, const ClickedAction &onClickAction);
+
+    VerticalPackingLayoutPtr menuLayout; 
+
 };
 
 } // End of namespace Morphic

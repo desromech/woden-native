@@ -23,6 +23,7 @@ using namespace Woden::Events;
 typedef std::shared_ptr<class Morph> MorphPtr;
 typedef std::weak_ptr<class Morph> MorphWeakPtr;
 typedef std::shared_ptr<class MorphicLayout> MorphicLayoutPtr;
+typedef std::shared_ptr<class RootMorph> RootMorphPtr;
 typedef std::shared_ptr<class SystemWindow> SystemWindowPtr;
 
 /**
@@ -119,6 +120,23 @@ public:
     virtual MorphPtr getMouseFocus() const;
     virtual bool hasMouseFocus() const;
 
+    virtual bool isMenuBar() const
+    {
+        return false;
+    }
+
+    virtual bool isRootMorph() const
+    {
+        return false;
+    }
+
+    virtual RootMorphPtr getRootMorph()
+    {
+        auto ownerMorph = owner.lock();
+        if(ownerMorph)
+            return ownerMorph->getRootMorph();
+        return nullptr;
+    }
 
     const MorphicLayoutPtr &getLayout() const
     {
