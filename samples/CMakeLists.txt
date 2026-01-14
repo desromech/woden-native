@@ -1,12 +1,12 @@
 ## UI/Morphic samples
-add_executable(Sample01-Empty SampleCommon.cpp Sample01-Empty.cpp)
-target_link_libraries(Sample01-Empty WodenEngine)
+add_executable(MorphicSample01-Empty SampleCommon.cpp MorphicSample01-Empty.cpp)
+target_link_libraries(MorphicSample01-Empty WodenEngine)
 
-add_executable(Sample02-String SampleCommon.cpp Sample02-String.cpp)
-target_link_libraries(Sample02-String WodenEngine)
+add_executable(MorphicSample02-String SampleCommon.cpp MorphicSample02-String.cpp)
+target_link_libraries(MorphicSample02-String WodenEngine)
 
-add_executable(Sample03-Button SampleCommon.cpp Sample03-Button.cpp)
-target_link_libraries(Sample03-Button WodenEngine)
+add_executable(MorphicSample03-Button SampleCommon.cpp MorphicSample03-Button.cpp)
+target_link_libraries(MorphicSample03-Button WodenEngine)
 
 ## Scene rendering samples.
 add_executable(SceneSample01-Empty SampleCommon.cpp SceneSample01-Empty.cpp)
