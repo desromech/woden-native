@@ -58,6 +58,12 @@ public:
         updateLayout();
     }
 
+    void setBounds(const Rectangle &newBounds)
+    {
+        bounds = newBounds;
+        updateLayout();
+    }
+
     Rectangle getLocalBounds() const
     {
         return Rectangle(Vector2(0), getExtent());

@@ -561,8 +561,6 @@ void SceneRenderer::setupWithScreenSize(int newScreenWidth, int newScreenHeight)
     if(screen && screen->screenHeight == newScreenHeight && screen->screenWidth == newScreenWidth)
         return;
 
-    printf("setupWithScreenSize %d %d\n", newScreenWidth, newScreenHeight);
-
     // Ensure to finish the execution, so that we can release existing resources.
     auto device = RenderingContext::getMainContext()->device;
     device->finishExecution();

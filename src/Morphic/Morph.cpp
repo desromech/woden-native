@@ -144,7 +144,7 @@ void Morph::updateLayout()
     if(!layout)
         return;
 
-    printf("TODO: apply layout\n");
+    layout->applyWithLocalBounds(getLocalBounds());
 }
 
 } // End of namespace Morphic

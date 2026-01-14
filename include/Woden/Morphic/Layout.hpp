@@ -1,6 +1,7 @@
 #ifndef WODEN_MORPHIC_LAYOUT_HPP
 #define WODEN_MORPHIC_LAYOUT_HPP
 
+#include "Woden/Math/Rectangle.hpp"
 #include <memory>
 
 namespace Woden
@@ -17,6 +18,7 @@ typedef std::shared_ptr<class Morph> MorphPtr;
 class MorphicLayout
 {
 public:
+    virtual void applyWithLocalBounds(const Math::Rectangle &localBounds) = 0;
 };
 
 /**
@@ -25,6 +27,7 @@ public:
 class FillMorphicLayout : public MorphicLayout
 {
 public:
+    virtual void applyWithLocalBounds(const Math::Rectangle &localBounds);
 
     MorphPtr morph;
 };
