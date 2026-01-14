@@ -13,6 +13,16 @@ namespace Woden
 namespace Rendering
 {
 
+/**
+ * I am a bundle of GUI elements that share a specific texture binding.
+ */
+struct GuiElementSet
+{
+    size_t startIndex = 0;
+    size_t elementCount = 0;
+    agpu_shader_resource_binding_ref textureBinding;
+};
+
 class GUIRenderer 
 {
 public:
@@ -45,10 +55,10 @@ public:
     }
 
     std::vector<GuiElement> guiElements;
+    std::vector<GuiElementSet> guiElementsSets;
 
     agpu_buffer_ref guiElementsBuffer;
     agpu_shader_resource_binding_ref guiElementsBinding;
-    agpu_shader_resource_binding_ref currentTextureBinding;
     Math::Vector2 framebufferExtent;
     Math::Vector2 scaleFactor;
 

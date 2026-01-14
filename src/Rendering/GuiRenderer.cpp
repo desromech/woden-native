@@ -44,6 +44,7 @@ void GUIRenderer::addGuiElement(const GuiElement &element)
     transformedElement.rectangleMin += currentTranslation;
 
     guiElements.push_back(transformedElement);
+    ++guiElementsSets.back().elementCount;
 }
 
 void GUIRenderer::addGuiElementWithImage(const GuiElement &element, const Assets::ImagePtr &image)
@@ -53,7 +54,14 @@ void GUIRenderer::addGuiElementWithImage(const GuiElement &element, const Assets
 
 void GUIRenderer::addGuiElementWithBinding(const GuiElement &element, const agpu_shader_resource_binding_ref &newTextureBinding)
 {
-    currentTextureBinding = newTextureBinding;
+    if(guiElementsSets.back().textureBinding != newTextureBinding)
+    {
+        GuiElementSet newSet;
+        newSet.startIndex = guiElements.size();
+        newSet.textureBinding = newTextureBinding;
+        guiElementsSets.push_back(newSet);
+    }
+    
     addGuiElement(element);
 }
 
@@ -148,15 +156,21 @@ void GUIRenderer::drawOnCommandList(const agpu_command_list_ref &commandList)
     commandList->usePipelineState(renderingContext->guiPipelineState);
     commandList->useShaderResources(renderingContext->guiSamplerBindings);
     commandList->useShaderResources(guiElementsBinding);
-    commandList->useShaderResources(currentTextureBinding);
     commandList->pushConstants(0, sizeof(pushConstants), &pushConstants);
-    commandList->drawArrays(4, guiElements.size(), 0, 0);
+
+    for(auto &elementSet : guiElementsSets)
+    {
+        commandList->useShaderResources(elementSet.textureBinding);
+        commandList->drawArrays(4, elementSet.elementCount, 0, elementSet.startIndex);
+    }
 }
 
 void GUIRenderer::reset()
 {
     guiElements.clear();
-    currentTextureBinding = RenderingContext::getMainContext()->guiEmptyTextureBinding;
+    guiElementsSets.clear();
+    guiElementsSets.push_back(GuiElementSet());
+    guiElementsSets.back().textureBinding = RenderingContext::getMainContext()->guiEmptyTextureBinding;
 }
 
 } // End of namespace Rendering
