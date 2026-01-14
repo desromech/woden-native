@@ -27,8 +27,13 @@ public:
         return std::static_pointer_cast<RootMorph> (shared_from_this());
     }
 
+    void popupAtPosition(const MorphPtr &popupMorph, const Vector2 &globalPosition);
+    void popupUniqueAtPosition(const MorphPtr &popupMorph, const Vector2 &globalPosition);
+    void killPopUps();
+
     MorphPtr currentKeyboardFocus;
     MorphPtr currentMouseFocus;
+    std::vector<MorphPtr> activePopups;
 };
 
 } // End of namespace Morphic

@@ -22,6 +22,7 @@ void Morph::removeMorph(const MorphPtr &morph)
         if(submorphs[i] == morph)
         {
             submorphs.erase(submorphs.begin() + i);
+            morph->owner.reset();
             return;
         }
     }
@@ -204,6 +205,15 @@ void Morph::updateLayout()
         return;
 
     layout->applyWithLocalBounds(getLocalBounds());
+}
+
+Vector2 Morph::transformLocalPositionToGlobal(const Vector2 &localPosition)
+{
+    auto globalPosition = getOrigin() + localPosition;
+    auto ownerMorph = owner.lock();
+    if(ownerMorph)
+        return ownerMorph->transformLocalPositionToGlobal(globalPosition);
+    return globalPosition;
 }
 
 } // End of namespace Morphic

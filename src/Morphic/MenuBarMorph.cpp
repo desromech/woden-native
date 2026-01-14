@@ -1,4 +1,5 @@
 #include "Woden/Morphic/MenuBarMorph.hpp"
+#include "Woden/Morphic/RootMorph.hpp"
 #include "Woden/Morphic/Layout.hpp"
 #include "Woden/Rendering/Context.hpp"
 #include "Woden/Rendering/GuiRenderer.hpp"
@@ -37,6 +38,25 @@ void MenuItemMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &ev
 {
     if(event->isLeftButton())
     {
+        auto ownerMorph = owner.lock();
+        if(ownerMorph && ownerMorph->isMenuBar())
+        {
+            auto menuBar = std::static_pointer_cast<MenuBarMorph> (ownerMorph);
+            menuBar->toggleSubmenuOpenAtPosition(submenu, transformLocalPositionToGlobal(Vector2(0, getExtent().y)));
+        }
+        else
+        {
+            auto rootMorph = getRootMorph();
+            if(rootMorph)
+                rootMorph->killPopUps();
+        }
+
+        // Send the action.
+        if(onClickAction)
+            onClickAction(shared_from_this());
+
+        event->wasHandled = true;
+
     }
 }
 
@@ -44,6 +64,13 @@ void MenuItemMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
 {
     takeMouseFocus();
     event->wasHandled = true;
+
+    auto ownerMorph = owner.lock();
+    if(ownerMorph && ownerMorph->isMenuBar() && ownerMorph->isMenuOpen() && submenu)
+    {
+        ownerMorph->getRootMorph()->popupUniqueAtPosition(submenu, transformLocalPositionToGlobal(Vector2(0, getExtent().y)));
+    }
+
 }
 
 
@@ -73,6 +100,25 @@ bool MenuBarMorph::isMenuBar() const
     return true;
 }
 
+bool MenuBarMorph::isMenuOpen() const
+{
+    return isMenuOpen_;
+}
+
+void MenuBarMorph::toggleSubmenuOpenAtPosition(const MenuMorphPtr &submenu, const Vector2 &openPosition)
+{
+    if(isMenuOpen_)
+    {
+        isMenuOpen_ = false;
+        getRootMorph()->killPopUps();
+    }
+    else
+    {
+        isMenuOpen_ = true;
+        getRootMorph()->popupUniqueAtPosition(submenu, openPosition);
+    }
+}
+
 MenuMorph::MenuMorph()
 {
     color = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -89,6 +135,8 @@ void MenuMorph::addItem(const std::string &label, const MenuMorphPtr &submenu)
 
     addMorph(item);
     menuLayout->addMorph(item, 0, false);
+    
+    fitSize();
 }
 
 void MenuMorph::addItem(const std::string &label, const ClickedAction &onClickAction)
@@ -100,6 +148,20 @@ void MenuMorph::addItem(const std::string &label, const ClickedAction &onClickAc
     addMorph(item);
     menuLayout->addMorph(item, 0, false);
 
+    fitSize();
+}
+
+void MenuMorph::fitSize()
+{
+    Vector2 fitExtent = Vector2(0);
+    for(auto &morph : submorphs)
+    {
+        auto extent = morph->getExtent();
+        fitExtent.x = std::max(fitExtent.x, extent.x);
+        fitExtent.y += extent.y;
+    }
+
+    setExtent(fitExtent);
 }
 
 } // End of namespace Morphic

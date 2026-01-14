@@ -43,9 +43,14 @@ public:
     void addItem(const std::string &label, const MenuMorphPtr &submenu);
 
     virtual bool isMenuBar() const override;
+    virtual bool isMenuOpen() const override;
+
+    void toggleSubmenuOpenAtPosition(const MenuMorphPtr &submenu, const Vector2 &openPosition);
 
     HorizontalPackingLayoutPtr barLayout;
     std::vector<MenuItemMorphPtr> items;
+
+    bool isMenuOpen_ = false;
 };
 
 class MenuMorph : public BorderedMorph
@@ -55,6 +60,8 @@ public:
 
     void addItem(const std::string &label, const MenuMorphPtr &submenu);
     void addItem(const std::string &label, const ClickedAction &onClickAction);
+
+    virtual void fitSize();
 
     VerticalPackingLayoutPtr menuLayout; 
 

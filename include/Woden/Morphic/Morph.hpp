@@ -125,6 +125,11 @@ public:
         return false;
     }
 
+    virtual bool isMenuOpen() const
+    {
+        return false;
+    }
+
     virtual bool isRootMorph() const
     {
         return false;
@@ -151,6 +156,8 @@ public:
 
     virtual void fitSize();
     virtual void updateLayout();
+
+    Vector2 transformLocalPositionToGlobal(const Vector2 &localPosition);
 
     MorphWeakPtr owner;
     Rectangle bounds = Rectangle(Vector2(0, 0), Vector2(50, 40));
