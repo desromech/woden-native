@@ -146,7 +146,7 @@ void MenuMorph::addItem(const std::string &label, const ClickedAction &onClickAc
     item->onClickAction = onClickAction;
 
     addMorph(item);
-    menuLayout->addMorph(item, 0, false);
+    menuLayout->addMorph(item, 0, true);
 
     fitSize();
 }
