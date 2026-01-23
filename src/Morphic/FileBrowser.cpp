@@ -37,11 +37,21 @@ void FileBrowser::initialize()
     fileTable = MakeMorph<TableMorph>();
     addMorph(fileTable);
 
+    // Create the buttons.
+    auto cancelButton = MakeMorph<SimpleButtonMorph> ();
+    cancelButton->setLabel("Cancel");
+    addMorph(cancelButton);
+
+    auto acceptButton = MakeMorph<SimpleButtonMorph> ();
+    acceptButton->setLabel("Accept");
+    addMorph(acceptButton);
+    
     // Add the container to the layout.
     browserLayout->addMorph(directoryLabel, 0, true);
     browserLayout->addMorph(fileTable, 1, true);
+    browserLayout->addMorph(cancelButton, 0, false);
+    browserLayout->addMorph(acceptButton, 0, false);
     setLayout(browserLayout);
-
 }
 
 void FileBrowser::setDirectory(const std::string &directory)
