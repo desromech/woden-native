@@ -74,9 +74,13 @@ public:
     float computeVisibleExactRowCount();
     int computeVisibleRowCount();
     int computeStartingRowIndex();
+    int computeRowIndexAtPosition(const Vector2 &aPosition);
 
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
     virtual void drawRowsWith(const Rendering::GUIRendererPtr &renderer);
+
+    virtual void handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event) override;
+    virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event) override;
 
     TableMorphPtr getTable();
 };
@@ -97,6 +101,7 @@ public:
 
     float getRowHeight();
 
+    void clearSelection();
     bool isSelectedRowIndex(size_t index);
     void selectSingleRow(size_t rowIndex);
 

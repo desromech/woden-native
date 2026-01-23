@@ -64,6 +64,12 @@ int TableContainerMorph::computeStartingRowIndex()
     return int(floor(getTable()->rowPositionY / getTable()->getRowHeight()));
 }
 
+int TableContainerMorph::computeRowIndexAtPosition(const Vector2 &aPosition)
+{
+    auto table = getTable();
+    return (int)floor(((aPosition.y + table->rowPositionY) / table->getRowHeight()));
+}
+
 void TableContainerMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
 {
     BorderedMorph::drawWith(renderer);
@@ -96,11 +102,30 @@ void TableContainerMorph::drawRowsWith(const Rendering::GUIRendererPtr &renderer
 
         // Selected display
         if(table->isSelectedRowIndex((size_t)rowIndex))
-            renderer->fillRectangleWithColor(rowBounds, Vector4(0.2, 0.4, 1.0, 1.0));
+            renderer->fillRectangleWithColor(rowBounds, Vector4(0.2f, 0.4f, 1.0, 1.0));
 
         Rectangle rowTextBounds = Rectangle::WithOriginAndExtent(Vector2(5, rowPositionY), Vector2(rowWidth, rowHeight));
         renderer->drawTextInRectangleWithColor(rowTextBounds, element->asString(), Vector4(0, 0, 0, 1));
     }
+}
+
+void TableContainerMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
+{
+    int rowIndex = computeRowIndexAtPosition(event->position);
+
+    auto table = getTable();
+    auto datasource = table->getDataSource();
+    if(rowIndex >= 0 && datasource->isValidIndex((size_t) rowIndex))
+        table->selectSingleRow(rowIndex);
+    else
+        table->clearSelection();
+}
+
+void TableContainerMorph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
+{
+    auto table = getTable();
+    table->rowPositionY = std::max(0.0f, table->rowPositionY - event->scrollAmount.y*10);
+    event->wasHandled = true;
 }
 
 TableMorphPtr TableContainerMorph::getTable()
@@ -116,15 +141,15 @@ TableMorph::TableMorph()
 
 void TableMorph::initialize()
 {
-    auto layout = std::make_shared<HorizontalPackingLayout> ();
+    auto tableLayout = std::make_shared<HorizontalPackingLayout> ();
 
     // Create the container.
     container = MakeMorph<TableContainerMorph>();
     addMorph(container);
 
     // Add the container to the layout.
-    layout->addMorph(container, 1, true);
-    setLayout(layout);
+    tableLayout->addMorph(container, 1, true);
+    setLayout(tableLayout);
 }
 
 const TableContainerMorphPtr &TableMorph::getContainer() const
@@ -146,6 +171,11 @@ float TableMorph::getRowHeight()
 {
     auto fontFace = Woden::Rendering::RenderingContext::getMainContext()->defaultFontFace;
     return fontFace->getHeight();
+}
+
+void TableMorph::clearSelection()
+{
+    selectedIndices.clear();
 }
 
 bool TableMorph::isSelectedRowIndex(size_t index)
