@@ -21,6 +21,9 @@ static void ensureSDLInitialization()
     if(hasInitializedSDL2)
         return;
 
+    SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
+    //SDL_SetHint(SDL_HINT_QUIT_ON_LAST_WINDOW_CLOSE, "0");
+        
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE);
     hasInitializedSDL2 = true;
 }
@@ -124,6 +127,27 @@ static void onMouseWheel(const SDL_MouseWheelEvent &event)
     window->processEvent(morphicEvent);
 }
 
+static void onWindowEvent(const SDL_WindowEvent &event)
+{
+    auto window = getWindowWithID(event.windowID);
+    if(!window)
+        return;
+    
+    switch(event.event)
+    {
+    case SDL_WINDOWEVENT_RESIZED:
+    case SDL_WINDOWEVENT_SIZE_CHANGED:
+        window->onSizeChanged();
+        break;
+
+    case SDL_WINDOWEVENT_CLOSE:
+        window->onCloseRequest();
+        break;
+    default:
+        break;
+    }
+}
+
 void processEvent(const SDL_Event *event)
 {
     switch(event->type)
@@ -148,6 +172,9 @@ void processEvent(const SDL_Event *event)
         break;
     case SDL_MOUSEWHEEL:
         onMouseWheel(event->wheel);
+        break;
+    case SDL_WINDOWEVENT:
+        onWindowEvent(event->window);
         break;
     case SDL_QUIT:
         isQuitting = true;
@@ -294,6 +321,11 @@ void SystemWindow::close()
     auto renderingContext = Woden::Rendering::RenderingContext::getMainContext();
     renderingContext->device->finishExecution();
 
+    auto windowId = SDL_GetWindowID(handle);
+    auto it = sdlWindowMap.find(windowId);
+    if(it != sdlWindowMap.end())
+        sdlWindowMap.erase(it);
+
     SDL_DestroyWindow(handle);
     handle = nullptr;
 }
@@ -365,6 +397,16 @@ void SystemWindow::swapBuffers()
             throw e;
         }
     }
+}
+
+void SystemWindow::onCloseRequest()
+{
+    printf("TODO: On close request\n");
+}
+
+void SystemWindow::onSizeChanged()
+{
+    recreateSwapChain();
 }
 
 void SystemWindow::recreateSwapChain()

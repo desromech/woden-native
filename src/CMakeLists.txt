@@ -29,6 +29,7 @@ set(WodenEngine_Sources
 
     
     Morphic/BorderedMorph.cpp
+    Morphic/FileBrowser.cpp
     Morphic/MenuBarMorph.cpp
     Morphic/Morph.cpp
     Morphic/RootMorph.cpp

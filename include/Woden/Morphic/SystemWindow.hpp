@@ -26,6 +26,9 @@ public:
     void swapBuffers();
     void recreateSwapChain();
 
+    void onCloseRequest();
+    void onSizeChanged();
+
     virtual void fullDrawWith(const Rendering::GUIRendererPtr &renderer) override;
 
     SDL_Window *handle = nullptr;

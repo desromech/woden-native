@@ -20,6 +20,9 @@ target_link_libraries(MorphicSample06-TextInputMorph WodenEngine)
 add_executable(MorphicSample07-TableMorph SampleCommon.cpp MorphicSample07-TableMorph.cpp)
 target_link_libraries(MorphicSample07-TableMorph WodenEngine)
 
+add_executable(MorphicSample08-FileBrowser SampleCommon.cpp MorphicSample08-FileBrowser.cpp)
+target_link_libraries(MorphicSample08-FileBrowser WodenEngine)
+
 ## Scene rendering samples.
 add_executable(SceneSample01-Empty SampleCommon.cpp SceneSample01-Empty.cpp)
 target_link_libraries(SceneSample01-Empty WodenEngine)

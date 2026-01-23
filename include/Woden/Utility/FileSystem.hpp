@@ -2,6 +2,7 @@
 #define _WODEN_UTILITY_FILE_SYSTEM_HPP
 
 #include <string>
+#include <vector>
 
 namespace Woden
 {
@@ -15,6 +16,16 @@ std::string extension(const std::string &path);
 bool isAbsolutePath(const std::string &path);
 std::string join(const std::string &leftPath, const std::string &rightPath);
 
+std::string getCurrentWorkingDirectory();
+
+struct DirectoryEntry
+{
+    bool isDirectory;
+    std::string name;
+};
+
+std::vector<DirectoryEntry> readWholeDirectory(const std::string &directoryPath);
+std::vector<DirectoryEntry> readWholeDirectorySorted(const std::string &directoryPath);
 
 } // End of namespace Utility
 } // End of namespace Woden

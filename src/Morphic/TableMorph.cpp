@@ -86,6 +86,8 @@ void TableContainerMorph::drawRowsWith(const Rendering::GUIRendererPtr &renderer
     auto rowHeight = table->getRowHeight();
 
     const auto &dataSource = table->getDataSource();
+    if(!dataSource)
+        return;
 
     auto rowWidth = getExtent().x; 
 
@@ -115,6 +117,9 @@ void TableContainerMorph::handleMouseButtonDownEvent(const MouseButtonDownEventP
 
     auto table = getTable();
     auto datasource = table->getDataSource();
+    if(!datasource)
+        return;
+
     if(rowIndex >= 0 && datasource->isValidIndex((size_t) rowIndex))
         table->selectSingleRow(rowIndex);
     else
