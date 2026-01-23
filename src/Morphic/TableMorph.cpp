@@ -80,9 +80,8 @@ void TableContainerMorph::drawRowsWith(const Rendering::GUIRendererPtr &renderer
     auto rowHeight = table->getRowHeight();
 
     const auto &dataSource = table->getDataSource();
-    printf("row height %f\n", rowHeight);
-    printf("visible row range %d %d\n", startingRowIndex, startingRowIndex + visibleRowCount);
-    printf("dataSource size: %zu\n", dataSource->getNumberOfElements());
+
+    auto rowWidth = getExtent().x; 
 
     for(int displayIndex = 0; displayIndex < visibleRowCount; ++displayIndex)
     {
@@ -93,8 +92,14 @@ void TableContainerMorph::drawRowsWith(const Rendering::GUIRendererPtr &renderer
         if(!element)
             continue;
 
-        //Rectangle rowBounds = Rectangle::WithOriginAndExtent();
-        printf("%d: %s\n", rowIndex, element->asString().c_str());
+        Rectangle rowBounds = Rectangle::WithOriginAndExtent(Vector2(0, rowPositionY), Vector2(rowWidth, rowHeight));
+
+        // Selected display
+        if(table->isSelectedRowIndex((size_t)rowIndex))
+            renderer->fillRectangleWithColor(rowBounds, Vector4(0.2, 0.4, 1.0, 1.0));
+
+        Rectangle rowTextBounds = Rectangle::WithOriginAndExtent(Vector2(5, rowPositionY), Vector2(rowWidth, rowHeight));
+        renderer->drawTextInRectangleWithColor(rowTextBounds, element->asString(), Vector4(0, 0, 0, 1));
     }
 }
 
@@ -141,6 +146,23 @@ float TableMorph::getRowHeight()
 {
     auto fontFace = Woden::Rendering::RenderingContext::getMainContext()->defaultFontFace;
     return fontFace->getHeight();
+}
+
+bool TableMorph::isSelectedRowIndex(size_t index)
+{
+    for(auto selectedIndex : selectedIndices)
+    {
+        if(selectedIndex == index)
+            return true;
+    }
+
+    return false;
+}
+
+void TableMorph::selectSingleRow(size_t rowIndex)
+{
+    selectedIndices.clear();
+    selectedIndices.push_back(rowIndex);
 }
 
 } // End of namespace Morphic

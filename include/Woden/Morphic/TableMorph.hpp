@@ -97,10 +97,15 @@ public:
 
     float getRowHeight();
 
+    bool isSelectedRowIndex(size_t index);
+    void selectSingleRow(size_t rowIndex);
+
     float rowPositionY = 0;
+
 protected:
     TableContainerMorphPtr container;    
     TableDataSourcePtr dataSource;
+    std::vector<size_t> selectedIndices;
 };
 
 } // End of namespace Morphic
