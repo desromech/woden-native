@@ -34,6 +34,11 @@ public:
     float descent = 0;
     float linegap = 0;
 
+    float getHeight() const
+    {
+        return ascent - descent + linegap;
+    }
+
     Math::Vector2 measureTextExtent(const std::string &text);
 
     ImagePtr image;

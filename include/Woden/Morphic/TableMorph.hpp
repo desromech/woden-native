@@ -71,6 +71,10 @@ class TableContainerMorph : public BorderedMorph
 public:
     TableContainerMorph();
 
+    float computeVisibleExactRowCount();
+    int computeVisibleRowCount();
+    int computeStartingRowIndex();
+
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
     virtual void drawRowsWith(const Rendering::GUIRendererPtr &renderer);
 
@@ -91,6 +95,9 @@ public:
     const TableDataSourcePtr &getDataSource() const;
     void setDataSource(const TableDataSourcePtr &newDataSource);
 
+    float getRowHeight();
+
+    float rowPositionY = 0;
 protected:
     TableContainerMorphPtr container;    
     TableDataSourcePtr dataSource;

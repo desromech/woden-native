@@ -1,5 +1,7 @@
 #include "Woden/Morphic/TableMorph.hpp"
 #include "Woden/Morphic/Layout.hpp"
+#include "Woden/Rendering/Context.hpp"
+#include "Woden/Rendering/GuiRenderer.hpp"
 
 namespace Woden
 {
@@ -47,6 +49,21 @@ TableContainerMorph::TableContainerMorph()
     color = Vector4(1, 1, 1, 1);
 }
 
+float TableContainerMorph::computeVisibleExactRowCount()
+{
+    return getExtent().y / getTable()->getRowHeight();
+}
+
+int TableContainerMorph::computeVisibleRowCount()
+{
+    return int(ceil(computeVisibleExactRowCount()));
+}
+
+int TableContainerMorph::computeStartingRowIndex()
+{
+    return int(floor(getTable()->rowPositionY / getTable()->getRowHeight()));
+}
+
 void TableContainerMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
 {
     BorderedMorph::drawWith(renderer);
@@ -55,8 +72,30 @@ void TableContainerMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
 
 void TableContainerMorph::drawRowsWith(const Rendering::GUIRendererPtr &renderer)
 {
-    const auto &dataSource = getTable()->getDataSource();
+    const auto &table = getTable();
+    int visibleRowCount = computeVisibleRowCount();
+    int startingRowIndex = computeStartingRowIndex();
+
+    float positionY = table->rowPositionY;
+    auto rowHeight = table->getRowHeight();
+
+    const auto &dataSource = table->getDataSource();
+    printf("row height %f\n", rowHeight);
+    printf("visible row range %d %d\n", startingRowIndex, startingRowIndex + visibleRowCount);
     printf("dataSource size: %zu\n", dataSource->getNumberOfElements());
+
+    for(int displayIndex = 0; displayIndex < visibleRowCount; ++displayIndex)
+    {
+        int rowIndex = startingRowIndex + displayIndex;
+        float rowPositionY = rowIndex*rowHeight - positionY;
+
+        auto element = dataSource->getElementAtIndex(size_t(rowIndex));
+        if(!element)
+            continue;
+
+        //Rectangle rowBounds = Rectangle::WithOriginAndExtent();
+        printf("%d: %s\n", rowIndex, element->asString().c_str());
+    }
 }
 
 TableMorphPtr TableContainerMorph::getTable()
@@ -98,6 +137,11 @@ void TableMorph::setDataSource(const TableDataSourcePtr &newDataSource)
     dataSource = newDataSource;
 }
 
+float TableMorph::getRowHeight()
+{
+    auto fontFace = Woden::Rendering::RenderingContext::getMainContext()->defaultFontFace;
+    return fontFace->getHeight();
+}
 
 } // End of namespace Morphic
 } // End of namespace Woden

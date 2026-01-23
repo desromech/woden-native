@@ -9,9 +9,12 @@ int woden_main(int argc, const char **argv)
     (void)argv;
 
     auto dataSource = std::make_shared<SimpleTableDataSource> ();
-    dataSource->addString("first");
-    dataSource->addString("second");
-    dataSource->addString("third");
+    for(int i = 0; i < 20; ++i)
+    {
+        char buffer[256];
+        snprintf(buffer, sizeof(buffer), "%d", i);
+        dataSource->addString(buffer);
+    }
 
     auto tableMorph = MakeMorph<TableMorph>();
     tableMorph->setExtent(Vector2(200, 200));
