@@ -78,6 +78,18 @@ public:
 };
 
 /**
+ * I am a layout inside a packing layout
+ */
+class PackingLayoutLayoutElement : public PackingLayoutElement
+{
+public:
+    virtual Math::Vector2 getFixedExtent() override;
+    virtual void applyRectangle(const Math::Rectangle &rectangle) override;
+
+    MorphicLayoutPtr layout;
+};
+
+/**
  * I am a layout that is used for packing a set of morphs in a vertical or horizontal layout
  */
 class PackingLayout : public MorphicLayout
@@ -87,6 +99,15 @@ public:
     {
         auto element = std::make_shared<PackingLayoutMorphElement> ();
         element->morph = morph;
+        element->proportion = proportion;
+        element->expanded = expanded;
+        elements.push_back(element);
+    }
+
+    void addLayout(const MorphicLayoutPtr &layout, int proportion = 1, bool expanded = false)
+    {
+        auto element = std::make_shared<PackingLayoutLayoutElement> ();
+        element->layout = layout;
         element->proportion = proportion;
         element->expanded = expanded;
         elements.push_back(element);

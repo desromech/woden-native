@@ -28,6 +28,17 @@ void PackingLayoutMorphElement::applyRectangle(const Math::Rectangle &rectangle)
     morph->setBounds(rectangle);
 }
 
+Math::Vector2 PackingLayoutLayoutElement::getFixedExtent()
+{
+    // TODO: Implement this properly.
+    return Math::Vector2(50, 50);
+}
+
+void PackingLayoutLayoutElement::applyRectangle(const Math::Rectangle &rectangle)
+{
+    layout->applyWithLocalBounds(rectangle);
+}
+
 void HorizontalPackingLayout::applyWithLocalBounds(const Math::Rectangle &localBounds)
 {
     // First pass: gather the proportion and fixed height

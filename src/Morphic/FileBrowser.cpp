@@ -45,12 +45,15 @@ void FileBrowser::initialize()
     auto acceptButton = MakeMorph<SimpleButtonMorph> ();
     acceptButton->setLabel("Accept");
     addMorph(acceptButton);
+
+    auto buttonLayout = std::make_shared<HorizontalPackingLayout> ();
+    buttonLayout->addMorph(cancelButton, 0, true);
+    buttonLayout->addMorph(acceptButton, 0, true);
     
     // Add the container to the layout.
     browserLayout->addMorph(directoryLabel, 0, true);
     browserLayout->addMorph(fileTable, 1, true);
-    browserLayout->addMorph(cancelButton, 0, false);
-    browserLayout->addMorph(acceptButton, 0, false);
+    browserLayout->addLayout(buttonLayout, 0, true);
     setLayout(browserLayout);
 }
 
