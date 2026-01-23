@@ -17,6 +17,9 @@ target_link_libraries(MorphicSample05-HorizontalButtonStack WodenEngine)
 add_executable(MorphicSample06-TextInputMorph SampleCommon.cpp MorphicSample06-TextInputMorph.cpp)
 target_link_libraries(MorphicSample06-TextInputMorph WodenEngine)
 
+add_executable(MorphicSample07-TableMorph SampleCommon.cpp MorphicSample07-TableMorph.cpp)
+target_link_libraries(MorphicSample07-TableMorph WodenEngine)
+
 ## Scene rendering samples.
 add_executable(SceneSample01-Empty SampleCommon.cpp SceneSample01-Empty.cpp)
 target_link_libraries(SceneSample01-Empty WodenEngine)

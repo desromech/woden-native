@@ -20,7 +20,7 @@ typedef std::shared_ptr<class TableMorph> TableMorphPtr;
 class TableDataSourceElement
 {
 public:
-
+    virtual std::string asString() const = 0;
 };
 
 /**
@@ -29,6 +29,7 @@ public:
 class TableDataSourceStringElement : public TableDataSourceElement
 {
 public:
+    virtual std::string asString() const;
 
     std::string string;
 };
@@ -39,6 +40,10 @@ public:
 class TableDataSource
 {
 public:
+    virtual TableDataSourceElementPtr getElementAtIndex(size_t index) = 0;
+    virtual bool isValidIndex(size_t index) = 0;
+
+    virtual size_t getNumberOfElements() = 0;
 };
 
 /**
@@ -50,6 +55,11 @@ public:
     void addString(const std::string &stringElement);
     void addElement(const TableDataSourceElementPtr &element);
 
+    virtual TableDataSourceElementPtr getElementAtIndex(size_t index) override;
+    virtual bool isValidIndex(size_t index) override;
+
+    virtual size_t getNumberOfElements() override;
+
     std::vector<TableDataSourceElementPtr> elements;
 };
 
@@ -60,8 +70,31 @@ class TableContainerMorph : public BorderedMorph
 {
 public:
     TableContainerMorph();
+
+    virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
+    virtual void drawRowsWith(const Rendering::GUIRendererPtr &renderer);
+
+    TableMorphPtr getTable();
 };
 
+/**
+ * I am a table morph.
+ */
+class TableMorph : public BorderedMorph
+{
+public:
+    TableMorph();
+    virtual void initialize() override;
+
+    const TableContainerMorphPtr &getContainer() const;
+
+    const TableDataSourcePtr &getDataSource() const;
+    void setDataSource(const TableDataSourcePtr &newDataSource);
+
+protected:
+    TableContainerMorphPtr container;    
+    TableDataSourcePtr dataSource;
+};
 
 } // End of namespace Morphic
 } // End of namespace Woden
