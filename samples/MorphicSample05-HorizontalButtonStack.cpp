@@ -8,14 +8,14 @@ int woden_main(int argc, const char **argv)
 {
     (void)argc;
     (void)argv;
-    auto morph = std::make_shared<Morph> ();
+    auto morph = MakeMorph<Morph> ();
     auto layout = std::make_shared<HorizontalPackingLayout> ();
 
     for(int i = 0; i < 5; ++i)
     {
         char label[64];
         snprintf(label, sizeof(label), "Click Me %d", i);
-        auto button = std::make_shared<SimpleButtonMorph> ();
+        auto button = MakeMorph<SimpleButtonMorph> ();
         button->setLabel(label);
         button->onClickAction = [=](const MorphPtr &morph){
             (void)morph;

@@ -17,7 +17,7 @@ class LevelEditorMorph : public Morph
 public:
     LevelEditorMorph();
     
-    bool initialize();
+    virtual void initialize() override;
 
     void createMenuBar();
 

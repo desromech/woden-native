@@ -34,6 +34,8 @@ class Morph : public std::enable_shared_from_this<Morph>
 public:
     Morph();
     virtual ~Morph();
+
+    virtual void initialize();
     
     static int runMainLoop();
     SystemWindowPtr openInSystemWindow();
@@ -167,6 +169,14 @@ public:
 protected:
     MorphicLayoutPtr layout;
 };
+
+template<typename MT>
+inline std::shared_ptr<MT> MakeMorph()
+{
+    auto morph = std::make_shared<MT> ();
+    morph->initialize();
+    return morph;
+}
 
 } // End of namespace Morphic
 } // End of namespace Woden

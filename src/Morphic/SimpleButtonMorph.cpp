@@ -29,7 +29,7 @@ void SimpleButtonMorph::setLabel(const std::string &labelText)
         setLayout(nullptr);
     }
 
-    label = std::make_shared<StringMorph> ();
+    label = MakeMorph<StringMorph> ();
     label->label = labelText;
     label->fitSize();
     addMorph(label);

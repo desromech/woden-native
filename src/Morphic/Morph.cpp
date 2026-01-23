@@ -15,6 +15,10 @@ Morph::~Morph()
 {
 }
 
+void Morph::initialize()
+{
+}
+
 void Morph::removeMorph(const MorphPtr &morph)
 {
     for(size_t i = 0; i < submorphs.size(); ++i)

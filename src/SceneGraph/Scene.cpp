@@ -82,7 +82,7 @@ void Scene::addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingS
 
 Morphic::SceneMorphPtr Scene::openInMorphic()
 {
-    auto sceneMorph = std::make_shared<Morphic::SceneMorph> ();
+    auto sceneMorph = Morphic::MakeMorph<Morphic::SceneMorph> ();
     sceneMorph->scene = std::static_pointer_cast<Scene> (shared_from_this());
     return sceneMorph;
 }

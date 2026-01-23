@@ -13,8 +13,7 @@ int main(int argc, const char *argv[])
     if(!Woden::Assets::ResourceCache::Get()->initialize())
         return 1;
     
-    auto editor = std::make_shared<Woden::LevelEditor::LevelEditorMorph> ();
-    editor->initialize();
+    auto editor = MakeMorph<Woden::LevelEditor::LevelEditorMorph> ();
     editor->openInSystemWindow();
 
     int exitCode = Morph::runMainLoop();

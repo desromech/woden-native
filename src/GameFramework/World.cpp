@@ -50,7 +50,7 @@ void World::spawnActor(const ActorPtr &actor)
 Morphic::WorldMorphPtr World::playInMorphic()
 {
     beginPlay();
-    auto worldMorph = std::make_shared<Morphic::WorldMorph> ();
+    auto worldMorph = Morphic::MakeMorph<Morphic::WorldMorph> ();
     worldMorph->world = shared_from_this();
     return worldMorph;
 }

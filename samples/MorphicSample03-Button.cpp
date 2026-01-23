@@ -7,7 +7,7 @@ int woden_main(int argc, const char **argv)
 {
     (void)argc;
     (void)argv;
-    auto morph = std::make_shared<SimpleButtonMorph> ();
+    auto morph = MakeMorph<SimpleButtonMorph> ();
     morph->setLabel("Click me");
     morph->onClickAction = [](const MorphPtr &morph){
         (void)morph;

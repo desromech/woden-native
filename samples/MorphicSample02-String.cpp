@@ -7,7 +7,7 @@ int woden_main(int argc, const char **argv)
 {
     (void)argc;
     (void)argv;
-    auto morph = std::make_shared<StringMorph> ();
+    auto morph = MakeMorph<StringMorph> ();
     morph->label = "Hello World";
     morph->setExtent(Vector2(128, 50));
     morph->openInSystemWindow();

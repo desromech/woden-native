@@ -16,12 +16,12 @@ LevelEditorMorph::LevelEditorMorph()
     setExtent(Vector2(1024, 576));
 }
 
-bool LevelEditorMorph::initialize()
+void LevelEditorMorph::initialize()
 {
     createMenuBar();
-    toolBar = std::make_shared<ToolBarMorph> ();
-    sceneView = std::make_shared<SceneMorph> ();
-    statusBar = std::make_shared<StatusBarMorph> ();
+    toolBar = MakeMorph<ToolBarMorph> ();
+    sceneView = MakeMorph<SceneMorph> ();
+    statusBar = MakeMorph<StatusBarMorph> ();
 
     addMorph(menuBar);
     addMorph(toolBar);
@@ -54,15 +54,13 @@ bool LevelEditorMorph::initialize()
         scene->normalLayer->addChild(pointLightSource->asSceneNodeWithPosition(Vector3(-1.5f, 1.5f, 1.6f)));
     }
     sceneView->scene = scene;
-
-    return true;
 }
 
 void LevelEditorMorph::createMenuBar()
 {
-    menuBar = std::make_shared<MenuBarMorph> ();
+    menuBar = MakeMorph<MenuBarMorph> ();
     {
-        auto menu = std::make_shared<MenuMorph> ();
+        auto menu = MakeMorph<MenuMorph> ();
         menu->addItem("Open File...", [=](const MorphPtr &eventSource){
             (void)eventSource;
             printf("TODO: Open file\n");
@@ -75,7 +73,7 @@ void LevelEditorMorph::createMenuBar()
         menuBar->addItem("File", menu);
     }
     {
-        auto menu = std::make_shared<MenuMorph> ();
+        auto menu = MakeMorph<MenuMorph> ();
         menu->addItem("Undo", [=](const MorphPtr &eventSource){
             (void)eventSource;
             printf("TODO: Undo\n");
@@ -88,7 +86,7 @@ void LevelEditorMorph::createMenuBar()
         menuBar->addItem("Edit", menu);
     }
     {
-        auto menu = std::make_shared<MenuMorph> ();
+        auto menu = MakeMorph<MenuMorph> ();
         menu->addItem("Play Level", [=](const MorphPtr &eventSource){
             (void)eventSource;
             printf("TODO: Play Level\n");
@@ -98,12 +96,12 @@ void LevelEditorMorph::createMenuBar()
     }
 
     {
-        auto menu = std::make_shared<MenuMorph> ();
+        auto menu = MakeMorph<MenuMorph> ();
         menuBar->addItem("View", menu);
     }
     
     {
-        auto menu = std::make_shared<MenuMorph> ();
+        auto menu = MakeMorph<MenuMorph> ();
         menu->addItem("About", [=](const MorphPtr &eventSource){
             (void)eventSource;
             printf("TODO: About window\n");

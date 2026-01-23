@@ -37,6 +37,7 @@ set(WodenEngine_Sources
     Morphic/SimpleButtonMorph.cpp
     Morphic/StringMorph.cpp
     Morphic/SystemWindow.cpp
+    Morphic/TableMorph.cpp
     Morphic/TextInputMorph.cpp
     Morphic/WorldMorph.cpp
 

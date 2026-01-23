@@ -85,7 +85,7 @@ MenuBarMorph::MenuBarMorph()
 
 void MenuBarMorph::addItem(const std::string &label, const MenuMorphPtr &submenu)
 {
-    auto item = std::make_shared<MenuItemMorph> ();
+    auto item = MakeMorph<MenuItemMorph> ();
     item->setLabel(label);
     item->submenu = submenu;
 
@@ -129,7 +129,7 @@ MenuMorph::MenuMorph()
 
 void MenuMorph::addItem(const std::string &label, const MenuMorphPtr &submenu)
 {
-    auto item = std::make_shared<MenuItemMorph> ();
+    auto item = MakeMorph<MenuItemMorph> ();
     item->setLabel(label);
     item->submenu = submenu;
 
@@ -141,7 +141,7 @@ void MenuMorph::addItem(const std::string &label, const MenuMorphPtr &submenu)
 
 void MenuMorph::addItem(const std::string &label, const ClickedAction &onClickAction)
 {
-    auto item = std::make_shared<MenuItemMorph> ();
+    auto item = MakeMorph<MenuItemMorph> ();
     item->setLabel(label);
     item->onClickAction = onClickAction;
 

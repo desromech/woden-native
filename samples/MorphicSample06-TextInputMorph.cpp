@@ -8,7 +8,7 @@ int woden_main(int argc, const char **argv)
 {
     (void)argc;
     (void)argv;
-    auto textInput = std::make_shared<TextInputMorph> ();
+    auto textInput = MakeMorph<TextInputMorph> ();
     textInput->openInSystemWindow();
     return 0;
 }
