@@ -6,6 +6,8 @@
 #include "Woden/Morphic/ToolBarMorph.hpp"
 #include "Woden/Morphic/StatusBarMorph.hpp"
 #include "Woden/Morphic/SceneMorph.hpp"
+#include "LevelEditorSceneViewMorph.hpp"
+
 namespace Woden
 {
 namespace LevelEditor
@@ -23,7 +25,7 @@ public:
 
     MenuBarMorphPtr menuBar;
     ToolBarMorphPtr toolBar;
-    SceneMorphPtr sceneView;
+    LevelEditorSceneViewMorphPtr sceneView;
     StatusBarMorphPtr statusBar;
 };
 
