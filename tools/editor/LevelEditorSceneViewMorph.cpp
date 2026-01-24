@@ -14,6 +14,18 @@ void LevelEditorSceneViewMorph::handleKeyboardDownEvent(const KeyboardDownEventP
 {
     switch(event->keySymbol)
     {
+    case SDLK_KP_7:
+        cameraAngles = Vector3(-M_PI_2, 0, 0);
+        cameraNode->transform.rotation = computeCameraOrientation();
+        break;
+    case SDLK_KP_1:
+        cameraAngles = Vector3(0);
+        cameraNode->transform.rotation = computeCameraOrientation();
+        break;
+    case SDLK_KP_3:
+        cameraAngles = Vector3(0, -M_PI_2, 0);
+        cameraNode->transform.rotation = computeCameraOrientation();
+        break;
     case SDLK_KP_5:
     {
         auto &camera = cameraNode->cameras.back();
