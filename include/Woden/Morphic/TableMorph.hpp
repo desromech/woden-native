@@ -79,7 +79,8 @@ public:
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
     virtual void drawRowsWith(const Rendering::GUIRendererPtr &renderer);
 
-    virtual void handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event) override;
+    virtual void handleMouseClickEvent(const MouseClickEventPtr &event) override;
+    virtual void handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event) override;
     virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event) override;
 
     TableMorphPtr getTable();

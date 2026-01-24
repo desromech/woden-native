@@ -30,7 +30,7 @@ int woden_main(int argc, const char **argv)
 
     Woden::Rendering::MaterialPtr floorMaterial = Woden::Assets::ResourceCache::Get()->getOrCreateCheckboardMaterial();
     Woden::Rendering::MetallicRoughnessMaterialPtr ceilingMaterial = std::make_shared<Woden::Rendering::MetallicRoughnessMaterial> ();
-    ceilingMaterial->baseColorFactor = Woden::Math::Vector4(0.05, 0.05, 0.05, 1.0);
+    ceilingMaterial->baseColorFactor = Woden::Math::Vector4(0.05f, 0.05f, 0.05f, 1.0);
     ceilingMaterial->roughnessFactor = 0.8f;
     ceilingMaterial->metallicFactor = 0.0f;
 

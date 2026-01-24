@@ -61,6 +61,28 @@ void MouseButtonUpEvent::sentToMorph(const MorphPtr &morph)
     morph->handleMouseButtonUpEvent(std::static_pointer_cast<MouseButtonUpEvent> (shared_from_this()));
 }
 
+// Mouse click event
+void MouseClickEvent::sentToActor(const ActorPtr &actor)
+{
+    actor->handleMouseClickEvent(std::static_pointer_cast<MouseClickEvent> (shared_from_this()));
+}
+
+void MouseClickEvent::sentToMorph(const MorphPtr &morph)
+{
+    morph->handleMouseClickEvent(std::static_pointer_cast<MouseClickEvent> (shared_from_this()));
+}
+
+// Mouse double click event
+void MouseDoubleClickEvent::sentToActor(const ActorPtr &actor)
+{
+    actor->handleMouseDoubleClickEvent(std::static_pointer_cast<MouseDoubleClickEvent> (shared_from_this()));
+}
+
+void MouseDoubleClickEvent::sentToMorph(const MorphPtr &morph)
+{
+    morph->handleMouseDoubleClickEvent(std::static_pointer_cast<MouseDoubleClickEvent> (shared_from_this()));
+}
+
 // Mouse motion event
 void MouseMotionEvent::sentToActor(const ActorPtr &actor)
 {

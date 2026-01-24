@@ -111,7 +111,7 @@ void TableContainerMorph::drawRowsWith(const Rendering::GUIRendererPtr &renderer
     }
 }
 
-void TableContainerMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
+void TableContainerMorph::handleMouseClickEvent(const MouseClickEventPtr &event)
 {
     int rowIndex = computeRowIndexAtPosition(event->position);
 
@@ -124,6 +124,22 @@ void TableContainerMorph::handleMouseButtonDownEvent(const MouseButtonDownEventP
         table->selectSingleRow(rowIndex);
     else
         table->clearSelection();
+}
+
+void TableContainerMorph::handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
+{
+    int rowIndex = computeRowIndexAtPosition(event->position);
+
+    auto table = getTable();
+    auto datasource = table->getDataSource();
+    if(!datasource)
+        return;
+
+    if(rowIndex >= 0 && datasource->isValidIndex((size_t) rowIndex))
+    {
+        table->selectSingleRow(rowIndex);
+        printf("TODO: activate row.\n");
+    }
 }
 
 void TableContainerMorph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
