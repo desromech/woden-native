@@ -4,6 +4,8 @@ set(LevelEditor_Sources
     LevelEditorMorph.hpp
     LevelEditorSceneViewMorph.cpp
     LevelEditorSceneViewMorph.hpp
+    LevelModel.cpp
+    LevelModel.hpp
 )
 
 add_executable(LevelEditor ${LevelEditor_Sources})
