@@ -2,6 +2,7 @@
 #define WODEN_EDITOR_LEVEl_MODEL_HPP
 
 #include "Woden/Math/AABox.hpp"
+#include "Woden/Math/Ray3D.hpp"
 #include "Woden/Morphic/TableMorph.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 #include <memory>

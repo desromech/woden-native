@@ -156,5 +156,10 @@ void LevelEditorMorph::createMenuBar()
     }
 }
 
+void LevelEditorMorph::rayPick(const Math::Ray3D &ray)
+{
+    printf("TODO: ray pick\n");
+}
+
 } // End of namespace LevelEditor
 } // End of namespace Woden

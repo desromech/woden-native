@@ -113,7 +113,7 @@ void TableContainerMorph::drawRowsWith(const Rendering::GUIRendererPtr &renderer
 
 void TableContainerMorph::handleMouseClickEvent(const MouseClickEventPtr &event)
 {
-    int rowIndex = computeRowIndexAtPosition(event->position);
+    int rowIndex = computeRowIndexAtPosition(event->position - getOrigin());
 
     auto table = getTable();
     auto datasource = table->getDataSource();
@@ -128,7 +128,7 @@ void TableContainerMorph::handleMouseClickEvent(const MouseClickEventPtr &event)
 
 void TableContainerMorph::handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
 {
-    int rowIndex = computeRowIndexAtPosition(event->position);
+    int rowIndex = computeRowIndexAtPosition(event->position - getOrigin());
 
     auto table = getTable();
     auto datasource = table->getDataSource();

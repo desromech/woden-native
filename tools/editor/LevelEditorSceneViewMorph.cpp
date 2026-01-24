@@ -1,4 +1,5 @@
 #include "LevelEditorSceneViewMorph.hpp"
+#include "LevelEditorMorph.hpp"
 #include "Woden/Rendering/Camera.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 
@@ -8,6 +9,11 @@ namespace LevelEditor
 {
 LevelEditorSceneViewMorph::LevelEditorSceneViewMorph()
 {
+}
+
+LevelEditorMorphPtr LevelEditorSceneViewMorph::getLevelEditor() const
+{
+    return std::static_pointer_cast<LevelEditorMorph> (owner.lock());
 }
 
 void LevelEditorSceneViewMorph::handleKeyboardDownEvent(const KeyboardDownEventPtr &event)
@@ -87,15 +93,12 @@ Math::Ray3D LevelEditorSceneViewMorph::computeRayForScreenPosition(const Vector2
 void LevelEditorSceneViewMorph::handleMouseClickEvent(const MouseClickEventPtr &event)
 {
     auto ray = computeRayForScreenPosition(event->position - getOrigin());
-    printf("Click ray: %f %f %f -> %f %f %f\n",
-        ray.origin.x, ray.origin.y, ray.origin.z,
-        ray.direction.x, ray.direction.y, ray.direction.z
-    ); 
+    getLevelEditor()->rayPick(ray);
 }
 
 void LevelEditorSceneViewMorph::handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
 {
-    //printf("TODO: Double click at %f %f\n", event->position.x, event->position.y);
+    printf("TODO: Double click at %f %f\n", event->position.x, event->position.y);
 
 }
 

@@ -25,6 +25,8 @@ public:
     void buildObjectPalette();
     void createMenuBar();
 
+    void rayPick(const Math::Ray3D &ray);
+
     MenuBarMorphPtr menuBar;
     ToolBarMorphPtr toolBar;
     LevelEditorSceneViewMorphPtr sceneView;
