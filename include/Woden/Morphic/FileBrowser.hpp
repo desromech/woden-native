@@ -4,6 +4,7 @@
 #include "TableMorph.hpp"
 #include "StringMorph.hpp"
 #include "SimpleButtonMorph.hpp"
+#include "TextInputMorph.hpp"
 
 namespace Woden
 {
@@ -38,6 +39,7 @@ public:
     StringMorphPtr directoryLabel;
     TableMorphPtr fileTable;
     SimpleTableDataSourcePtr fileTableDataSource;
+    TextInputMorphPtr fileNameInput;
 };
 
 /**

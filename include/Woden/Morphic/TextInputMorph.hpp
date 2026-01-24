@@ -8,6 +8,8 @@ namespace Woden
 namespace Morphic
 {
 
+typedef std::shared_ptr<class TextInputMorph> TextInputMorphPtr;
+
 /**
  * I am a text input morph
  */

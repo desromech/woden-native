@@ -37,6 +37,10 @@ void FileBrowser::initialize()
     fileTable = MakeMorph<TableMorph>();
     addMorph(fileTable);
 
+    // Create the text input
+    auto fileNameInput = MakeMorph<TextInputMorph> ();
+    addMorph(fileNameInput);
+
     // Create the buttons.
     auto cancelButton = MakeMorph<SimpleButtonMorph> ();
     cancelButton->setLabel("Cancel");
@@ -47,6 +51,7 @@ void FileBrowser::initialize()
     addMorph(acceptButton);
 
     auto buttonLayout = std::make_shared<HorizontalPackingLayout> ();
+    buttonLayout->addMorph(fileNameInput, 1, true);
     buttonLayout->addMorph(cancelButton, 0, true);
     buttonLayout->addMorph(acceptButton, 0, true);
     

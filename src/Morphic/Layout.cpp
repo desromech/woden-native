@@ -31,7 +31,7 @@ void PackingLayoutMorphElement::applyRectangle(const Math::Rectangle &rectangle)
 Math::Vector2 PackingLayoutLayoutElement::getFixedExtent()
 {
     // TODO: Implement this properly.
-    return Math::Vector2(50, 50);
+    return Math::Vector2(50, 25);
 }
 
 void PackingLayoutLayoutElement::applyRectangle(const Math::Rectangle &rectangle)
