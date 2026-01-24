@@ -8,9 +8,15 @@ LevelEditorSceneViewMorph::LevelEditorSceneViewMorph()
 {
 }
 
+void LevelEditorSceneViewMorph::handleKeyboardDownEvent(const KeyboardDownEventPtr &event)
+{
+
+}
+
 void LevelEditorSceneViewMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
 {
     SceneMorph::handleMouseMotionEvent(event);
+    takeKeyboardFocus();
 }
 
 void LevelEditorSceneViewMorph::handleMouseWheelEvent(const MouseWheelEventPtr &event)

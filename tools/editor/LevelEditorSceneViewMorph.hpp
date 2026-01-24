@@ -18,6 +18,8 @@ class LevelEditorSceneViewMorph : public SceneMorph
 public:
     LevelEditorSceneViewMorph();
 
+    virtual void handleKeyboardDownEvent(const KeyboardDownEventPtr &event) override;
+
     virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event) override;
     virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event) override;
     virtual void handleMouseClickEvent(const MouseClickEventPtr &event) override;

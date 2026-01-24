@@ -2,6 +2,7 @@
 #define WODEN_EDITOR_LEVEl_MODEL_HPP
 
 #include "Woden/Morphic/TableMorph.hpp"
+#include "Woden/SceneGraph/Scene.hpp"
 #include <memory>
 #include <vector>
 
@@ -19,6 +20,7 @@ public:
     virtual std::string asString() const override;
 
     std::string name;
+    SceneGraph::SceneNodePtr sceneNode;
 };
 
 class LevelModel : public Morphic::TableDataSource
