@@ -46,6 +46,24 @@ struct Frustum
         return result;
     }
 
+    static Frustum MakeOrtho(Scalar left, Scalar right, Scalar bottom, Scalar top, Scalar near, Scalar far)
+    {
+        Frustum result = {};
+
+        result.leftBottomNear  = Vector3(left, bottom,  near);
+        result.rightBottomNear = Vector3(right, bottom, near);
+        result.leftTopNear     = Vector3(left, top,     near);
+        result.rightTopNear    = Vector3(right, top,    near);
+
+        result.leftBottomFar  = Vector3(left, bottom,  far);
+        result.rightBottomFar = Vector3(right, bottom, far);
+        result.leftTopFar     = Vector3(left, top,     far);
+        result.rightTopFar    = Vector3(right, top,    far);
+
+        result.computePlanes();
+        return result;
+    }
+
     static Frustum MakePerspective(Scalar fovy, Scalar aspect, Scalar near, Scalar far)
     {
         Scalar fovyRad = Scalar(fovy *(M_PI/180.0) * 0.5);

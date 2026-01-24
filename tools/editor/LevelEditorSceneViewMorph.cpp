@@ -1,4 +1,6 @@
 #include "LevelEditorSceneViewMorph.hpp"
+#include "Woden/Rendering/Camera.hpp"
+#include "Woden/SceneGraph/Scene.hpp"
 
 namespace Woden
 {
@@ -10,7 +12,15 @@ LevelEditorSceneViewMorph::LevelEditorSceneViewMorph()
 
 void LevelEditorSceneViewMorph::handleKeyboardDownEvent(const KeyboardDownEventPtr &event)
 {
-
+    switch(event->keySymbol)
+    {
+    case SDLK_KP_5:
+    {
+        auto &camera = cameraNode->cameras.back();
+        camera->isPerspective = !camera->isPerspective;
+    }
+        break;
+    }
 }
 
 void LevelEditorSceneViewMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)

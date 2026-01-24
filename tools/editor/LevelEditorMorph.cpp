@@ -59,7 +59,7 @@ void LevelEditorMorph::initialize()
         auto grid = std::make_shared<Rendering::InfiniteGridRenderable> ();
         scene->normalLayer->addChild(grid->asSceneNode());
     }
-    /*
+    
     // Cube
     {
         scene->normalLayer->addChild(Woden::Rendering::MeshBuilder()
@@ -77,8 +77,7 @@ void LevelEditorMorph::initialize()
 
         scene->normalLayer->addChild(pointLightSource->asSceneNodeWithPosition(Vector3(-1.5f, 1.5f, 1.6f)));
     }
-    */
-
+    
     sceneView->scene = scene;
     sceneView->cameraNode->transform.translation = Vector3(0, 1, 3);
 }

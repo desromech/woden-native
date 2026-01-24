@@ -17,18 +17,31 @@ class Camera
 public:
     Math::Matrix4x4 computeProjectionMatrix(Math::Scalar aspect)
     {
-        return Math::Matrix4x4::ReverseDepthPerspective(fovY, aspect, nearDistance, farDistance);
+        if(isPerspective)
+            return Math::Matrix4x4::ReverseDepthPerspective(fovY, aspect, nearDistance, farDistance);
+        
+        auto hh = tan((fovY *0.5 ) *M_PI / 180) * focalDistance;
+		auto hw = hh * aspect;
+
+        return Math::Matrix4x4::ReverseDepthOrtho(-hw, hw, -hh, hh, nearDistance, farDistance);
     }
 
     Math::Frustum computeViewFrustum(Math::Scalar aspect)
     {
-        return Math::Frustum::MakePerspective(fovY, aspect, nearDistance, farDistance);
+        if(isPerspective)
+            return Math::Frustum::MakePerspective(fovY, aspect, nearDistance, farDistance);
+
+        // FIXME: Use an orthographic frustum
+        auto hh = tan((fovY *0.5 ) *M_PI / 180) * focalDistance;
+		auto hw = hh * aspect;
+        return Math::Frustum::MakeOrtho(-hw, hw, -hh, hh, nearDistance, farDistance);
     }
 
     bool isPerspective = true;
     Math::Scalar nearDistance = 0.1f;
     Math::Scalar farDistance = 1000.0;
     Math::Scalar fovY = 60.0;
+    Math::Scalar focalDistance = 10.0;
 
     Math::Scalar cascadeSplitDistributionLambda = 0.99f;
 };
