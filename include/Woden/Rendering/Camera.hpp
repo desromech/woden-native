@@ -23,7 +23,7 @@ public:
         auto hh = tan((fovY *0.5 ) *M_PI / 180) * focalDistance;
 		auto hw = hh * aspect;
 
-        return Math::Matrix4x4::ReverseDepthOrtho(-hw, hw, -hh, hh, nearDistance, farDistance);
+        return Math::Matrix4x4::ReverseDepthOrtho(-hw, hw, -hh, hh, orthographicNearDistance, orthographicFarDistance);
     }
 
     Math::Frustum computeViewFrustum(Math::Scalar aspect)
@@ -34,12 +34,15 @@ public:
         // FIXME: Use an orthographic frustum
         auto hh = tan((fovY *0.5 ) *M_PI / 180) * focalDistance;
 		auto hw = hh * aspect;
-        return Math::Frustum::MakeOrtho(-hw, hw, -hh, hh, nearDistance, farDistance);
+        return Math::Frustum::MakeOrtho(-hw, hw, -hh, hh, orthographicNearDistance, orthographicFarDistance);
     }
 
     bool isPerspective = true;
     Math::Scalar nearDistance = 0.1f;
-    Math::Scalar farDistance = 1000.0;
+    Math::Scalar farDistance = 1000.0f;
+    Math::Scalar orthographicNearDistance = -1000.0f;
+    Math::Scalar orthographicFarDistance = 1000.0f;
+
     Math::Scalar fovY = 60.0;
     Math::Scalar focalDistance = 10.0;
 

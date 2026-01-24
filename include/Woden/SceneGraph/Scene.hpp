@@ -40,6 +40,7 @@ typedef std::shared_ptr<class SceneNode> SceneNodePtr;
 class SceneElement : public std::enable_shared_from_this<SceneElement>
 {
 public:
+    virtual void removeChild(SceneElementPtr child);
     virtual void addedToSceneElement(const SceneElementPtr &newParent);
     virtual void removedFromSceneElement(const SceneElementPtr &oldParent);
     virtual void addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene);
@@ -85,6 +86,8 @@ inline ScenePtr MakeScene()
 class SceneTreeElement : public SceneElement
 {
 public:
+    virtual void removeFromParent();
+
     virtual void addedToSceneElement(const SceneElementPtr &newParent) override;
     virtual void removedFromSceneElement(const SceneElementPtr &oldParent) override;
     virtual ScenePtr getScene() override;
@@ -100,6 +103,7 @@ class SceneTreeElementWithChildren : public SceneTreeElement
 {
 public:
     void addChild(SceneElementPtr child);
+    virtual void removeChild(SceneElementPtr child) override;
     void removeAllChildren();
 
     virtual void addIntoRenderingScene(const Rendering::RenderingScenePtr &renderingScene) override;

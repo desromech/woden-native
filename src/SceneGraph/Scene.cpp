@@ -16,6 +16,13 @@ void SceneElement::addedToSceneElement(const SceneElementPtr &newParent)
     assert(0 && "Element does not support having a parent.");
 }
 
+void SceneElement::removeChild(SceneElementPtr child)
+{
+    (void)child;
+    assert(0 && "Element does not support having children.");
+}
+
+
 void SceneElement::removedFromSceneElement(const SceneElementPtr &oldParent)
 {
     (void)oldParent;
@@ -94,6 +101,13 @@ Morphic::SystemWindowPtr Scene::openInSystemWindow()
 }
 
 // SceneTree Element
+void SceneTreeElement::removeFromParent()
+{
+    auto p = parent.lock();
+    if(p)
+        p->removeChild(shared_from_this());
+}
+
 void SceneTreeElement::addedToSceneElement(const SceneElementPtr &newParent)
 {
     assert(!parent.lock());
@@ -128,6 +142,18 @@ void SceneTreeElementWithChildren::addChild(SceneElementPtr child)
 {
     child->addedToSceneElement(shared_from_this());
     children.push_back(child);
+}
+
+void SceneTreeElementWithChildren::removeChild(SceneElementPtr child)
+{
+    for(size_t i = 0; i < children.size(); ++i)
+    {
+        if(children[i] == child)
+        {
+            children.erase(children.begin() + i);
+            child->removedFromSceneElement(shared_from_this());
+        }
+    }
 }
 
 void SceneTreeElementWithChildren::removeAllChildren()
