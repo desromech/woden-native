@@ -55,6 +55,8 @@ public:
     virtual void handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event);
     virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event);
     virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event);
+    virtual void handleMouseClickEvent(const MouseClickEventPtr &event);
+    virtual void handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event);
 
     WorldWeakPtr world;
     std::vector<ActorComponentPtr> components;

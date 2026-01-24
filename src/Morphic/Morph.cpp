@@ -145,6 +145,28 @@ void Morph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
     });
 }
 
+void Morph::handleMouseClickEvent(const MouseClickEventPtr &event)
+{
+    event->withTranslationInverseDo(getOrigin(), [&](){
+        for(auto &submorph : submorphs)
+        {
+            if(submorph->bounds.containsPoint(event->position))
+                submorph->processEvent(event);
+        }
+    });
+}
+
+void Morph::handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
+{
+    event->withTranslationInverseDo(getOrigin(), [&](){
+        for(auto &submorph : submorphs)
+        {
+            if(submorph->bounds.containsPoint(event->position))
+                submorph->processEvent(event);
+        }
+    });
+}
+
 void Morph::gotKeyboardFocus()
 {
 }

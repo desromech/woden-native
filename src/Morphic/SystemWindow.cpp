@@ -83,6 +83,20 @@ static void onMouseButtonDown(const SDL_MouseButtonEvent &event)
     morphicEvent->buttonIndex = event.button;
 
     window->processEvent(morphicEvent);
+    if(event.clicks == 1)
+    {
+        auto clickEvent = std::make_shared<MouseClickEvent> ();
+        clickEvent->position = Vector2(event.x, event.y);
+        clickEvent->buttonIndex = event.button;
+        window->processEvent(clickEvent);
+    }
+    else if(event.clicks == 2)
+    {
+        auto clickEvent = std::make_shared<MouseDoubleClickEvent> ();
+        clickEvent->position = Vector2(event.x, event.y);
+        clickEvent->buttonIndex = event.button;
+        window->processEvent(clickEvent);
+    }
 }
 
 static void onMouseButtonUp(const SDL_MouseButtonEvent &event)

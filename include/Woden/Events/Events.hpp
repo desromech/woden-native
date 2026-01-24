@@ -20,18 +20,20 @@ typedef std::shared_ptr<class Morph> MorphPtr;
 
 namespace Events
 {
-typedef std::shared_ptr<class Event>                EventPtr;
-typedef std::shared_ptr<class KeyboardEvent>        KeyboardEventPtr;
-typedef std::shared_ptr<class KeyboardDownEvent>    KeyboardDownEventPtr;
-typedef std::shared_ptr<class KeyboardUpEvent>      KeyboardUpEventPtr;
-typedef std::shared_ptr<class MouseEvent>           MouseEventPtr;
-typedef std::shared_ptr<class MouseEvent>           MouseEventPtr;
-typedef std::shared_ptr<class MouseButtonEvent>     MouseButtonEventPtr;
-typedef std::shared_ptr<class MouseButtonDownEvent> MouseButtonDownEventPtr;
-typedef std::shared_ptr<class MouseButtonUpEvent>   MouseButtonUpEventPtr;
-typedef std::shared_ptr<class MouseMotionEvent>     MouseMotionEventPtr;
-typedef std::shared_ptr<class MouseWheelEvent>      MouseWheelEventPtr;
-typedef std::shared_ptr<class TextInputEvent>       TextInputEventPtr;
+typedef std::shared_ptr<class Event>                 EventPtr;
+typedef std::shared_ptr<class KeyboardEvent>         KeyboardEventPtr;
+typedef std::shared_ptr<class KeyboardDownEvent>     KeyboardDownEventPtr;
+typedef std::shared_ptr<class KeyboardUpEvent>       KeyboardUpEventPtr;
+typedef std::shared_ptr<class MouseEvent>            MouseEventPtr;
+typedef std::shared_ptr<class MouseEvent>            MouseEventPtr;
+typedef std::shared_ptr<class MouseButtonEvent>      MouseButtonEventPtr;
+typedef std::shared_ptr<class MouseButtonDownEvent>  MouseButtonDownEventPtr;
+typedef std::shared_ptr<class MouseButtonUpEvent>    MouseButtonUpEventPtr;
+typedef std::shared_ptr<class MouseMotionEvent>      MouseMotionEventPtr;
+typedef std::shared_ptr<class MouseWheelEvent>       MouseWheelEventPtr;
+typedef std::shared_ptr<class MouseClickEvent>       MouseClickEventPtr;
+typedef std::shared_ptr<class MouseDoubleClickEvent> MouseDoubleClickEventPtr;
+typedef std::shared_ptr<class TextInputEvent>        TextInputEventPtr;
 
 using GameFramework::ActorPtr;
 using Morphic::MorphPtr;
@@ -115,6 +117,20 @@ public:
 };
 
 class MouseButtonUpEvent : public MouseButtonEvent
+{
+public:
+    virtual void sentToActor(const ActorPtr &actor) override;
+    virtual void sentToMorph(const MorphPtr &morph) override;
+};
+
+class MouseClickEvent : public MouseButtonEvent
+{
+public:
+    virtual void sentToActor(const ActorPtr &actor) override;
+    virtual void sentToMorph(const MorphPtr &morph) override;
+};
+
+class MouseDoubleClickEvent : public MouseButtonEvent
 {
 public:
     virtual void sentToActor(const ActorPtr &actor) override;

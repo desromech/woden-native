@@ -152,5 +152,15 @@ void Actor::handleMouseWheelEvent(const MouseWheelEventPtr &event)
     (void)event;
 }
 
+void Actor::handleMouseClickEvent(const MouseClickEventPtr &event)
+{
+    (void)event;
+}
+
+void Actor::handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
+{
+    (void)event;
+}
+
 } // End of namespace GameFramework
 } // End of namespace Woden
