@@ -21,19 +21,33 @@ LevelEditorMorph::LevelEditorMorph()
 void LevelEditorMorph::initialize()
 {
     createMenuBar();
+    model = std::make_shared<LevelModel> ();
+
     toolBar = MakeMorph<ToolBarMorph> ();
     sceneView = MakeMorph<LevelEditorSceneViewMorph> ();
     statusBar = MakeMorph<StatusBarMorph> ();
+    levelElementsTable = MakeMorph<TableMorph> ();
+    objectPaletteTable = MakeMorph<TableMorph> ();
 
     addMorph(menuBar);
     addMorph(toolBar);
+    addMorph(levelElementsTable);
+    addMorph(objectPaletteTable);
     addMorph(sceneView);
     addMorph(statusBar);
+
+    auto leftLayout = std::make_shared<VerticalPackingLayout> ();
+    leftLayout->addMorph(levelElementsTable, 1, true);
+    leftLayout->addMorph(objectPaletteTable, 1, true);
+
+    auto middleLayout = std::make_shared<HorizontalPackingLayout> ();
+    middleLayout->addLayout(leftLayout, 1, true);
+    middleLayout->addMorph(sceneView, 4, true);
 
     auto layout = std::make_shared<VerticalPackingLayout> ();
     layout->addMorph(menuBar, 0, true);
     layout->addMorph(toolBar, 0, true);
-    layout->addMorph(sceneView, 1, true);
+    layout->addLayout(middleLayout, 1, true);
     layout->addMorph(statusBar, 0, true);
 
     setLayout(layout);
@@ -64,7 +78,7 @@ void LevelEditorMorph::initialize()
         scene->normalLayer->addChild(pointLightSource->asSceneNodeWithPosition(Vector3(-1.5f, 1.5f, 1.6f)));
     }
     */
-   
+
     sceneView->scene = scene;
     sceneView->cameraNode->transform.translation = Vector3(0, 1, 3);
 }

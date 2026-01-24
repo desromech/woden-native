@@ -28,6 +28,8 @@ public:
     ToolBarMorphPtr toolBar;
     LevelEditorSceneViewMorphPtr sceneView;
     StatusBarMorphPtr statusBar;
+    TableMorphPtr levelElementsTable;
+    TableMorphPtr objectPaletteTable;
     LevelModelPtr model;
 };
 
