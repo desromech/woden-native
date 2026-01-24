@@ -1,5 +1,6 @@
 #include "LevelEditorMorph.hpp"
 #include "Woden/Morphic/Layout.hpp"
+#include "Woden/Morphic/RootMorph.hpp"
 
 #include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
@@ -65,9 +66,13 @@ void LevelEditorMorph::createMenuBar()
             (void)eventSource;
             printf("TODO: Open file\n");
         });
+        menu->addItem("Save File...", [=](const MorphPtr &eventSource){
+            (void)eventSource;
+            printf("TODO: Save file\n");
+        });
         menu->addItem("Exit", [=](const MorphPtr &eventSource){
             (void)eventSource;
-            printf("TODO: Exit\n");
+            getRootMorph()->close();
         });
 
         menuBar->addItem("File", menu);
