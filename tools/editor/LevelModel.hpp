@@ -17,6 +17,12 @@ typedef std::shared_ptr<class LevelModel> LevelModelPtr;
 typedef std::weak_ptr<class LevelModel> LevelModelWeakPtr;
 typedef std::shared_ptr<class LevelElement> LevelElementPtr;
 
+struct ElementAlongRay
+{
+    LevelElementPtr element;
+    Math::Scalar rayDistance;
+};
+
 class ObjectPaletteElement : public Morphic::TableDataSourceElement
 {
 public:
@@ -24,13 +30,15 @@ public:
     virtual void activate(const LevelModelPtr &model) = 0;
 };
 
-class LevelElement : public Morphic::TableDataSourceElement
+class LevelElement : public Morphic::TableDataSourceElement, public std::enable_shared_from_this<LevelElement>
 {
 public:
     virtual std::string asString() const override;
 
     virtual void addedToModel(const LevelModelPtr &model);
     virtual void removedFromModel(const LevelModelPtr &model);
+
+    virtual void addElementsAlongRay(const Math::Ray3D &ray, std::vector<ElementAlongRay> &elementsAlongRay);
 
     LevelModelWeakPtr model;
     std::string name;
@@ -53,6 +61,8 @@ public:
     virtual std::string asString() const override;
     virtual Rendering::RenderablePtr makeMesh() override;
 
+    virtual void addElementsAlongRay(const Math::Ray3D &ray, std::vector<ElementAlongRay> &elementsAlongRay) override;
+
     Math::AABox boundingBox = Math::AABox::WithHalfExtent(0.5f);
 };
 
@@ -63,6 +73,8 @@ public:
     virtual void activate(const LevelModelPtr &model) override;
 };
 
+
+
 class LevelModel : public Morphic::TableDataSource, public std::enable_shared_from_this<LevelModel>
 {
 public:
@@ -72,7 +84,9 @@ public:
     virtual bool isValidIndex(size_t index) override;
 
     virtual size_t getNumberOfElements() override;
-    
+
+    std::vector<ElementAlongRay> findElementsAlongRay(const Math::Ray3D &ray);
+
     SceneGraph::ScenePtr scene;
     std::vector<LevelElementPtr> elements;
 };

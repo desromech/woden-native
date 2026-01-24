@@ -158,7 +158,8 @@ void LevelEditorMorph::createMenuBar()
 
 void LevelEditorMorph::rayPick(const Math::Ray3D &ray)
 {
-    printf("TODO: ray pick\n");
+    auto elementsAlongRay = model->findElementsAlongRay(ray);
+    printf("elementsAlongRay %d\n", int(elementsAlongRay.size()));
 }
 
 } // End of namespace LevelEditor

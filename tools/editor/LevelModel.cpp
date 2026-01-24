@@ -23,6 +23,12 @@ void LevelElement::removedFromModel(const LevelModelPtr &oldModel)
     model.reset();
 }
 
+void LevelElement::addElementsAlongRay(const Math::Ray3D &ray, std::vector<ElementAlongRay> &elementsAlongRay)
+{
+    (void)ray;
+    (void)elementsAlongRay;
+}
+
 // CSGBrush
 void CSGBrush::addedToModel(const LevelModelPtr &model)
 {
@@ -60,6 +66,18 @@ Rendering::RenderablePtr CSGBoxBrush::makeMesh()
             .finishMesh();
 }
 
+void CSGBoxBrush::addElementsAlongRay(const Math::Ray3D &ray, std::vector<ElementAlongRay> &elementsAlongRay)
+{
+    auto rayCastingResult = boundingBox.intersectionsWithRay(ray);
+    if(rayCastingResult.isEmpty())
+        return;
+
+    ElementAlongRay elementAlongRay;
+    elementAlongRay.element = shared_from_this();
+    elementAlongRay.rayDistance = rayCastingResult.intersectionPoints[0];
+    elementsAlongRay.push_back(elementAlongRay);
+}
+
 // CSGBoxBrushPalette
 std::string CSGBoxBrushPalette::asString() const
 {
@@ -94,6 +112,14 @@ bool LevelModel::isValidIndex(size_t index)
 size_t LevelModel::getNumberOfElements()
 {
     return elements.size();
+}
+
+std::vector<ElementAlongRay> LevelModel::findElementsAlongRay(const Math::Ray3D &ray)
+{
+    std::vector<ElementAlongRay> foundElements;
+    for(auto &element : elements)
+        element->addElementsAlongRay(ray, foundElements);
+    return foundElements;
 }
 
 } // End of namespace LevelEditor
