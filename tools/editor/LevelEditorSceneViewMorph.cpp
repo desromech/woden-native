@@ -32,6 +32,21 @@ void LevelEditorSceneViewMorph::handleKeyboardDownEvent(const KeyboardDownEventP
         camera->isPerspective = !camera->isPerspective;
     }
         break;
+
+    case SDLK_KP_PLUS:
+    {
+        auto &camera = cameraNode->cameras.back();
+        if(!camera->isPerspective)
+            camera->focalDistance /= 1.1;
+    }
+        break;
+    case SDLK_KP_MINUS:
+    {
+        auto &camera = cameraNode->cameras.back();
+        if(!camera->isPerspective)
+            camera->focalDistance *= 1.1;
+    }
+        break;
     }
 }
 
@@ -43,17 +58,44 @@ void LevelEditorSceneViewMorph::handleMouseMotionEvent(const MouseMotionEventPtr
 
 void LevelEditorSceneViewMorph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
 {
+    auto &camera = cameraNode->cameras.back();
+    if(!camera->isPerspective)
+    {
+        if(event->scrollAmount.y > 0)
+            camera->focalDistance /= 1.1;
+        else if (event->scrollAmount.y < 0)
+            camera->focalDistance *= 1.1;
+        return;
+    }
+        
     SceneMorph::handleMouseWheelEvent(event);
+}
+
+Math::Ray3D LevelEditorSceneViewMorph::computeRayForScreenPosition(const Vector2 &screenPosition)
+{
+    auto extent = getExtent();
+    auto aspect = extent.x / extent.y;
+    auto frustum = cameraNode->cameras.front()->computeViewFrustum(aspect);
+    auto worldFrustum = frustum.transformedWithMatrix(cameraNode->transform.asMatrix());
+    //printf("screen pos %f %f\n", screenPosition.x, screenPosition.y);
+    auto normalizedPoint = Vector2(screenPosition.x / extent.x, 1.0 - screenPosition.y / extent.y);
+
+    //printf("NDC: %f %f\n", ndc.x, ndc.y);
+    return worldFrustum.rayForNormalizedPoint(normalizedPoint);
 }
 
 void LevelEditorSceneViewMorph::handleMouseClickEvent(const MouseClickEventPtr &event)
 {
-    printf("TODO: Click at %f %f\n", event->position.x, event->position.y);
+    auto ray = computeRayForScreenPosition(event->position - getOrigin());
+    printf("Click ray: %f %f %f -> %f %f %f\n",
+        ray.origin.x, ray.origin.y, ray.origin.z,
+        ray.direction.x, ray.direction.y, ray.direction.z
+    ); 
 }
 
 void LevelEditorSceneViewMorph::handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
 {
-    printf("TODO: Double click at %f %f\n", event->position.x, event->position.y);
+    //printf("TODO: Double click at %f %f\n", event->position.x, event->position.y);
 
 }
 

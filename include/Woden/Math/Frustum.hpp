@@ -4,6 +4,7 @@
 #include "Vector3.hpp"
 #include "Matrix4x4.hpp"
 #include "Plane.hpp"
+#include "Ray3D.hpp"
 
 namespace Woden
 {
@@ -132,6 +133,27 @@ struct Frustum
         result.rightTopFar    = mix(rightTopNear,    rightTopFar,    farLambda);
         result.computePlanes();
         return result;
+    }
+
+    Vector3 normalizedPointInNearPlane(const Vector2 &normalizedPoint) const
+    {
+        auto bottom = mix(leftBottomNear, rightBottomNear, normalizedPoint.x);
+        auto top = mix(leftTopNear, rightTopNear, normalizedPoint.x);
+        return mix(bottom, top, normalizedPoint.y);
+    }
+
+    Vector3 normalizedPointInFarPlane(const Vector2 &normalizedPoint) const
+    {
+        auto bottom = mix(leftBottomFar, rightBottomFar, normalizedPoint.x);
+        auto top = mix(leftTopFar, rightTopFar, normalizedPoint.x);
+        return mix(bottom, top, normalizedPoint.y);
+    }
+
+    Ray3D rayForNormalizedPoint(const Vector2 &normalizedPoint) const
+    {
+        auto nearPoint = normalizedPointInNearPlane(normalizedPoint);
+        auto farPoint = normalizedPointInFarPlane(normalizedPoint);
+        return Ray3D::FromTo(nearPoint, farPoint);
     }
 };
 

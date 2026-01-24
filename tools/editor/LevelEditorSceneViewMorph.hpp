@@ -3,6 +3,7 @@
 
 #include "Woden/Morphic/Morph.hpp"
 #include "Woden/Morphic/SceneMorph.hpp"
+#include "Woden/Math/Ray3D.hpp"
 #include "LevelEditorSceneViewMorph.hpp"
 
 namespace Woden
@@ -24,6 +25,8 @@ public:
     virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event) override;
     virtual void handleMouseClickEvent(const MouseClickEventPtr &event) override;
     virtual void handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event) override;
+
+    Math::Ray3D computeRayForScreenPosition(const Vector2 &screenPosition);
 
 };
 

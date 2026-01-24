@@ -44,7 +44,7 @@ public:
     Math::Scalar orthographicFarDistance = 1000.0f;
 
     Math::Scalar fovY = 60.0;
-    Math::Scalar focalDistance = 10.0;
+    Math::Scalar focalDistance = 1.0;
 
     Math::Scalar cascadeSplitDistributionLambda = 0.99f;
 };
