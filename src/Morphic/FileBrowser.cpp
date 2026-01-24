@@ -1,5 +1,6 @@
 #include "Woden/Morphic/FileBrowser.hpp"
 #include "Woden/Morphic/Layout.hpp"
+#include "Woden/Morphic/RootMorph.hpp"
 #include "Woden/Utility/FileSystem.hpp"
 
 namespace Woden
@@ -35,10 +36,13 @@ void FileBrowser::initialize()
 
     // Create the table.
     fileTable = MakeMorph<TableMorph>();
+    fileTable->onElementActivate = [=](TableDataSourceElementPtr element) {
+        onTableElementActivate(element);
+    };
     addMorph(fileTable);
 
     // Create the text input
-    auto fileNameInput = MakeMorph<TextInputMorph> ();
+    fileNameInput = MakeMorph<TextInputMorph> ();
     addMorph(fileNameInput);
 
     // Create the buttons.
@@ -89,12 +93,35 @@ void FileBrowser::setDirectory(const std::string &directory)
 
 void FileBrowser::onCancelButton()
 {
-    printf("On cancel button\n");
+    if(onCancelAction)
+        onCancelAction();
+    getRootMorph()->close();
 }
 
 void FileBrowser::onAcceptButton()
 {
-    printf("On accept button\n");
+    if(fileNameInput->text.empty())
+        return;
+
+    std::string acceptedFileName = Utility::join(currentDirectory, fileNameInput->text);
+    if(onAcceptedFile)
+        onAcceptedFile(acceptedFileName);
+    getRootMorph()->close();
+}
+
+void FileBrowser::onTableElementActivate(TableDataSourceElementPtr element)
+{
+    auto browserElement = std::static_pointer_cast<FileBrowserDataSourceStringElement> (element);
+    std::string selectedPath = Utility::join(currentDirectory, browserElement->name);
+    if(browserElement->isDirectory)
+    {
+        setDirectory(selectedPath);
+        return;
+    }
+
+    if(onAcceptedFile)
+        onAcceptedFile(selectedPath);
+    getRootMorph()->close();
 }
 
 

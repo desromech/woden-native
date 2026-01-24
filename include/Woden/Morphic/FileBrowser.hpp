@@ -41,9 +41,13 @@ public:
     SimpleTableDataSourcePtr fileTableDataSource;
     TextInputMorphPtr fileNameInput;
 
+    std::function<void ()> onCancelAction;
+    std::function<void (std::string)> onAcceptedFile;
+
 protected:
     void onCancelButton();
     void onAcceptButton();
+    void onTableElementActivate(TableDataSourceElementPtr element);
 };
 
 /**

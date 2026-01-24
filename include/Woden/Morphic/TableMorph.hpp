@@ -2,6 +2,7 @@
 #define WODEN_MORPHIC_TABLE_MORPH_HPP
 
 #include "BorderedMorph.hpp"
+#include <functional>
 
 namespace Woden
 {
@@ -107,6 +108,9 @@ public:
     void selectSingleRow(size_t rowIndex);
 
     float rowPositionY = 0;
+
+    std::function<void ()> onSelectionChange;
+    std::function<void (TableDataSourceElementPtr)> onElementActivate;
 
 protected:
     TableContainerMorphPtr container;    

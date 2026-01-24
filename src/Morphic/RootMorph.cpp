@@ -68,6 +68,9 @@ void RootMorph::killPopUps()
     activePopups.clear();
 }
 
+void RootMorph::close()
+{
+}
 
 } // End of namespace Morphic
 } // End of namespace Woden

@@ -21,7 +21,7 @@ public:
     SystemWindow();
 
     void open();
-    void close();
+    virtual void close() override;
     void updateAndRender(Scalar deltaTime);
     void swapBuffers();
     void recreateSwapChain();

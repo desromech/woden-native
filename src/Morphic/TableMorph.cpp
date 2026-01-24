@@ -137,8 +137,10 @@ void TableContainerMorph::handleMouseDoubleClickEvent(const MouseDoubleClickEven
 
     if(rowIndex >= 0 && datasource->isValidIndex((size_t) rowIndex))
     {
+        auto element = datasource->getElementAtIndex(rowIndex);
         table->selectSingleRow(rowIndex);
-        printf("TODO: activate row.\n");
+        if(table->onElementActivate)
+            table->onElementActivate(element);
     }
 }
 
@@ -197,6 +199,8 @@ float TableMorph::getRowHeight()
 void TableMorph::clearSelection()
 {
     selectedIndices.clear();
+    if(onSelectionChange)
+        onSelectionChange();
 }
 
 bool TableMorph::isSelectedRowIndex(size_t index)
@@ -214,6 +218,8 @@ void TableMorph::selectSingleRow(size_t rowIndex)
 {
     selectedIndices.clear();
     selectedIndices.push_back(rowIndex);
+    if(onSelectionChange)
+        onSelectionChange();
 }
 
 } // End of namespace Morphic

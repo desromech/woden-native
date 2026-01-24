@@ -31,6 +31,8 @@ public:
     void popupUniqueAtPosition(const MorphPtr &popupMorph, const Vector2 &globalPosition);
     void killPopUps();
 
+    virtual void close();
+
     MorphPtr currentKeyboardFocus;
     MorphPtr currentMouseFocus;
     std::vector<MorphPtr> activePopups;

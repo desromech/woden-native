@@ -161,7 +161,7 @@ std::vector<DirectoryEntry> readWholeDirectory(const std::string &directoryPath)
         DirectoryEntry entry;
         entry.isDirectory = findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
         entry.name = wideCharToUTF8(findData.cFileName);
-        if(entry.name != "." && entry.name != "..")
+        if(entry.name != ".")
             result.push_back(entry);
     }
 
@@ -178,7 +178,7 @@ std::vector<DirectoryEntry> readWholeDirectory(const std::string &directoryPath)
         DirectoryEntry dirEntry;
         dirEntry.name = entry->d_name;
         dirEntry.isDirectory = entry->d_type == DT_DIR;
-        if(dirEntry.name == "." || dirEntry.name == "..")
+        if(dirEntry.name == ".")
             continue;;
 
         result.push_back(dirEntry);
