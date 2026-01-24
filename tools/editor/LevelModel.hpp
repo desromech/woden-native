@@ -16,6 +16,13 @@ typedef std::shared_ptr<class LevelModel> LevelModelPtr;
 typedef std::weak_ptr<class LevelModel> LevelModelWeakPtr;
 typedef std::shared_ptr<class LevelElement> LevelElementPtr;
 
+class ObjectPaletteElement : public Morphic::TableDataSourceElement
+{
+public:
+    virtual std::string asString() const = 0;
+    virtual void activate(const LevelModelPtr &model) = 0;
+};
+
 class LevelElement : public Morphic::TableDataSourceElement
 {
 public:
@@ -46,6 +53,13 @@ public:
     virtual Rendering::RenderablePtr makeMesh() override;
 
     Math::AABox boundingBox = Math::AABox::WithHalfExtent(0.5f);
+};
+
+class CSGBoxBrushPalette : public ObjectPaletteElement
+{
+public:
+    virtual std::string asString() const override;
+    virtual void activate(const LevelModelPtr &model) override;
 };
 
 class LevelModel : public Morphic::TableDataSource, public std::enable_shared_from_this<LevelModel>

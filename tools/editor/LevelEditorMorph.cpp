@@ -30,6 +30,7 @@ void LevelEditorMorph::initialize()
     objectPaletteTable = MakeMorph<TableMorph> ();
 
     levelElementsTable->setDataSource(model);
+    buildObjectPalette();
 
     addMorph(menuBar);
     addMorph(toolBar);
@@ -63,11 +64,6 @@ void LevelEditorMorph::initialize()
         scene->normalLayer->addChild(grid->asSceneNode());
     }
     
-    {
-        // Box
-        auto box = std::make_shared<CSGBoxBrush> ();
-        model->addElement(box);
-    }
     /*// Cube
     {
         scene->normalLayer->addChild(Woden::Rendering::MeshBuilder()
@@ -88,6 +84,17 @@ void LevelEditorMorph::initialize()
     
     sceneView->scene = scene;
     sceneView->cameraNode->transform.translation = Vector3(0, 1, 3);
+}
+
+void LevelEditorMorph::buildObjectPalette()
+{
+    auto dataSource = std::make_shared<SimpleTableDataSource> ();
+    dataSource->addElement(std::make_shared<CSGBoxBrushPalette> ());
+    objectPaletteTable->setDataSource(dataSource);
+    objectPaletteTable->onElementActivate = [=](TableDataSourceElementPtr sourceElement) {
+        auto objectPalette = std::static_pointer_cast<ObjectPaletteElement> (sourceElement);
+        objectPalette->activate(model);
+    };
 }
 
 void LevelEditorMorph::createMenuBar()

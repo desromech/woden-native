@@ -40,6 +40,7 @@ void CSGBrush::removedFromModel(const LevelModelPtr &model)
     LevelElement::removedFromModel(model);
     if(sceneNode)
     {
+        sceneNode->removeFromParent();
         sceneNode.reset();
     }
 
@@ -57,6 +58,18 @@ Rendering::RenderablePtr CSGBoxBrush::makeMesh()
             .addCubeWithBox(boundingBox)
             .generateTexcoordsWithFacePlanarTransformWithScale(Math::Vector2(1, 1))
             .finishMesh();
+}
+
+// CSGBoxBrushPalette
+std::string CSGBoxBrushPalette::asString() const
+{
+    return "CSG Box";
+}
+
+void CSGBoxBrushPalette::activate(const LevelModelPtr &model)
+{
+    auto box = std::make_shared<CSGBoxBrush> ();
+    model->addElement(box);
 }
 
 // Level model.

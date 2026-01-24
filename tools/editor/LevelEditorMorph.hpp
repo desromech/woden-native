@@ -22,6 +22,7 @@ public:
     
     virtual void initialize() override;
 
+    void buildObjectPalette();
     void createMenuBar();
 
     MenuBarMorphPtr menuBar;
