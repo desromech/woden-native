@@ -5,6 +5,7 @@
 #include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
 #include "Woden/Rendering/Renderable.hpp"
+#include "Woden/Rendering/InfiniteGrid.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 
 namespace Woden
@@ -38,6 +39,13 @@ void LevelEditorMorph::initialize()
     setLayout(layout);
 
     auto scene = SceneGraph::MakeScene();
+    
+    // Infinite grid
+    {
+        auto grid = std::make_shared<Rendering::InfiniteGridRenderable> ();
+        scene->normalLayer->addChild(grid->asSceneNode());
+    }
+    // Cube
     {
         scene->normalLayer->addChild(Woden::Rendering::MeshBuilder()
             .addCubeWithExtent(Vector3(1, 1, 1))

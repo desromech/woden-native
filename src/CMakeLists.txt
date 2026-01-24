@@ -51,6 +51,7 @@ set(WodenEngine_Sources
 
     Rendering/Context.cpp
     Rendering/GuiRenderer.cpp
+    Rendering/InfiniteGrid.cpp
     Rendering/LightSource.cpp
     Rendering/Material.cpp
     Rendering/MeshBuilder.cpp

@@ -71,6 +71,7 @@ public:
     agpu_renderpass_ref depthStencilRenderPass;
     agpu_renderpass_ref shadowMapRenderPass;
     agpu_renderpass_ref hdrOpaqueRenderPass;
+    agpu_renderpass_ref hdrTranslucentRenderPass;
 
     agpu_pipeline_state_ref clearDepthPipelineState;
 
@@ -81,6 +82,8 @@ public:
     agpu_pipeline_state_ref shadowScenePipelineState;
     agpu_pipeline_state_ref shadowSceneCulledPipelineState;
 
+    agpu_pipeline_state_ref infiniteGridPipelineState;
+    
     agpu_pipeline_state_ref metallicRoughnessOpaqueScenePipelineState;
 
     agpu_pipeline_state_ref transformLightsToViewPipeline;

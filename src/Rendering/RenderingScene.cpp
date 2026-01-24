@@ -187,5 +187,14 @@ void RenderingScene::addObjectWithRenderable(const RenderablePtr &renderable)
     opaqueObjects.push_back(sceneObject);
 }
 
+void RenderingScene::addTranslucentObjectWithRenderable(const RenderablePtr &renderable)
+{
+    RenderingSceneObject sceneObject = {};
+    sceneObject.renderable = renderable;
+    sceneObject.modelMatrix = currentModelMatrix;
+    sceneObject.inverseModelMatrix = currentInverseModelMatrix;
+    translucentObject.push_back(sceneObject);
+}
+
 } // End of namespace Rendering
 } // End of namespace Woden

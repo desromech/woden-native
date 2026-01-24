@@ -469,6 +469,20 @@ void SceneRenderer::renderScene(const agpu_command_list_ref &commandList, const 
     performHDROpaquePass();
 
     commandList->endRenderPass();
+
+    // HDR translucent render pass.
+    commandList->beginRenderPass(context->hdrTranslucentRenderPass, screen->hdrTranslucentFramebuffer, false);
+    commandList->setViewport(0, 0, screen->screenWidth, screen->screenHeight);
+    commandList->setScissor(0, 0, screen->screenWidth, screen->screenHeight);
+    commandList->setShaderSignature(context->sceneShaderSignature);
+    commandList->useShaderResources(context->sceneSamplerBindings);
+    commandList->useShaderResources(statesBinding);
+    commandList->pushConstants(0, sizeof(initialPushConstants), &initialPushConstants);
+
+    performHDRTranslucentPass();
+
+    commandList->endRenderPass();
+    
     currentCommandList.reset();
 }
 
@@ -542,6 +556,15 @@ void SceneRenderer::performHDROpaquePass()
     {
         currentCommandList->pushConstants(0, 4, &object.sceneObjectStateIndex);
         object.renderable->renderOpaqueWith(this);
+    }
+}
+
+void SceneRenderer::performHDRTranslucentPass()
+{
+    for(auto &object : currentRenderingScene->translucentObject)
+    {
+        currentCommandList->pushConstants(0, 4, &object.sceneObjectStateIndex);
+        object.renderable->renderTranslucentWith(this);
     }
 }
 
@@ -712,6 +735,21 @@ void SceneRenderer::setupWithScreenSize(int newScreenWidth, int newScreenHeight)
             fprintf(stderr, "Failed to create hdr-opaque framebuffer\n");
             abort();
         }
+    }
+
+    // HDR translucent frame buffer
+    {
+        agpu_texture_view_ref colorAttachments[3] = {
+            screen->hdrColorBufferView,
+        };
+
+        screen->hdrTranslucentFramebuffer = device->createFrameBuffer(newScreenWidth, newScreenHeight, 1, colorAttachments, screen->depthStencilAttachmentView);
+        if(!screen->hdrTranslucentFramebuffer)
+        {
+            fprintf(stderr, "Failed to create hdr-opaque framebuffer\n");
+            abort();
+        }
+        
     }
 
 }

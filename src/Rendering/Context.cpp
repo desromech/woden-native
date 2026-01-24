@@ -512,6 +512,33 @@ bool RenderingContext::createScenePipelineStates()
         if(!hdrOpaqueRenderPass)
             return false;
     }
+    {
+        agpu_renderpass_depth_stencil_description depthStencilAttachment = {};
+        depthStencilAttachment.format = DepthStencilBufferViewFormat;
+        depthStencilAttachment.begin_action = AGPU_ATTACHMENT_KEEP;
+        depthStencilAttachment.end_action = AGPU_ATTACHMENT_KEEP;
+        depthStencilAttachment.stencil_begin_action = AGPU_ATTACHMENT_KEEP;
+        depthStencilAttachment.stencil_end_action = AGPU_ATTACHMENT_KEEP;
+        depthStencilAttachment.sample_count = 1;
+
+        // Color attachment
+        agpu_renderpass_color_attachment_description colorAttachment[3] = {};
+        colorAttachment[0].format = HDRColorBufferFormat;
+        colorAttachment[0].begin_action = AGPU_ATTACHMENT_KEEP;
+        colorAttachment[0].end_action = AGPU_ATTACHMENT_KEEP;
+        colorAttachment[0].sample_count = 1;
+
+        agpu_renderpass_description description = {};
+        description.depth_stencil_attachment = &depthStencilAttachment;
+        description.color_attachment_count = 1;
+        description.color_attachments = colorAttachment;
+
+        hdrTranslucentRenderPass = device->createRenderPass(&description);
+        if(!hdrTranslucentRenderPass)
+            return false;
+    }
+
+    
 
     // Static vertex layout
     {
@@ -702,6 +729,37 @@ bool RenderingContext::createScenePipelineStates()
         if(!lightClusterListComputationPipeline)
         {
             fprintf(stderr, "Failed to create light grid cluster list pipeline state.");
+            return false;
+        }
+    }
+
+        // Create the infinite grid pipeline state
+    {
+        auto vertexShader = compileShader("assets/shaders/EditorGridVertex.glsl", AGPU_VERTEX_SHADER);
+        auto fragmentShader = compileShader("assets/shaders/EditorGridFragment.glsl", AGPU_FRAGMENT_SHADER);
+        if(!vertexShader || !fragmentShader)
+            return false;
+        
+        auto builder = device->createPipelineBuilder();
+        builder->setRenderTargetCount(1);
+        builder->setRenderTargetFormat(0, HDRColorBufferFormat);
+        builder->setDepthStencilFormat(DepthStencilBufferViewFormat);
+        builder->setDepthState(true, false, AGPU_GREATER_EQUAL);
+        builder->setCullMode(AGPU_CULL_MODE_NONE);
+        builder->setBlendState(-1, true);
+        builder->setBlendFunction(-1, AGPU_BLENDING_ONE, AGPU_BLENDING_INVERTED_SRC_ALPHA, AGPU_BLENDING_OPERATION_ADD,
+            AGPU_BLENDING_ONE, AGPU_BLENDING_INVERTED_SRC_ALPHA, AGPU_BLENDING_OPERATION_ADD);
+
+        builder->setShaderSignature(sceneShaderSignature);
+        builder->attachShader(vertexShader);
+        builder->attachShader(fragmentShader);
+
+        builder->setPrimitiveType(AGPU_TRIANGLE_STRIP);
+
+        infiniteGridPipelineState = builder->build();
+        if(!infiniteGridPipelineState)
+        {
+            fprintf(stderr, "Failed to create the infinite grid pipeline state.");
             return false;
         }
     }

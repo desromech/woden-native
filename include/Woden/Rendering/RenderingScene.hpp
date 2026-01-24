@@ -98,6 +98,7 @@ public:
     void addSpotLightSource(const SpotLightSource *lightSource);
 
     void addObjectWithRenderable(const RenderablePtr &renderable);
+    void addTranslucentObjectWithRenderable(const RenderablePtr &renderable);
 
     Math::Matrix4x4 currentModelMatrix;
     Math::Matrix4x4 currentInverseModelMatrix;

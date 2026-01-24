@@ -34,6 +34,7 @@ public:
 
     agpu_framebuffer_ref depthOnlyFramebuffer;
     agpu_framebuffer_ref hdrOpaqueFramebuffer;
+    agpu_framebuffer_ref hdrTranslucentFramebuffer;
 
     agpu_shader_resource_binding_ref guiTextureBinding;
     agpu_shader_resource_binding_ref getValidGuiTextureBinding();
@@ -112,6 +113,7 @@ private:
     void performShadowPass();
     void performDepthOnlyPass();
     void performHDROpaquePass();
+    void performHDRTranslucentPass();
 
 };
 
