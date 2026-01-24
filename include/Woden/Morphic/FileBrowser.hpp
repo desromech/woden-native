@@ -40,6 +40,10 @@ public:
     TableMorphPtr fileTable;
     SimpleTableDataSourcePtr fileTableDataSource;
     TextInputMorphPtr fileNameInput;
+
+protected:
+    void onCancelButton();
+    void onAcceptButton();
 };
 
 /**

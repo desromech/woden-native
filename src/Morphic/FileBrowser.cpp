@@ -44,10 +44,16 @@ void FileBrowser::initialize()
     // Create the buttons.
     auto cancelButton = MakeMorph<SimpleButtonMorph> ();
     cancelButton->setLabel("Cancel");
+    cancelButton->onClickAction = [=](MorphPtr) {
+        onCancelButton();
+    };
     addMorph(cancelButton);
 
     auto acceptButton = MakeMorph<SimpleButtonMorph> ();
     acceptButton->setLabel("Accept");
+    acceptButton->onClickAction = [=](MorphPtr) {
+        onAcceptButton();
+    };
     addMorph(acceptButton);
 
     auto buttonLayout = std::make_shared<HorizontalPackingLayout> ();
@@ -80,6 +86,17 @@ void FileBrowser::setDirectory(const std::string &directory)
     fileTable->setDataSource(fileTableDataSource);
 
 }
+
+void FileBrowser::onCancelButton()
+{
+    printf("On cancel button\n");
+}
+
+void FileBrowser::onAcceptButton()
+{
+    printf("On accept button\n");
+}
+
 
 } // End of namespace Morphic
 } // End of namespace Woden
