@@ -1,5 +1,6 @@
 #include "LevelModel.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
+#include <algorithm>
 
 namespace Woden
 {
@@ -119,6 +120,10 @@ std::vector<ElementAlongRay> LevelModel::findElementsAlongRay(const Math::Ray3D 
     std::vector<ElementAlongRay> foundElements;
     for(auto &element : elements)
         element->addElementsAlongRay(ray, foundElements);
+
+    std::sort(foundElements.begin(), foundElements.end(), [](const ElementAlongRay &a, const ElementAlongRay &b){
+        return a.rayDistance < b.rayDistance;
+    });
     return foundElements;
 }
 

@@ -104,6 +104,8 @@ public:
     float getRowHeight();
 
     void clearSelection();
+    const std::vector<size_t> &getSelectedIndices();
+    std::vector<TableDataSourceElementPtr> getSelectedElements();
     bool isSelectedRowIndex(size_t index);
     void selectSingleRow(size_t rowIndex);
 

@@ -26,6 +26,7 @@ public:
     void createMenuBar();
 
     void rayPick(const Math::Ray3D &ray);
+    void onLevelElementsTableSelectionChange();
 
     MenuBarMorphPtr menuBar;
     ToolBarMorphPtr toolBar;

@@ -30,6 +30,9 @@ void LevelEditorMorph::initialize()
     objectPaletteTable = MakeMorph<TableMorph> ();
 
     levelElementsTable->setDataSource(model);
+    levelElementsTable->onSelectionChange = [=](){
+        onLevelElementsTableSelectionChange();
+    };
     buildObjectPalette();
 
     addMorph(menuBar);
@@ -159,7 +162,15 @@ void LevelEditorMorph::createMenuBar()
 void LevelEditorMorph::rayPick(const Math::Ray3D &ray)
 {
     auto elementsAlongRay = model->findElementsAlongRay(ray);
-    printf("elementsAlongRay %d\n", int(elementsAlongRay.size()));
+    for(auto element : elementsAlongRay)
+    {
+    }
+    //printf("elementsAlongRay %d\n", int(elementsAlongRay.size()));
+}
+
+void LevelEditorMorph::onLevelElementsTableSelectionChange()
+{
+
 }
 
 } // End of namespace LevelEditor

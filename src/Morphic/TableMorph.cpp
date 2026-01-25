@@ -203,6 +203,23 @@ void TableMorph::clearSelection()
         onSelectionChange();
 }
 
+const std::vector<size_t> &TableMorph::getSelectedIndices()
+{
+    return selectedIndices;
+}
+
+std::vector<TableDataSourceElementPtr> TableMorph::getSelectedElements()
+{
+    std::vector<TableDataSourceElementPtr> elements;
+    for(auto index : selectedIndices)
+    {
+        if(dataSource && dataSource->isValidIndex(index))
+            elements.push_back(dataSource->getElementAtIndex(index));
+    }
+
+    return elements;
+}
+
 bool TableMorph::isSelectedRowIndex(size_t index)
 {
     for(auto selectedIndex : selectedIndices)
