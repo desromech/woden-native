@@ -1,5 +1,6 @@
 #include "LevelEditorSceneViewMorph.hpp"
 #include "LevelEditorMorph.hpp"
+#include "Woden/Rendering/Camera.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 #include "LevelEditorViewEditionMode.hpp"
 
@@ -83,23 +84,6 @@ void LevelEditorSceneViewMorph::onMouseDoubleClickEvent(const MouseDoubleClickEv
         viewMode->onMouseDoubleClickEvent(event);
 }
 
-/*
-
-void LevelEditorSceneViewMorph::onMouseWheelEvent(const MouseWheelEventPtr &event)
-{
-    auto &camera = cameraNode->cameras.back();
-    if(!camera->isPerspective)
-    {
-        if(event->scrollAmount.y > 0)
-            camera->focalDistance /= 1.1;
-        else if (event->scrollAmount.y < 0)
-            camera->focalDistance *= 1.1;
-        return;
-    }
-        
-    SceneMorph::onMouseWheelEvent(event);
-}
-
 Math::Ray3D LevelEditorSceneViewMorph::computeRayForScreenPosition(const Vector2 &screenPosition)
 {
     auto extent = getExtent();
@@ -112,19 +96,6 @@ Math::Ray3D LevelEditorSceneViewMorph::computeRayForScreenPosition(const Vector2
     //printf("NDC: %f %f\n", ndc.x, ndc.y);
     return worldFrustum.rayForNormalizedPoint(normalizedPoint);
 }
-
-void LevelEditorSceneViewMorph::onMouseClickEvent(const MouseClickEventPtr &event)
-{
-    auto ray = computeRayForScreenPosition(event->position);
-    getLevelEditor()->rayPick(ray);
-}
-
-void LevelEditorSceneViewMorph::onMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
-{
-    printf("TODO: Double click at %f %f\n", event->position.x, event->position.y);
-
-}
-*/
 
 } // End of namespace LevelEditor
 } // End of namespace Woden

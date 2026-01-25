@@ -1,5 +1,6 @@
 #include "LevelEditorViewEditionMode.hpp"
 #include "LevelEditorSceneViewMorph.hpp"
+#include "LevelEditorMorph.hpp"
 #include "Woden/Rendering/Camera.hpp"
 
 namespace Woden
@@ -47,6 +48,13 @@ void LevelEditorViewEditionMode::onKeyboardDownEvent(const KeyboardDownEventPtr 
     }
         break;
     }
+}
+
+void LevelEditorViewEditionMode::onMouseClickEvent(const MouseClickEventPtr &event)
+{
+    auto sceneView = sceneViewReference.lock();
+    auto ray = sceneView->computeRayForScreenPosition(event->position);
+    sceneView->getLevelEditor()->rayPick(ray);
 }
 
 void LevelEditorViewEditionMode::onMouseMotionEvent(const MouseMotionEventPtr &event)

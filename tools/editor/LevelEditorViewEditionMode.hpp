@@ -13,6 +13,7 @@ class LevelEditorViewEditionMode : public LevelEditorViewMode
 public:
     virtual void onKeyboardDownEvent(const KeyboardDownEventPtr &event) override;
 
+    virtual void onMouseClickEvent(const MouseClickEventPtr &event);
     virtual void onMouseMotionEvent(const MouseMotionEventPtr &event) override;
     virtual void onMouseWheelEvent(const MouseWheelEventPtr &event) override;
 };
