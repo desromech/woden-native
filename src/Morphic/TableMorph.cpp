@@ -239,5 +239,18 @@ void TableMorph::selectSingleRow(size_t rowIndex)
         onSelectionChange();
 }
 
+void TableMorph::selectSingleRowElement(const TableDataSourceElementPtr &element)
+{
+    for(size_t i = 0; i < dataSource->getNumberOfElements(); ++i)
+    {
+        auto dataSourceElement = dataSource->getElementAtIndex(i);
+        if(dataSourceElement == element)
+        {
+            selectSingleRow(i);
+            return;
+        }
+    }
+}
+
 } // End of namespace Morphic
 } // End of namespace Woden

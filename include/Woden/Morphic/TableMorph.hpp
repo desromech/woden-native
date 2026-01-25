@@ -108,6 +108,7 @@ public:
     std::vector<TableDataSourceElementPtr> getSelectedElements();
     bool isSelectedRowIndex(size_t index);
     void selectSingleRow(size_t rowIndex);
+    void selectSingleRowElement(const TableDataSourceElementPtr &element);
 
     float rowPositionY = 0;
 

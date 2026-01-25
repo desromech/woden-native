@@ -162,10 +162,10 @@ void LevelEditorMorph::createMenuBar()
 void LevelEditorMorph::rayPick(const Math::Ray3D &ray)
 {
     auto elementsAlongRay = model->findElementsAlongRay(ray);
-    for(auto element : elementsAlongRay)
-    {
-    }
-    //printf("elementsAlongRay %d\n", int(elementsAlongRay.size()));
+    if(elementsAlongRay.empty())
+        levelElementsTable->clearSelection();
+    else
+        levelElementsTable->selectSingleRowElement(elementsAlongRay.front().element);
 }
 
 void LevelEditorMorph::onLevelElementsTableSelectionChange()
