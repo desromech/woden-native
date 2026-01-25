@@ -1,7 +1,7 @@
 #include "LevelEditorSceneViewMorph.hpp"
 #include "LevelEditorMorph.hpp"
-#include "Woden/Rendering/Camera.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
+#include "LevelEditorViewEditionMode.hpp"
 
 namespace Woden
 {
@@ -11,6 +11,18 @@ LevelEditorSceneViewMorph::LevelEditorSceneViewMorph()
 {
 }
 
+void LevelEditorSceneViewMorph::initialize()
+{
+    SceneMorph::initialize();
+    setViewMode(std::make_shared<LevelEditorViewObjectEditionMode> ());
+}
+
+void LevelEditorSceneViewMorph::setViewMode(const LevelEditorViewModePtr &newViewMode)
+{
+    newViewMode->sceneViewReference = std::static_pointer_cast<LevelEditorSceneViewMorph> (shared_from_this());
+    viewMode = newViewMode;
+}
+
 LevelEditorMorphPtr LevelEditorSceneViewMorph::getLevelEditor() const
 {
     return std::static_pointer_cast<LevelEditorMorph> (owner.lock());
@@ -18,49 +30,60 @@ LevelEditorMorphPtr LevelEditorSceneViewMorph::getLevelEditor() const
 
 void LevelEditorSceneViewMorph::onKeyboardDownEvent(const KeyboardDownEventPtr &event)
 {
-    switch(event->keySymbol)
-    {
-    case SDLK_KP_7:
-        cameraAngles = Vector3(-M_PI_2, 0, 0);
-        cameraNode->transform.rotation = computeCameraOrientation();
-        break;
-    case SDLK_KP_1:
-        cameraAngles = Vector3(0);
-        cameraNode->transform.rotation = computeCameraOrientation();
-        break;
-    case SDLK_KP_3:
-        cameraAngles = Vector3(0, -M_PI_2, 0);
-        cameraNode->transform.rotation = computeCameraOrientation();
-        break;
-    case SDLK_KP_5:
-    {
-        auto &camera = cameraNode->cameras.back();
-        camera->isPerspective = !camera->isPerspective;
-    }
-        break;
+    if(viewMode)
+        viewMode->onKeyboardDownEvent(event);
+}
 
-    case SDLK_KP_PLUS:
-    {
-        auto &camera = cameraNode->cameras.back();
-        if(!camera->isPerspective)
-            camera->focalDistance /= 1.1;
-    }
-        break;
-    case SDLK_KP_MINUS:
-    {
-        auto &camera = cameraNode->cameras.back();
-        if(!camera->isPerspective)
-            camera->focalDistance *= 1.1;
-    }
-        break;
-    }
+void LevelEditorSceneViewMorph::onKeyboardUpEvent(const KeyboardUpEventPtr &event)
+{
+    if(viewMode)
+        viewMode->onKeyboardUpEvent(event);
+}
+
+void LevelEditorSceneViewMorph::onTextInputEvent(const TextInputEventPtr &event)
+{
+    if(viewMode)
+        viewMode->onTextInputEvent(event);
+}
+
+void LevelEditorSceneViewMorph::onMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
+{
+    if(viewMode)
+        viewMode->onMouseButtonDownEvent(event);
+}
+
+void LevelEditorSceneViewMorph::onMouseButtonUpEvent(const MouseButtonUpEventPtr &event)
+{
+    if(viewMode)
+        viewMode->onMouseButtonUpEvent(event);
 }
 
 void LevelEditorSceneViewMorph::onMouseMotionEvent(const MouseMotionEventPtr &event)
 {
-    SceneMorph::onMouseMotionEvent(event);
     takeKeyboardFocus();
+    if(viewMode)
+        viewMode->onMouseMotionEvent(event);
 }
+
+void LevelEditorSceneViewMorph::onMouseWheelEvent(const MouseWheelEventPtr &event)
+{
+    if(viewMode)
+        viewMode->onMouseWheelEvent(event);
+}
+
+void LevelEditorSceneViewMorph::onMouseClickEvent(const MouseClickEventPtr &event)
+{
+    if(viewMode)
+        viewMode->onMouseClickEvent(event);
+}
+
+void LevelEditorSceneViewMorph::onMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
+{
+    if(viewMode)
+        viewMode->onMouseDoubleClickEvent(event);
+}
+
+/*
 
 void LevelEditorSceneViewMorph::onMouseWheelEvent(const MouseWheelEventPtr &event)
 {
@@ -101,6 +124,7 @@ void LevelEditorSceneViewMorph::onMouseDoubleClickEvent(const MouseDoubleClickEv
     printf("TODO: Double click at %f %f\n", event->position.x, event->position.y);
 
 }
+*/
 
 } // End of namespace LevelEditor
 } // End of namespace Woden

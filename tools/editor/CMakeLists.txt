@@ -4,6 +4,10 @@ set(LevelEditor_Sources
     LevelEditorMorph.hpp
     LevelEditorSceneViewMorph.cpp
     LevelEditorSceneViewMorph.hpp
+    LevelEditorViewEditionMode.cpp
+    LevelEditorViewEditionMode.hpp
+    LevelEditorViewMode.cpp
+    LevelEditorViewMode.hpp
     LevelModel.cpp
     LevelModel.hpp
 )
