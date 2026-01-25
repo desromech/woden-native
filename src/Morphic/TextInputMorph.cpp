@@ -25,7 +25,7 @@ void TextInputMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
     renderer->drawTextInRectangleWithColor(getLocalBounds(), text, textColor);
 }
 
-void TextInputMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
+void TextInputMorph::onMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
 {
     if(event->wasHandled)
         return;
@@ -34,14 +34,14 @@ void TextInputMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &e
     event->wasHandled = true;
 }
 
-void TextInputMorph::handleKeyboardDownEvent(const KeyboardDownEventPtr &event)
+void TextInputMorph::onKeyboardDownEvent(const KeyboardDownEventPtr &event)
 {
     if(event->wasHandled)
         return;
         
 }
 
-void TextInputMorph::handleKeyboardUpEvent(const KeyboardUpEventPtr &event)
+void TextInputMorph::onKeyboardUpEvent(const KeyboardUpEventPtr &event)
 {
     if(event->wasHandled)
         return;
@@ -49,7 +49,7 @@ void TextInputMorph::handleKeyboardUpEvent(const KeyboardUpEventPtr &event)
 
 }
 
-void TextInputMorph::handleTextInputEvent(const TextInputEventPtr &event)
+void TextInputMorph::onTextInputEvent(const TextInputEventPtr &event)
 {
     text += event->text;
     event->wasHandled = true;

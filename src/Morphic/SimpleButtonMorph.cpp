@@ -41,7 +41,7 @@ void SimpleButtonMorph::setLabel(const std::string &labelText)
     setLayout(layout);
 }
 
-void SimpleButtonMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
+void SimpleButtonMorph::onMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
 {
     if(event->isLeftButton())
     {
@@ -50,7 +50,7 @@ void SimpleButtonMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr
     }
 }
 
-void SimpleButtonMorph::handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event)
+void SimpleButtonMorph::onMouseButtonUpEvent(const MouseButtonUpEventPtr &event)
 {
     if(event->isLeftButton())
     {
@@ -63,7 +63,7 @@ void SimpleButtonMorph::handleMouseButtonUpEvent(const MouseButtonUpEventPtr &ev
 
 }
 
-void SimpleButtonMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
+void SimpleButtonMorph::onMouseMotionEvent(const MouseMotionEventPtr &event)
 {
     takeMouseFocus();
     event->wasHandled = true;

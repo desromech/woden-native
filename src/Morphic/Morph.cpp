@@ -88,17 +88,17 @@ void Morph::handleUnknownEvent(const EventPtr &event)
 
 void Morph::handleKeyboardDownEvent(const KeyboardDownEventPtr &event)
 {
-    (void)event;
+    onKeyboardDownEvent(event);
 }
 
 void Morph::handleKeyboardUpEvent(const KeyboardUpEventPtr &event)
 {
-    (void)event;
+    onKeyboardUpEvent(event);
 }
 
 void Morph::handleTextInputEvent(const TextInputEventPtr &event)
 {
-    (void)event;
+    onTextInputEvent(event);
 }
 
 void Morph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
@@ -109,6 +109,7 @@ void Morph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
             if(submorph->bounds.containsPoint(event->position))
                 submorph->processEvent(event);
         }
+        onMouseButtonDownEvent(event);
     });
 }
 
@@ -120,6 +121,7 @@ void Morph::handleMouseButtonUpEvent(const MouseButtonUpEventPtr &event)
             if(submorph->bounds.containsPoint(event->position))
                 submorph->processEvent(event);
         }
+        onMouseButtonUpEvent(event);
     });
 }
 
@@ -131,6 +133,7 @@ void Morph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
             if(submorph->bounds.containsPoint(event->position))
                 submorph->processEvent(event);
         }
+        onMouseMotionEvent(event);
     });
 }
 
@@ -142,6 +145,7 @@ void Morph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
             if(submorph->bounds.containsPoint(event->position))
                 submorph->processEvent(event);
         }
+        onMouseWheelEvent(event);
     });
 }
 
@@ -153,6 +157,7 @@ void Morph::handleMouseClickEvent(const MouseClickEventPtr &event)
             if(submorph->bounds.containsPoint(event->position))
                 submorph->processEvent(event);
         }
+        onMouseClickEvent(event);
     });
 }
 
@@ -164,8 +169,56 @@ void Morph::handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
             if(submorph->bounds.containsPoint(event->position))
                 submorph->processEvent(event);
         }
+        onMouseDoubleClickEvent(event);
     });
 }
+
+void Morph::onKeyboardDownEvent(const KeyboardDownEventPtr &event)
+{
+    (void)event;
+}
+
+void Morph::onKeyboardUpEvent(const KeyboardUpEventPtr &event)
+{
+    (void)event;
+}
+
+void Morph::onTextInputEvent(const TextInputEventPtr &event)
+{
+    (void)event;
+}
+
+void Morph::onMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
+{
+    (void)event;
+}
+
+void Morph::onMouseButtonUpEvent(const MouseButtonUpEventPtr &event)
+{
+    (void)event;
+}
+
+void Morph::onMouseMotionEvent(const MouseMotionEventPtr &event)
+{
+    (void)event;
+}
+
+void Morph::onMouseWheelEvent(const MouseWheelEventPtr &event)
+{
+    (void)event;
+}
+
+void Morph::onMouseClickEvent(const MouseClickEventPtr &event)
+{
+    (void)event;
+}
+
+void Morph::onMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
+{
+    (void)event;
+}
+
+
 
 void Morph::gotKeyboardFocus()
 {

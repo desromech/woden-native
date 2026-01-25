@@ -32,8 +32,8 @@ public:
     virtual void update(Math::Scalar deltaTime) override;
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
 
-    virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event);
-    virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event);
+    virtual void onMouseMotionEvent(const MouseMotionEventPtr &event);
+    virtual void onMouseWheelEvent(const MouseWheelEventPtr &event);
 
     Math::Quaternion computeCameraOrientation() const;
 

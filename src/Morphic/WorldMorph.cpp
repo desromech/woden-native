@@ -61,7 +61,7 @@ void WorldMorph::drawWith(const Rendering::GUIRendererPtr &renderer)
     }
 }
 
-void WorldMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
+void WorldMorph::onMouseMotionEvent(const MouseMotionEventPtr &event)
 {
     (void)event;
     takeKeyboardFocus();

@@ -24,8 +24,8 @@ public:
 
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
 
-    virtual void handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event) override;
-    virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event) override;
+    virtual void onMouseButtonDownEvent(const MouseButtonDownEventPtr &event) override;
+    virtual void onMouseMotionEvent(const MouseMotionEventPtr &event) override;
 
     void setLabel(const std::string &newLabel);
 

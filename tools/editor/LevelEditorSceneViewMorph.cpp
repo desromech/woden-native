@@ -16,7 +16,7 @@ LevelEditorMorphPtr LevelEditorSceneViewMorph::getLevelEditor() const
     return std::static_pointer_cast<LevelEditorMorph> (owner.lock());
 }
 
-void LevelEditorSceneViewMorph::handleKeyboardDownEvent(const KeyboardDownEventPtr &event)
+void LevelEditorSceneViewMorph::onKeyboardDownEvent(const KeyboardDownEventPtr &event)
 {
     switch(event->keySymbol)
     {
@@ -56,13 +56,13 @@ void LevelEditorSceneViewMorph::handleKeyboardDownEvent(const KeyboardDownEventP
     }
 }
 
-void LevelEditorSceneViewMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
+void LevelEditorSceneViewMorph::onMouseMotionEvent(const MouseMotionEventPtr &event)
 {
-    SceneMorph::handleMouseMotionEvent(event);
+    SceneMorph::onMouseMotionEvent(event);
     takeKeyboardFocus();
 }
 
-void LevelEditorSceneViewMorph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
+void LevelEditorSceneViewMorph::onMouseWheelEvent(const MouseWheelEventPtr &event)
 {
     auto &camera = cameraNode->cameras.back();
     if(!camera->isPerspective)
@@ -74,7 +74,7 @@ void LevelEditorSceneViewMorph::handleMouseWheelEvent(const MouseWheelEventPtr &
         return;
     }
         
-    SceneMorph::handleMouseWheelEvent(event);
+    SceneMorph::onMouseWheelEvent(event);
 }
 
 Math::Ray3D LevelEditorSceneViewMorph::computeRayForScreenPosition(const Vector2 &screenPosition)
@@ -90,13 +90,13 @@ Math::Ray3D LevelEditorSceneViewMorph::computeRayForScreenPosition(const Vector2
     return worldFrustum.rayForNormalizedPoint(normalizedPoint);
 }
 
-void LevelEditorSceneViewMorph::handleMouseClickEvent(const MouseClickEventPtr &event)
+void LevelEditorSceneViewMorph::onMouseClickEvent(const MouseClickEventPtr &event)
 {
-    auto ray = computeRayForScreenPosition(event->position - getOrigin());
+    auto ray = computeRayForScreenPosition(event->position);
     getLevelEditor()->rayPick(ray);
 }
 
-void LevelEditorSceneViewMorph::handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
+void LevelEditorSceneViewMorph::onMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event)
 {
     printf("TODO: Double click at %f %f\n", event->position.x, event->position.y);
 

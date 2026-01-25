@@ -110,6 +110,17 @@ public:
     virtual void handleMouseClickEvent(const MouseClickEventPtr &event);
     virtual void handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event);
 
+    virtual void onKeyboardDownEvent(const KeyboardDownEventPtr &event);
+    virtual void onKeyboardUpEvent(const KeyboardUpEventPtr &event);
+    virtual void onTextInputEvent(const TextInputEventPtr &event);
+
+    virtual void onMouseButtonDownEvent(const MouseButtonDownEventPtr &event);
+    virtual void onMouseButtonUpEvent(const MouseButtonUpEventPtr &event);
+    virtual void onMouseMotionEvent(const MouseMotionEventPtr &event);
+    virtual void onMouseWheelEvent(const MouseWheelEventPtr &event);
+    virtual void onMouseClickEvent(const MouseClickEventPtr &event);
+    virtual void onMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event);
+
     virtual void gotKeyboardFocus();
     virtual void lostKeyboardFocus();
 

@@ -52,7 +52,7 @@ Math::Quaternion SceneMorph::computeCameraOrientation() const
     return Quaternion::YRotation(cameraAngles.y) * Quaternion::XRotation(cameraAngles.x);
 }
 
-void SceneMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
+void SceneMorph::onMouseMotionEvent(const MouseMotionEventPtr &event)
 {
     if(event->hasLeftButtonDown())
     {
@@ -71,7 +71,7 @@ void SceneMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
 
 }
 
-void SceneMorph::handleMouseWheelEvent(const MouseWheelEventPtr &event)
+void SceneMorph::onMouseWheelEvent(const MouseWheelEventPtr &event)
 {
     //printf("Wheel %f %f\n", event->position.x, event->position.y);
     cameraNode->transform.translation += 

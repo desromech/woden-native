@@ -21,11 +21,11 @@ public:
 
     virtual void drawWith(const Rendering::GUIRendererPtr &renderer) override;
 
-    virtual void handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event) override;
+    virtual void onMouseButtonDownEvent(const MouseButtonDownEventPtr &event) override;
 
-    virtual void handleKeyboardDownEvent(const KeyboardDownEventPtr &event) override;
-    virtual void handleKeyboardUpEvent(const KeyboardUpEventPtr &event) override;
-    virtual void handleTextInputEvent(const TextInputEventPtr &event) override;
+    virtual void onKeyboardDownEvent(const KeyboardDownEventPtr &event) override;
+    virtual void onKeyboardUpEvent(const KeyboardUpEventPtr &event) override;
+    virtual void onTextInputEvent(const TextInputEventPtr &event) override;
 
 
     std::string text;

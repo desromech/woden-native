@@ -22,12 +22,12 @@ public:
 
     LevelEditorMorphPtr getLevelEditor() const;
 
-    virtual void handleKeyboardDownEvent(const KeyboardDownEventPtr &event) override;
+    virtual void onKeyboardDownEvent(const KeyboardDownEventPtr &event) override;
 
-    virtual void handleMouseMotionEvent(const MouseMotionEventPtr &event) override;
-    virtual void handleMouseWheelEvent(const MouseWheelEventPtr &event) override;
-    virtual void handleMouseClickEvent(const MouseClickEventPtr &event) override;
-    virtual void handleMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event) override;
+    virtual void onMouseMotionEvent(const MouseMotionEventPtr &event) override;
+    virtual void onMouseWheelEvent(const MouseWheelEventPtr &event) override;
+    virtual void onMouseClickEvent(const MouseClickEventPtr &event) override;
+    virtual void onMouseDoubleClickEvent(const MouseDoubleClickEventPtr &event) override;
 
     Math::Ray3D computeRayForScreenPosition(const Vector2 &screenPosition);
 };

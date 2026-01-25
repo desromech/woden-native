@@ -34,7 +34,7 @@ void MenuItemMorph::setLabel(const std::string &newLabel)
     setExtent(fontFace->measureTextExtent(label) + Vector2(10, 10));
 }
 
-void MenuItemMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
+void MenuItemMorph::onMouseButtonDownEvent(const MouseButtonDownEventPtr &event)
 {
     if(event->isLeftButton())
     {
@@ -60,7 +60,7 @@ void MenuItemMorph::handleMouseButtonDownEvent(const MouseButtonDownEventPtr &ev
     }
 }
 
-void MenuItemMorph::handleMouseMotionEvent(const MouseMotionEventPtr &event)
+void MenuItemMorph::onMouseMotionEvent(const MouseMotionEventPtr &event)
 {
     takeMouseFocus();
     event->wasHandled = true;
