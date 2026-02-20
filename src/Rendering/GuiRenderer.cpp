@@ -43,6 +43,9 @@ void GUIRenderer::addGuiElement(const GuiElement &element)
     transformedElement.rectangleMax += currentTranslation;
     transformedElement.rectangleMin += currentTranslation;
 
+    transformedElement.rectangleMax *= scaleFactor;
+    transformedElement.rectangleMin *= scaleFactor;
+
     guiElements.push_back(transformedElement);
     ++guiElementsSets.back().elementCount;
 }

@@ -105,6 +105,11 @@ public:
         return *this = (*this + o);
     }
 
+    Vector2 operator*=(const Vector2 &o)
+    {
+        return *this = (*this * o);
+    }
+
     Vector2 operator+(const Vector2 &o) const
     {
         return Vector2(x + o.x, y + o.y);
