@@ -59,9 +59,13 @@ agpu_error AMtlBuffer::getDescription(agpu_buffer_description* description)
 
 agpu_error AMtlBuffer::uploadBufferData(agpu_size offset, agpu_size size, agpu_pointer data)
 {
-    CHECK_POINTER(data)
     if(offset + size > handle.length)
         return AGPU_OUT_OF_BOUNDS;
+
+    if(size == 0)
+        return AGPU_OK;
+
+    CHECK_POINTER(data)
         
     if(description.heap_type != AGPU_MEMORY_HEAP_TYPE_DEVICE_LOCAL)
     {
