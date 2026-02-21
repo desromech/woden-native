@@ -95,6 +95,8 @@ const PhysicsSubsystemPtr &World::getPhysicsSubsystem()
     {
         physicsSubsystem = std::make_shared<PhysicsSubsystem> ();
         addSubsystem(physicsSubsystem);
+
+        physicsSubsystem->sceneSubsystem = getSceneSubsystem();
     }
     return physicsSubsystem;
 }
