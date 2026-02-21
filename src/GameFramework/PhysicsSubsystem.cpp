@@ -20,7 +20,7 @@ PhysicsSubsystem::~PhysicsSubsystem()
 void PhysicsSubsystem::updateSingleTimeStep(Math::Scalar deltaTime)
 {
     physicsWorld->loadCollisionStateFromModels();
-    physicsWorld->updateSingleTimeStep(deltaTime);
+    physicsWorld->update(deltaTime);
     physicsWorld->saveCollisionStateIntoModels();
     if(debugEnabled)
         updateDebugContacts();

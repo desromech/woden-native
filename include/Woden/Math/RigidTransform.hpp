@@ -75,6 +75,11 @@ struct RigidTransform
         return transform;
     }
 
+    bool operator==(const RigidTransform &o) const
+    {
+        return rotation == o.rotation && translation == o.translation;
+    }
+
     Quaternion rotation = Quaternion::Identity();
     Vector3 translation = Vector3(0, 0, 0);
 };
