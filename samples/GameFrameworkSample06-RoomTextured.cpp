@@ -28,9 +28,9 @@ int woden_main(int argc, const char **argv)
 
     auto world = std::make_shared<World> ();
 
-    Woden::Rendering::MaterialPtr floorMaterial = Woden::Assets::ResourceCache::Get()->getOrLoadMaterial("assets/materials/floor/mossy-cobblestone.wdmat");
+    Woden::Rendering::MaterialPtr floorMaterial = Woden::Assets::ResourceCache::Get()->getOrLoadMaterial("floor/mossy-cobblestone");
     Woden::Rendering::MaterialPtr ceilingMaterial = floorMaterial;
-    Woden::Rendering::MaterialPtr wallMaterial = Woden::Assets::ResourceCache::Get()->getOrLoadMaterial("assets/materials/bricks/brick-wall-006.wdmat");
+    Woden::Rendering::MaterialPtr wallMaterial = Woden::Assets::ResourceCache::Get()->getOrLoadMaterial("bricks/brick-wall-006");
 
     Wall walls[] = {
         {AABox(Vector3(-10, -0.5, -10), Vector3(10, 0.0, 10)), floorMaterial},

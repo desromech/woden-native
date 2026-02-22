@@ -30,6 +30,7 @@ void ResourceCache::releaseSingleton()
 
 bool ResourceCache::initialize()
 {
+    materialSearchPath = "assets/materials/";
     return true;
 }
 
@@ -134,10 +135,12 @@ Rendering::MaterialPtr ResourceCache::getOrLoadMaterial(const std::string &path)
             return existent;
     }
 
-    auto materialText = Utility::readWholeTextFile(path);
+    std::string fullPath = materialSearchPath + path + ".wdmat";
+
+    auto materialText = Utility::readWholeTextFile(fullPath);
     if(materialText.empty())
     {
-        fprintf(stderr, "Failed to load material %s\n", path.c_str());
+        fprintf(stderr, "Failed to load material %s\n", fullPath.c_str());
         return nullptr;
     }
 
@@ -169,9 +172,11 @@ Rendering::MaterialPtr ResourceCache::getOrLoadMaterial(const std::string &path)
     auto material = materialFactory->makeInstance();
     assert(material);
 
+    loadedMaterials.insert(std::make_pair(path, material));
+
     ResourceLoadingContext context;
     context.jsonObject = document.GetObj();
-    context.directory = Utility::dirname(path);
+    context.directory = Utility::dirname(fullPath);
     context.resourceCache = shared_from_this();
 
     material->loadWithContext(context);

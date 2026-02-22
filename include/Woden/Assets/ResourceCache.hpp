@@ -33,6 +33,8 @@ private:
     TexturePtr checkboardNormalTexture;
     Rendering::MaterialPtr checkboardMaterial;
 
+    std::string materialSearchPath;
+
     std::unordered_map<std::string, ImageWeakPtr> loadedImages;
     std::unordered_map<std::string, Rendering::MaterialWeakPtr> loadedMaterials;
     std::unordered_map<std::string, TextureWeakPtr> loadedTextures;
