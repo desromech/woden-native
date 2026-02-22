@@ -1,0 +1,13 @@
+{
+    "type": "MetallicRoughness",
+    "baseColorFactor": [0.0, 0.0, 0.0, 1.0],
+    "emissiveFactor": [1.0, 1.0, 1.0],
+    "emissiveTexture": "temp_lava.jpg",
+
+    "roughnessFactor": 1.0,
+    "metallicFactor": 0.0,
+
+    "doubleSided" : true,
+
+    "texcoordOffsetVelocity" : [0.0, 0.1]
+}
