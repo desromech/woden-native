@@ -1,8 +1,8 @@
 #ifndef WODEN_ASSETS_MAP_FILE_HPP
 #define WODEN_ASSETS_MAP_FILE_HPP
 
-#include "Math/Vector3.hpp"
-#include "Math/Plane.hpp"
+#include "Woden/Math/Vector3.hpp"
+#include "Woden/Math/Plane.hpp"
 
 #include <map>
 #include <memory>
