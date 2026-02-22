@@ -3,6 +3,7 @@ set(WodenEngine_Sources
     Assets/Font.cpp
     Assets/Image.cpp
     Assets/PixelFormat.cpp
+    Assets/QMapFile.cpp
     Assets/ResourceCache.cpp
     Assets/ResourceLoadingContext.cpp
     Assets/Texture.cpp
