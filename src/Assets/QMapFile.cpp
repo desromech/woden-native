@@ -290,7 +290,6 @@ public:
 
         auto brush = std::make_shared<QMapBrush> ();
 
-        printf("paseBrushFace %d\n", int(peekTokenType()));
         while(peekTokenType() == QMapFileTokenType::LeftParent)
         {
             auto face = parseFace();
