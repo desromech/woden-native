@@ -90,18 +90,30 @@ void RigidBody::integrateMovement(Math::Scalar deltaTime)
     }
     
     // Compute the linear acceleration
-    auto linearAcceleration = owner.lock()->gravity + netForce*Math::Vector3(inverseMass) - linearVelocity*Math::Vector3(linearDamping) + internalLinearAcceleration;
+    auto linearAcceleration = owner.lock()->gravity + netForce*Math::Vector3(inverseMass) + internalLinearAcceleration;
 
     // Integrate the linear acceleration
     auto integratedVelocity = linearVelocity + linearAcceleration*Math::Vector3(deltaTime);
+
+    // Apply the linear damping
+    auto linearDampingFactor = Math::clamp(powf(1.0f - linearDamping, deltaTime), 0.0f, 1.0f);
+    integratedVelocity *= linearDampingFactor;
+
+    // Integrate the linear velocity
     linearVelocityIntegrationDelta = integratedVelocity - linearVelocity;
     linearVelocity = integratedVelocity;
 
     // Compute the angular acceleration.
-    auto angularAcceleration = worldInverseInertiaTensor * netTorque - angularVelocity*Math::Vector3(angularDamping);
+    auto angularAcceleration = worldInverseInertiaTensor * netTorque;
 
     // Integrate the angular acceleration.
     auto integratedAngularVelocity = angularVelocity + angularAcceleration*Math::Vector3(deltaTime);
+
+    // Apply the angular damping
+    auto angularDampingFactor = Math::clamp(powf(1.0f - angularDamping, deltaTime), 0.0f, 1.0f);
+    integratedAngularVelocity *= angularDampingFactor;
+
+    // Integrat the angular velocity
     angularVelocityIntegrationDelta = integratedAngularVelocity - angularVelocity;
     angularVelocity = integratedAngularVelocity;
 

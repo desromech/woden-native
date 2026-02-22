@@ -87,9 +87,9 @@ int woden_main(int argc, const char **argv)
     };
     for(auto &boxPosition : boxPositions)
     {
-        auto halfExtent = Vector3(0.125);
+        auto halfExtent = Vector3(0.25);
         auto cubeMesh = Woden::Rendering::MeshBuilder()
-            .addCubeWithHalfExtent(halfExtent + 0.1)
+            .addCubeWithHalfExtent(halfExtent)
             .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
             .finishMesh();
         
