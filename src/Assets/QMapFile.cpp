@@ -1,5 +1,6 @@
 #include "Woden/Assets/QMapFile.hpp"
 #include "Woden/Utility/ReadWholeFile.hpp"
+#include <algorithm>
 #include <stdint.h>
 
 namespace Woden
@@ -271,9 +272,9 @@ public:
     QMapFacePtr parseFace()
     {
         auto face = std::make_shared<QMapFace> ();
-        face->firstPoint = parsePoint();
-        face->secondPoint = parsePoint();
-        face->thirdPoint = parsePoint();
+        face->firstPlanePoint = parsePoint();
+        face->secondPlanePoint = parsePoint();
+        face->thirdPlanePoint = parsePoint();
         face->materialName = parseName();
         face->firstTexturePlane = parseTexturePlane();
         face->secondTexturePlane = parseTexturePlane();
@@ -360,6 +361,130 @@ QMapFilePtr QMapFile::parseFromString(const std::string &string)
     auto tokens = QMapFileTokenizer(string).tokenizeString();
     return QMapFileParser(tokens).parseMap();
 }
+
+void QMapFile::computeGeometry()
+{
+    for(auto &entity : entities)
+        entity->computeGeometry();
+}
+
+void QMapFile::addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale)
+{
+}
+
+void QMapEntity::computeGeometry()
+{
+    for(auto &brush : brushes)
+        brush->computeGeometry();
+}
+
+std::string QMapEntity::getClassName()
+{
+    auto it = properties.find("classname");
+    if(it != properties.end())
+        return it->second;
+    return std::string();
+}
+
+void QMapBrush::computeGeometry()
+{
+    // Reset the face geometry.
+    for(auto &face : faces)
+    {
+        face->resetGeometryComputation();
+    }
+
+    // Compute the vertices.
+    for(size_t i = 0; i < faces.size(); ++i)
+    {
+        auto &firstFace = faces[i];
+        auto &firstPlane = firstFace->plane;
+        for(size_t j = i + 1; j < faces.size(); ++j)
+        {
+            auto &secondFace = faces[j];
+            auto &secondPlane = secondFace->plane;
+            for(size_t k = j + 1; k < faces.size(); ++k)
+            {
+                auto &thirdFace = faces[k];
+                auto &thirdPlane = thirdFace->plane;
+
+                auto m = Math::Matrix3x3::WithRows(firstPlane.normal, secondPlane.normal, thirdPlane.normal);
+                auto det = m.determinant();
+                if(det != 0)
+                {
+                    auto v = Math::Vector3(firstPlane.distance, secondPlane.distance, thirdPlane.distance);
+                    auto p = m.inverse() * v;
+                    if(isPointInBrush(p))
+                    {
+                        //printf("p %f %f %f\n", p.x, p.y, p.z);
+                        firstFace->vertices.push_back(p);
+                        secondFace->vertices.push_back(p);
+                        thirdFace->vertices.push_back(p);
+                    }
+                }
+            }
+        }
+    }
+    
+    // Sort the vertices and compute the texcoord.
+    for(auto &face : faces)
+    {
+        face->sortVertices();
+        face->computeTexcoords();
+    }
+}
+
+bool QMapBrush::isPointInBrush(const Math::Vector3 &p) const
+{
+    Math::Scalar Epsilon = 1e-5;
+    //printf("ib: %f %f %f\n", p.x, p.y, p.z);
+    for(auto &face : faces)
+    {
+        //auto sd = face->plane.signedDistanceToPoint(p);
+        //printf("sd: %f\n", sd);
+        if(!face->plane.isPointInsideOrBehind(p, Epsilon))
+            return false;
+    }
+    return true;
+}
+
+void QMapFace::resetGeometryComputation()
+{
+    plane = Math::Plane::WithQPoints(firstPlanePoint, secondPlanePoint, thirdPlanePoint);
+    //printf("plane %f %f %f = %f\n", plane.normal.x, plane.normal.y, plane.normal.z, plane.distance);
+    vertices.clear();
+    texcoords.clear();
+}
+
+void QMapFace::sortVertices()
+{
+    if(vertices.empty())
+        return;
+    
+    Math::Vector3 centroid = Math::Vector3(0);
+    for(auto &v : vertices)
+        centroid += v;
+    centroid /= Math::Vector3(Math::Scalar(vertices.size()));
+
+    auto n = plane.normal;
+    std::sort(vertices.begin(), vertices.end(), [&] (const Math::Vector3 &a, const Math::Vector3 &b) {
+        auto u = centroid - a;
+        auto v = centroid - b;
+        return u.cross(v).dot(n) >= 0;
+    });
+}
+
+void QMapFace::computeTexcoords()
+{
+    texcoords.clear();
+    texcoords.reserve(vertices.size());
+    for(auto &vertex : vertices)
+    {
+        (void)vertex;
+        texcoords.push_back(Math::Vector2(0, 0));
+    }
+}
+
 
 } // End of namespace Assets
 } // namespace Woden

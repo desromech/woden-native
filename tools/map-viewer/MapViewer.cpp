@@ -50,6 +50,12 @@ int main(int argc, const char *argv[])
     }
 
     auto scene = MakeScene();
+    if(mapFile)
+    {
+        mapFile->computeGeometry();
+        mapFile->addToSceneWithInverseScale(scene, 32);
+    }
+    
     scene->openInSystemWindow();
 
     int exitCode = Morph::runMainLoop();

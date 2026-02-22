@@ -1,8 +1,10 @@
 #ifndef WODEN_ASSETS_MAP_FILE_HPP
 #define WODEN_ASSETS_MAP_FILE_HPP
 
+#include "Woden/Math/Vector2.hpp"
 #include "Woden/Math/Vector3.hpp"
 #include "Woden/Math/Plane.hpp"
+#include "Woden/SceneGraph/Scene.hpp"
 
 #include <map>
 #include <memory>
@@ -25,6 +27,10 @@ public:
     static QMapFilePtr parseFromFileNamed(const std::string &filename);
     static QMapFilePtr parseFromString(const std::string &string);
 
+    void computeGeometry();
+
+    void addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale);
+
     std::vector<QMapEntityPtr> entities;
 
 };
@@ -32,28 +38,43 @@ public:
 class QMapEntity
 {
 public: 
+    std::string getClassName();
+
+    void computeGeometry();
+
     std::map<std::string, std::string> properties;
     std::vector<QMapBrushPtr> brushes;
 };
 
 class QMapBrush
 {
-public: 
+public:
+    void computeGeometry();
+    bool isPointInBrush(const Math::Vector3 &p) const;
+
     std::vector<QMapFacePtr> faces;
 };
 
 class QMapFace
 {
 public:
-    Math::Vector3 firstPoint;
-    Math::Vector3 secondPoint;
-    Math::Vector3 thirdPoint;
+    void resetGeometryComputation();
+    void sortVertices();
+    void computeTexcoords();
+
+    Math::Vector3 firstPlanePoint;
+    Math::Vector3 secondPlanePoint;
+    Math::Vector3 thirdPlanePoint;
     Math::Plane firstTexturePlane;
     Math::Plane secondTexturePlane;
     Math::Scalar rotation;
     Math::Scalar xScale;
     Math::Scalar yScale;
     std::string materialName;
+
+    Math::Plane plane;
+    std::vector<Math::Vector3> vertices;
+    std::vector<Math::Vector2> texcoords;
 };
 
 } // End of namespace Assets

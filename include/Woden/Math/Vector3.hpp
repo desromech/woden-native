@@ -140,6 +140,11 @@ public:
         return *this = (*this * o);
     }
 
+    Vector3 operator/=(const Vector3 &o)
+    {
+        return *this = (*this / o);
+    }
+
     friend std::ostream &operator<<(std::ostream &out, const Vector3 &vector)
     {
         out << "Vector3(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
