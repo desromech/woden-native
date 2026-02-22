@@ -45,6 +45,15 @@ public:
 class QMapFace
 {
 public:
+    Math::Vector3 firstPoint;
+    Math::Vector3 secondPoint;
+    Math::Vector3 thirdPoint;
+    Math::Plane firstTexturePlane;
+    Math::Plane secondTexturePlane;
+    Math::Scalar rotation;
+    Math::Scalar xScale;
+    Math::Scalar yScale;
+    std::string materialName;
 };
 
 } // End of namespace Assets

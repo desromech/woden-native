@@ -198,6 +198,156 @@ public:
     size_t position = 0;
 };
 
+class QMapFileParser
+{
+public:
+    QMapFileParser(const std::vector<QMapFileToken> &initTokens)
+        : tokens(initTokens)
+    {
+    }
+
+    void advance(int amount = 1)
+    {
+        position += amount;
+    }
+
+    QMapFileTokenType peekTokenType(int offset = 0)
+    {
+        size_t peekPosition = position + offset;
+        if(peekPosition < tokens.size())
+            return tokens[peekPosition].type;
+        return QMapFileTokenType::EndOfFile;        
+    }
+
+    bool match(QMapFileTokenType expectedTokenType)
+    {
+        if(peekTokenType() != expectedTokenType)
+            return false;
+        advance();
+        return true;
+    }
+
+    QMapFileToken nextToken()
+    {
+        return tokens[position++];
+    }
+
+    Math::Scalar parseNumber()
+    {
+        if(peekTokenType() != QMapFileTokenType::Number)
+            return 0;
+        return Math::Scalar(atof(nextToken().content.c_str()));
+    }
+
+    Math::Vector3 parsePoint()
+    {
+        match(QMapFileTokenType::LeftParent);
+        auto x = parseNumber();
+        auto y = parseNumber();
+        auto z = parseNumber();
+        match(QMapFileTokenType::RightParent);
+        return Math::Vector3(x, y, z);
+    }
+
+    Math::Plane parseTexturePlane()
+    {
+        match(QMapFileTokenType::LeftBracket);
+        auto nx = parseNumber();
+        auto ny = parseNumber();
+        auto nz = parseNumber();
+        auto d = parseNumber();
+        match(QMapFileTokenType::RightBracket);
+        return Math::Plane(Math::Vector3(nx, ny, nz), d);
+    }
+
+    std::string parseName()
+    {
+        if(peekTokenType() != QMapFileTokenType::Name)
+            return std::string();
+
+        return nextToken().content;
+    }
+
+    QMapFacePtr parseFace()
+    {
+        auto face = std::make_shared<QMapFace> ();
+        face->firstPoint = parsePoint();
+        face->secondPoint = parsePoint();
+        face->thirdPoint = parsePoint();
+        face->materialName = parseName();
+        face->firstTexturePlane = parseTexturePlane();
+        face->secondTexturePlane = parseTexturePlane();
+        face->rotation = parseNumber();
+        face->xScale = parseNumber();
+        face->yScale = parseNumber();
+        return face;
+    }
+
+    QMapBrushPtr parseBrush()
+    {
+        if(!match(QMapFileTokenType::LeftCBracket))
+            return nullptr;
+
+        auto brush = std::make_shared<QMapBrush> ();
+
+        printf("paseBrushFace %d\n", int(peekTokenType()));
+        while(peekTokenType() == QMapFileTokenType::LeftParent)
+        {
+            auto face = parseFace();
+            if(face)
+                brush->faces.push_back(face);
+        }
+
+        match(QMapFileTokenType::RightCBracket);
+        return brush;
+    }
+
+    QMapEntityPtr parseEntity()
+    {
+        if(!match(QMapFileTokenType::LeftCBracket))
+            return nullptr;
+
+        auto entity = std::make_shared<QMapEntity> ();
+
+        // Properties.
+        while (peekTokenType() == QMapFileTokenType::String)
+        {
+            std::string key = nextToken().content;
+            std::string value;
+            if(peekTokenType() == QMapFileTokenType::String)
+                value = nextToken().content;
+            entity->properties[key] = value;
+        }
+
+        // Brushes
+        while(peekTokenType() == QMapFileTokenType::LeftCBracket)
+        {
+            auto brush = parseBrush();
+            entity->brushes.push_back(brush);
+        }
+
+        match(QMapFileTokenType::RightCBracket);
+        return entity;
+    }
+
+    QMapFilePtr parseMap()
+    {
+        auto map = std::make_shared<QMapFile> ();
+        while(peekTokenType() == QMapFileTokenType::LeftCBracket)
+        {
+            auto entity = parseEntity();
+            if(!entity)
+                return map;
+            map->entities.push_back(entity);
+        }
+
+        return map;
+    }
+
+    const std::vector<QMapFileToken> &tokens;
+    size_t position = 0;
+};
+
 QMapFilePtr QMapFile::parseFromFileNamed(const std::string &filename)
 {
     auto string = Utility::readWholeTextFile(filename);
@@ -208,14 +358,8 @@ QMapFilePtr QMapFile::parseFromFileNamed(const std::string &filename)
 
 QMapFilePtr QMapFile::parseFromString(const std::string &string)
 {
-    auto map = std::make_shared<QMapFile> ();
     auto tokens = QMapFileTokenizer(string).tokenizeString();
-    printf("TODO: parse qmap file. %zu tokens\n", tokens.size());
-    for(auto &token : tokens)
-    {
-        printf("%d: %s\n", int(token.type), token.content.c_str());
-    }
-    return map;
+    return QMapFileParser(tokens).parseMap();
 }
 
 } // End of namespace Assets
