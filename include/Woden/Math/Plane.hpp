@@ -9,7 +9,8 @@ namespace Math
 {
 
 /**
- * I am a 3D plane
+ * I am a 3D plane in hessian form:
+ * <P, N> = D
  */
 struct Plane
 {
@@ -26,6 +27,16 @@ struct Plane
         auto n = u.cross(v).normalized();
         auto d = p1.dot(n);
         return Plane(n, d);
+    }
+
+    Scalar signedDistanceToPoint(const Vector3 &p)
+    {
+        return normal.dot(p) - distance;
+    }
+
+    bool isPointInsideOrBehind(const Vector3 &p, Scalar epsilon)
+    {
+        return signedDistanceToPoint(p) < epsilon;
     }
 
     Vector3 normal = Vector3::Zeros();
