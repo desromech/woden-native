@@ -1,6 +1,6 @@
 {
     "type": "MetallicRoughness",
-    "baseColorTexture": "mossy_cobblestone_diff_1k.jpg",
+    "baseColorTexture": "mossy_cobblestone.jpg",
     "normalTexture": "mossy_cobblestone_nor_gl_1k.jpg",
     "metallicRoughnessTexture": "mossy_cobblestone_arm_1k.jpg",
     "occlusionTexture": "mossy_cobblestone_arm_1k.jpg",

@@ -1,6 +1,6 @@
 {
     "type": "MetallicRoughness",
-    "baseColorTexture": "coast_sand_04_diff_1k.jpg",
+    "baseColorTexture": "coast_sand_04.jpg",
     "normalTexture": "coast_sand_04_nor_gl_1k.jpg",
     "metallicRoughnessTexture": "coast_sand_04_arm_1k.jpg",
     "occlusionTexture": "coast_sand_04_arm_1k.jpg",
