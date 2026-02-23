@@ -11,7 +11,7 @@
 ]
 
 @baseclass size(-8 -8 -8, 8 8 8) color(255 255 40) = PointLightClass [
-    radius(float) : "Influence radius": "10.0"
+    influenceRadius(float) : "Influence radius": "10.0"
 ]
 
 @PointClass base(LightClass, PointLightClass) = light : "Punctual light source" []

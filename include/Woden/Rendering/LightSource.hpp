@@ -48,7 +48,7 @@ class PointLightSource : public LightSource
 public:
     virtual void addIntoRenderingScene(const RenderingScenePtr &renderingScene) override;
 
-    Math::Scalar influenceRadius;
+    Math::Scalar influenceRadius = 1.0;
 };
 
 class SpotLightSource : public PointLightSource

@@ -1,6 +1,7 @@
 #include "Woden/Assets/QMapFile.hpp"
 #include "Woden/Assets/ResourceCache.hpp"
 #include "Woden/Utility/ReadWholeFile.hpp"
+#include "Woden/Rendering/LightSource.hpp"
 #include <algorithm>
 #include <stdint.h>
 #include <sstream>
@@ -329,7 +330,7 @@ public:
             std::string value;
             if(peekTokenType() == QMapFileTokenType::String)
                 value = nextToken().content;
-            entity->properties[key] = value;
+            entity->addProperty(key, value);
         }
 
         // Brushes
@@ -427,7 +428,7 @@ void QMapEntity::computeGroupedTexcoords()
 
 void QMapEntity::addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale)
 {
-    auto origin = quakeToWodenCoordinates(getOrigin());
+    auto origin = quakeToWodenCoordinates(getOrigin()) / inverseScale;
     auto sceneNode = std::make_shared<SceneGraph::SceneNode> ();
     sceneNode->transform.translation = origin;
 
@@ -450,23 +451,50 @@ void QMapEntity::addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, M
         sceneNode->addRenderable(meshBuilder.finishMesh());
     }
 
+    if(isLightEntity())
+    {
+        auto lightSource = parseLightSource();
+        if(lightSource)
+            sceneNode->addLightSource(lightSource);
+    }
 
     scene->normalLayer->addChild(sceneNode);
 }
 
-std::string QMapEntity::getClassName()
+void QMapEntity::addProperty(const std::string &key, const std::string &value)
 {
-    auto it = properties.find("classname");
-    if(it != properties.end())
-        return it->second;
-    return std::string();
+    properties[key] = value;
+    if(key == "classname")
+    {
+        className = value;
+        return;
+    }
 }
 
-
-Math::Vector3 QMapEntity::getOrigin()
+bool QMapEntity::getBooleanProperty(const std::string &key, bool defaultValue)
 {
-    Math::Vector3 v(0);
-    auto it = properties.find("origin");
+    bool result = defaultValue;
+    auto it = properties.find(key);
+    if(it != properties.end())
+        result = atoi(it->second.c_str()) != 0;
+
+    return result;
+}
+
+Math::Scalar QMapEntity::getScalarProperty(const std::string &key, Math::Scalar defaultValue)
+{
+    Math::Scalar result = defaultValue;
+    auto it = properties.find(key);
+    if(it != properties.end())
+        result = atof(it->second.c_str());
+
+    return result;
+}
+
+Math::Vector3 QMapEntity::getVector3Property(const std::string &key, const Math::Vector3 &defaultValue)
+{
+    Math::Vector3 v = defaultValue;
+    auto it = properties.find(key);
     if(it != properties.end())
     {
         std::istringstream in(it->second);
@@ -475,6 +503,47 @@ Math::Vector3 QMapEntity::getOrigin()
 
     return v;
 }
+
+Math::Vector3 QMapEntity::getOrigin()
+{
+    return getVector3Property("origin");
+}
+
+bool QMapEntity::isLightEntity() const
+{
+    return className == "light" || className == "light_spot" || className == "light_directional";
+}
+
+Rendering::LightSourcePtr QMapEntity::parseLightSource()
+{
+    if(className == "light_spot")
+        return parseSpotLightSource();
+    if(className == "light_directional")
+        return parseDirectionalLightSource();
+    return parsePointLightSource();
+}
+
+Rendering::LightSourcePtr QMapEntity::parseDirectionalLightSource()
+{
+    return nullptr;
+}
+
+Rendering::LightSourcePtr QMapEntity::parsePointLightSource()
+{
+    auto pointLightSource = std::make_shared<Rendering::PointLightSource> ();
+    pointLightSource->castShadows = getBooleanProperty("castShadows", false);
+    pointLightSource->color = getVector3Property("color", pointLightSource->color);
+    pointLightSource->intensity = getScalarProperty("intensity", 1.0);
+    pointLightSource->influenceRadius = getScalarProperty("influenceRadius", 1.0);
+
+    return pointLightSource;
+}
+
+Rendering::LightSourcePtr QMapEntity::parseSpotLightSource()
+{
+    return nullptr;
+}
+
 
 void QMapBrush::computeGeometry()
 {

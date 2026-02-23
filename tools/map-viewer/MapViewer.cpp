@@ -57,7 +57,7 @@ int main(int argc, const char *argv[])
         mapFile->addToSceneWithInverseScale(scene, 32);
     }
     
-    {
+    /*{
         auto pointLightSource = std::make_shared<Woden::Rendering::PointLightSource> ();
         pointLightSource->color = Vector3(0.8f, 0.8f, 0.2f);
         pointLightSource->intensity = 10;
@@ -65,7 +65,7 @@ int main(int argc, const char *argv[])
 
         scene->normalLayer->addChild(pointLightSource->asSceneNodeWithPosition(Vector3(-1.5f, 3.0, 1.6f)));
 
-    }
+    }*/
 
     scene->openInSystemWindow();
 

@@ -43,14 +43,25 @@ public:
 class QMapEntity
 {
 public: 
-    std::string getClassName();
+    void addProperty(const std::string &key, const std::string &value);
+
+    bool getBooleanProperty(const std::string &key, bool defaultValue = 0);
+    Math::Scalar getScalarProperty(const std::string &key, Math::Scalar defaultValue = 0);
+    Math::Vector3 getVector3Property(const std::string &key, const Math::Vector3 &defaultValue = Math::Vector3(0));
     Math::Vector3 getOrigin();
+    bool isLightEntity() const;
 
     void computeGeometry();
     void groupFacesPerMaterial();
     void computeGroupedTexcoords();
 
     void addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale);
+    Rendering::LightSourcePtr parseLightSource();
+    Rendering::LightSourcePtr parseDirectionalLightSource();
+    Rendering::LightSourcePtr parsePointLightSource();
+    Rendering::LightSourcePtr parseSpotLightSource();
+
+    std::string className;
 
     std::map<std::string, std::string> properties;
     std::vector<QMapBrushPtr> brushes;
