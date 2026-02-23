@@ -523,7 +523,7 @@ void QMapFace::addToMeshWithInverseScale(Woden::Rendering::MeshBuilder &meshBuil
 
         meshBuilder.positions.push_back(quakeToWodenCoordinates(vertex) / inverseScale);
         meshBuilder.texcoords.push_back(texcoord);
-        meshBuilder.normals.push_back(quakeToWodenCoordinates(-plane.normal));
+        meshBuilder.normals.push_back(quakeToWodenCoordinates(plane.normal));
     }
 
     for(size_t i = 2; i < vertices.size(); ++i)
@@ -563,7 +563,7 @@ void QMapFace::computeTexcoords()
     for(auto &vertex : vertices)
     {
         (void)vertex;
-        texcoords.push_back(Math::Vector2(0, 0));
+        texcoords.push_back(Math::Vector2(vertex.x/64, vertex.y/64));
     }
 }
 

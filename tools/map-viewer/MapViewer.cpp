@@ -58,21 +58,12 @@ int main(int argc, const char *argv[])
     }
     
     {
-        scene->normalLayer->addChild(Woden::Rendering::MeshBuilder()
-            .addCubeWithExtent(Vector3(1, 1, 1))
-            .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
-            .finishMesh()->asSceneNode()
-        );
-    }
-
-
-    {
         auto pointLightSource = std::make_shared<Woden::Rendering::PointLightSource> ();
         pointLightSource->color = Vector3(0.8f, 0.8f, 0.2f);
-        pointLightSource->intensity = 5;
-        pointLightSource->influenceRadius = 4;
+        pointLightSource->intensity = 10;
+        pointLightSource->influenceRadius = 10;
 
-        scene->normalLayer->addChild(pointLightSource->asSceneNodeWithPosition(Vector3(-1.5f, 1.5f, 1.6f)));
+        scene->normalLayer->addChild(pointLightSource->asSceneNodeWithPosition(Vector3(-1.5f, 3.0, 1.6f)));
 
     }
 
