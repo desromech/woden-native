@@ -525,7 +525,11 @@ Rendering::LightSourcePtr QMapEntity::parseLightSource()
 
 Rendering::LightSourcePtr QMapEntity::parseDirectionalLightSource()
 {
-    return nullptr;
+    auto directionalLightSource = std::make_shared<Rendering::DirectionalLightSource> ();
+    directionalLightSource->castShadows = getBooleanProperty("castShadows", false);
+    directionalLightSource->color = getVector3Property("color", directionalLightSource->color);
+    directionalLightSource->intensity = getScalarProperty("intensity", 1.0);
+    return directionalLightSource;
 }
 
 Rendering::LightSourcePtr QMapEntity::parsePointLightSource()
@@ -535,13 +539,19 @@ Rendering::LightSourcePtr QMapEntity::parsePointLightSource()
     pointLightSource->color = getVector3Property("color", pointLightSource->color);
     pointLightSource->intensity = getScalarProperty("intensity", 1.0);
     pointLightSource->influenceRadius = getScalarProperty("influenceRadius", 1.0);
-
     return pointLightSource;
 }
 
 Rendering::LightSourcePtr QMapEntity::parseSpotLightSource()
 {
-    return nullptr;
+    auto spotLightSource = std::make_shared<Rendering::SpotLightSource> ();
+    spotLightSource->castShadows = getBooleanProperty("castShadows", false);
+    spotLightSource->color = getVector3Property("color", spotLightSource->color);
+    spotLightSource->intensity = getScalarProperty("intensity", 1.0);
+    spotLightSource->influenceRadius = getScalarProperty("influenceRadius", 1.0);
+    spotLightSource->innerCutoff = getScalarProperty("innerCutoff", spotLightSource->innerCutoff);
+    spotLightSource->outerCutoff = getScalarProperty("outerCutoff", spotLightSource->outerCutoff);
+    return spotLightSource;
 }
 
 

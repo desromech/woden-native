@@ -75,7 +75,7 @@
 }
 // entity 2
 {
-"classname" "light"
+"classname" "light_spot"
 "origin" "-40 8 120"
 "intensity" "10"
 "castShadows" "0"
@@ -84,7 +84,7 @@
 }
 // entity 3
 {
-"classname" "light"
+"classname" "light_spot"
 "origin" "136 8 120"
 "intensity" "10"
 "castShadows" "0"
