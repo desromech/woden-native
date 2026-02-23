@@ -122,6 +122,17 @@ public:
                     advance();
             }
 
+            // Exponent
+            if(peek() == 'e' || peek() == 'E')
+            {
+                advance();
+                if(peek() == '-' || peek() == '+')
+                    advance();
+
+                while(isDigit(peek()))
+                    advance();
+            }
+
             return makeTokenStartingFrom(QMapFileTokenType::Number, startingPosition);
         }
 
@@ -260,7 +271,7 @@ public:
         auto nz = parseNumber();
         auto d = parseNumber();
         match(QMapFileTokenType::RightBracket);
-        return Math::Plane(Math::Vector3(nx, ny, nz), d);
+        return Math::Plane(Math::Vector3(nx, ny, nz), -d);
     }
 
     std::string parseName()
@@ -562,7 +573,7 @@ void QMapFace::computeTexcoords()
     texcoords.reserve(vertices.size());
     for(auto &vertex : vertices)
     {
-        (void)vertex;
+        
         texcoords.push_back(Math::Vector2(vertex.x/64, vertex.y/64));
     }
 }
