@@ -1,7 +1,9 @@
 #include "Woden/Assets/QMapFile.hpp"
+#include "Woden/Assets/ResourceCache.hpp"
 #include "Woden/Utility/ReadWholeFile.hpp"
 #include <algorithm>
 #include <stdint.h>
+#include <sstream>
 
 namespace Woden
 {
@@ -370,12 +372,60 @@ void QMapFile::computeGeometry()
 
 void QMapFile::addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale)
 {
+    for(auto &entity : entities)
+        entity->addToSceneWithInverseScale(scene, inverseScale);
 }
 
 void QMapEntity::computeGeometry()
 {
     for(auto &brush : brushes)
         brush->computeGeometry();
+
+    groupFacesPerMaterial();
+}
+
+void QMapEntity::groupFacesPerMaterial()
+{
+    groupedFaces.clear();
+
+    for(auto &brush : brushes)
+    {
+        for(auto &face : brush->faces)
+        {
+            if(groupedFaces.find(face->materialName) == groupedFaces.end())
+                groupedFaces[face->materialName] = std::vector<QMapFacePtr> ();
+            groupedFaces.find(face->materialName)->second.push_back(face);
+        }
+    }
+}
+
+void QMapEntity::addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale)
+{
+    auto origin = quakeToWodenCoordinates(getOrigin());
+    auto sceneNode = std::make_shared<SceneGraph::SceneNode> ();
+    sceneNode->transform.translation = origin;
+
+    if(!groupedFaces.empty())
+    {
+        Woden::Rendering::MeshBuilder meshBuilder;
+
+        for(auto faceGroup : groupedFaces)
+        {
+            auto &materialName = faceGroup.first;
+            auto &faces = faceGroup.second;
+            auto material = Woden::Assets::ResourceCache::Get()->getOrLoadMaterial(materialName);
+
+            meshBuilder.setMaterial(material);
+            for (auto &face : faces)
+                face->addToMeshWithInverseScale(meshBuilder, inverseScale);
+        }
+
+        meshBuilder.generateTangentSpaceFrame();
+        sceneNode->addRenderable(meshBuilder.finishMesh());
+    }
+
+
+    scene->normalLayer->addChild(sceneNode);
 }
 
 std::string QMapEntity::getClassName()
@@ -384,6 +434,20 @@ std::string QMapEntity::getClassName()
     if(it != properties.end())
         return it->second;
     return std::string();
+}
+
+
+Math::Vector3 QMapEntity::getOrigin()
+{
+    Math::Vector3 v(0);
+    auto it = properties.find("origin");
+    if(it != properties.end())
+    {
+        std::istringstream in(it->second);
+        in >> v.x >> v.y >> v.z;
+    }
+
+    return v;
 }
 
 void QMapBrush::computeGeometry()
@@ -446,6 +510,24 @@ bool QMapBrush::isPointInBrush(const Math::Vector3 &p) const
             return false;
     }
     return true;
+}
+
+void QMapFace::addToMeshWithInverseScale(Woden::Rendering::MeshBuilder &meshBuilder, Math::Scalar inverseScale)
+{
+    meshBuilder.beginTriangles();
+
+    for(size_t i = 0; i < vertices.size(); ++i)
+    {
+        auto &vertex = vertices[i];
+        auto &texcoord = texcoords[i];
+
+        meshBuilder.positions.push_back(quakeToWodenCoordinates(vertex) / inverseScale);
+        meshBuilder.texcoords.push_back(texcoord);
+        meshBuilder.normals.push_back(quakeToWodenCoordinates(-plane.normal));
+    }
+
+    for(size_t i = 2; i < vertices.size(); ++i)
+        meshBuilder.addTriangleI012(0, i - 1, i);
 }
 
 void QMapFace::resetGeometryComputation()

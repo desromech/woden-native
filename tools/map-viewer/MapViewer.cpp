@@ -1,6 +1,7 @@
 #include "Woden/Assets/ResourceCache.hpp"
 #include "Woden/Assets/QMapFile.hpp"
 #include "Woden/Rendering/Context.hpp"
+#include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Morphic/Morph.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 
@@ -56,6 +57,25 @@ int main(int argc, const char *argv[])
         mapFile->addToSceneWithInverseScale(scene, 32);
     }
     
+    {
+        scene->normalLayer->addChild(Woden::Rendering::MeshBuilder()
+            .addCubeWithExtent(Vector3(1, 1, 1))
+            .generateTexcoordsWithFacePlanarTransformWithScale(Vector2(1, 1))
+            .finishMesh()->asSceneNode()
+        );
+    }
+
+
+    {
+        auto pointLightSource = std::make_shared<Woden::Rendering::PointLightSource> ();
+        pointLightSource->color = Vector3(0.8f, 0.8f, 0.2f);
+        pointLightSource->intensity = 5;
+        pointLightSource->influenceRadius = 4;
+
+        scene->normalLayer->addChild(pointLightSource->asSceneNodeWithPosition(Vector3(-1.5f, 1.5f, 1.6f)));
+
+    }
+
     scene->openInSystemWindow();
 
     int exitCode = Morph::runMainLoop();

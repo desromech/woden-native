@@ -5,6 +5,7 @@
 #include "Woden/Math/Vector3.hpp"
 #include "Woden/Math/Plane.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
+#include "Woden/Rendering/MeshBuilder.hpp"
 
 #include <map>
 #include <memory>
@@ -21,6 +22,11 @@ typedef std::shared_ptr<class QMapEntity> QMapEntityPtr;
 typedef std::shared_ptr<class QMapBrush> QMapBrushPtr;
 typedef std::shared_ptr<class QMapFace> QMapFacePtr;
 
+inline Math::Vector3 quakeToWodenCoordinates(const Math::Vector3 &v)
+{
+    return Math::Vector3(v.x, v.z, -v.y);
+}
+
 class QMapFile
 {
 public:
@@ -32,18 +38,21 @@ public:
     void addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale);
 
     std::vector<QMapEntityPtr> entities;
-
 };
 
 class QMapEntity
 {
 public: 
     std::string getClassName();
+    Math::Vector3 getOrigin();
 
     void computeGeometry();
+    void groupFacesPerMaterial();
+    void addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale);
 
     std::map<std::string, std::string> properties;
     std::vector<QMapBrushPtr> brushes;
+    std::map<std::string, std::vector<QMapFacePtr>> groupedFaces;
 };
 
 class QMapBrush
@@ -58,6 +67,7 @@ public:
 class QMapFace
 {
 public:
+    void addToMeshWithInverseScale(Woden::Rendering::MeshBuilder &meshBuilder, Math::Scalar inverseScale);
     void resetGeometryComputation();
     void sortVertices();
     void computeTexcoords();
