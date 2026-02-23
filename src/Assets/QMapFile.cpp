@@ -479,6 +479,7 @@ Math::Vector3 QMapEntity::getOrigin()
 void QMapBrush::computeGeometry()
 {
     // Reset the face geometry.
+    vertices.clear();
     for(auto &face : faces)
     {
         face->resetGeometryComputation();
@@ -507,6 +508,7 @@ void QMapBrush::computeGeometry()
                     if(isPointInBrush(p))
                     {
                         //printf("p %f %f %f\n", p.x, p.y, p.z);
+                        vertices.push_back(p);
                         firstFace->vertices.push_back(p);
                         secondFace->vertices.push_back(p);
                         thirdFace->vertices.push_back(p);

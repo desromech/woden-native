@@ -64,6 +64,7 @@ public:
     bool isPointInBrush(const Math::Vector3 &p) const;
 
     std::vector<QMapFacePtr> faces;
+    std::vector<Math::Vector3> vertices;
 };
 
 class QMapFace
