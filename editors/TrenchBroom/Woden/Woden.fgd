@@ -3,3 +3,21 @@
 @baseclass size(-16 -16 -24, 16 16 32) color(0 255 0) = PlayerClass []
 
 @PointClass base(PlayerClass) = info_player_start : "Player 1 start" []
+
+@baseclass size(-8 -8 -8, 8 8 8) color(255 255 40) = LightClass [
+    intensity(float) : "Light intensity" : "1.0"
+    color(color1) : "Color" : "1.0 1.0 1.0"
+    castShadows(boolean) : "Cast Shadows" : 0
+]
+
+@baseclass size(-8 -8 -8, 8 8 8) color(255 255 40) = PointLightClass [
+    radius(float) : "Influence radius": "10.0"
+]
+
+@PointClass base(LightClass, PointLightClass) = light : "Punctual light source" []
+@PointClass base(LightClass, PointLightClass) = light_spot : "Spot light source" [
+    innerCutoff(float) : "Inner Cutoff": "45"
+    outerCutoff(float) : "Outer Cutoff": "60"
+]
+
+@PointClass base(LightClass) = light_directional : "Directional light source" []
