@@ -3,6 +3,7 @@
 
 #include "Texture.hpp"
 #include "Woden/Rendering/Material.hpp"
+#include "Woden/Math/Vector2.hpp"
 #include <unordered_map>
 
 namespace Woden
@@ -26,6 +27,7 @@ public:
     ImagePtr getOrLoadImage(const std::string &path, TextureUsageMode usageMode);
     TexturePtr getOrLoadTexture(const std::string &path, TextureUsageMode usageMode);
     Rendering::MaterialPtr getOrLoadMaterial(const std::string &path);
+    Math::Vector2 fetchTextureExtent(const std::string &path);
 
 
 private:

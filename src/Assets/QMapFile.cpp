@@ -271,7 +271,7 @@ public:
         auto nz = parseNumber();
         auto d = parseNumber();
         match(QMapFileTokenType::RightBracket);
-        return Math::Plane(Math::Vector3(nx, ny, nz), -d);
+        return Math::Plane(Math::Vector3(nx, ny, nz), d);
     }
 
     std::string parseName()
@@ -393,6 +393,7 @@ void QMapEntity::computeGeometry()
         brush->computeGeometry();
 
     groupFacesPerMaterial();
+    computeGroupedTexcoords();
 }
 
 void QMapEntity::groupFacesPerMaterial()
@@ -407,6 +408,20 @@ void QMapEntity::groupFacesPerMaterial()
                 groupedFaces[face->materialName] = std::vector<QMapFacePtr> ();
             groupedFaces.find(face->materialName)->second.push_back(face);
         }
+    }
+}
+
+void QMapEntity::computeGroupedTexcoords()
+{
+    for(auto &group : groupedFaces)
+    {
+        auto materialName = group.first;
+        auto &faces = group.second;
+
+        auto textureExtent = Woden::Assets::ResourceCache::Get()->fetchTextureExtent(materialName);
+        //printf("material %s extent %f %f\n", materialName.c_str(), textureExtent.x, textureExtent.y);
+        for (auto &face : faces)
+            face->computeTexcoords(textureExtent);
     }
 }
 
@@ -501,12 +516,9 @@ void QMapBrush::computeGeometry()
         }
     }
     
-    // Sort the vertices and compute the texcoord.
+    // Sort the vertices.
     for(auto &face : faces)
-    {
         face->sortVertices();
-        face->computeTexcoords();
-    }
 }
 
 bool QMapBrush::isPointInBrush(const Math::Vector3 &p) const
@@ -567,14 +579,21 @@ void QMapFace::sortVertices()
     });
 }
 
-void QMapFace::computeTexcoords()
+void QMapFace::computeTexcoords(const Math::Vector2 &textureExtent)
 {
     texcoords.clear();
     texcoords.reserve(vertices.size());
     for(auto &vertex : vertices)
     {
-        
-        texcoords.push_back(Math::Vector2(vertex.x/64, vertex.y/64));
+        auto tu = firstTexturePlane.normal.dot(vertex)/textureExtent.x;
+        tu /= xScale;
+        tu += firstTexturePlane.distance / textureExtent.x;
+
+        auto tv = secondTexturePlane.normal.dot(vertex)/textureExtent.y;
+        tv /= yScale;
+        tv += firstTexturePlane.distance / textureExtent.y;
+
+        texcoords.push_back(Math::Vector2(tu, tv));
     }
 }
 

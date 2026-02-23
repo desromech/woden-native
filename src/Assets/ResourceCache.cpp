@@ -4,6 +4,7 @@
 #include "Woden/Rendering/MetallicRoughnessMaterial.hpp"
 #include "Woden/Utility/ReadWholeFile.hpp"
 #include "Woden/Utility/FileSystem.hpp"
+#include "stb_image.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -184,6 +185,19 @@ Rendering::MaterialPtr ResourceCache::getOrLoadMaterial(const std::string &path)
     return material;
 }
 
+Math::Vector2 ResourceCache::fetchTextureExtent(const std::string &path)
+{
+    std::string fullPath = materialSearchPath + path + ".jpg";
+    int width, height;
+    if(stbi_info(fullPath.c_str(), &width, &height, nullptr))
+        return Math::Vector2(width, height);
+
+    fullPath = materialSearchPath + path + ".png";
+    if(stbi_info(fullPath.c_str(), &width, &height, nullptr))
+        return Math::Vector2(width, height);
+
+    return Math::Vector2(1, 1);
+}
 
 } // End of namespace Assets
 } // End of namespace Woden

@@ -48,6 +48,8 @@ public:
 
     void computeGeometry();
     void groupFacesPerMaterial();
+    void computeGroupedTexcoords();
+
     void addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale);
 
     std::map<std::string, std::string> properties;
@@ -70,7 +72,7 @@ public:
     void addToMeshWithInverseScale(Woden::Rendering::MeshBuilder &meshBuilder, Math::Scalar inverseScale);
     void resetGeometryComputation();
     void sortVertices();
-    void computeTexcoords();
+    void computeTexcoords(const Math::Vector2 &textureExtent);
 
     Math::Vector3 firstPlanePoint;
     Math::Vector3 secondPlanePoint;
