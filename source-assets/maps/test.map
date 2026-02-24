@@ -81,6 +81,7 @@
 "castShadows" "0"
 "color" "0.8 0.8 0.6"
 "influenceRadius" "10.000000"
+"angles" "0 0 -90"
 }
 // entity 3
 {
@@ -90,4 +91,5 @@
 "castShadows" "0"
 "color" "0.8 0.8 0.6"
 "influenceRadius" "10.000000"
+"angles" "0 0 -90"
 }

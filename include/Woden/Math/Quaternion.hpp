@@ -81,6 +81,11 @@ struct Quaternion
         return ZRotation(Scalar(angle * M_PI / 180.0));
     }
 
+    static Quaternion ZYXRotationDegrees(Math::Vector3 angles)
+    {
+        return ZRotationDegrees(angles.x) * YRotationDegrees(angles.y)* XRotationDegrees(angles.z);
+    }
+
     Quaternion conjugated() const
     {
         return Quaternion(-x, -y, -z, w);

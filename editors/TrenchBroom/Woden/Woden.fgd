@@ -4,8 +4,8 @@
 
 @PointClass base(PlayerClass) = info_player_start : "Player 1 start" []
 
-@baseclass size(-8 -8 -8, 8 8 8) color(255 255 40) = Angles [
-    angles(string) : "Pitch Yaw Roll (Y Z X)" : "0 0 0"
+@baseclass = Angles [
+    angles(string) : "(Z Y X)" : "0 0 0"
 ]
 
 @baseclass size(-8 -8 -8, 8 8 8) color(255 255 40) = LightClass [

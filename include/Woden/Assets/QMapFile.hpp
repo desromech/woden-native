@@ -49,6 +49,8 @@ public:
     Math::Scalar getScalarProperty(const std::string &key, Math::Scalar defaultValue = 0);
     Math::Vector3 getVector3Property(const std::string &key, const Math::Vector3 &defaultValue = Math::Vector3(0));
     Math::Vector3 getOrigin();
+    Math::Vector3 getAngles();
+    Math::Quaternion getOrientation();
     bool isLightEntity() const;
 
     void computeGeometry();

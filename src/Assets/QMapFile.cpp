@@ -431,6 +431,7 @@ void QMapEntity::addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, M
     auto origin = quakeToWodenCoordinates(getOrigin()) / inverseScale;
     auto sceneNode = std::make_shared<SceneGraph::SceneNode> ();
     sceneNode->transform.translation = origin;
+    sceneNode->transform.rotation = getOrientation();
 
     if(!groupedFaces.empty())
     {
@@ -507,6 +508,18 @@ Math::Vector3 QMapEntity::getVector3Property(const std::string &key, const Math:
 Math::Vector3 QMapEntity::getOrigin()
 {
     return getVector3Property("origin");
+}
+
+Math::Vector3 QMapEntity::getAngles()
+{
+    return getVector3Property("angles");
+}
+
+
+Math::Quaternion QMapEntity::getOrientation()
+{
+    auto angles = getAngles();
+    return Math::Quaternion::ZYXRotationDegrees(angles);
 }
 
 bool QMapEntity::isLightEntity() const
