@@ -23,6 +23,9 @@ typedef std::shared_ptr<class ConvexCollisionShape> ConvexCollisionShapePtr;
 typedef std::shared_ptr<class BoxCollisionShape> BoxCollisionShapePtr;
 typedef std::shared_ptr<class SphereCollisionShape> SphereCollisionShapePtr;
 
+typedef std::shared_ptr<class CompoundCollisionShape> CompoundCollisionShapePtr;
+typedef std::shared_ptr<class CompoundCollisionShapeChild> CompoundCollisionShapeChildPtr;
+
 struct ShapeRayCastingResult
 {
     CollisionShapePtr shape;
@@ -35,6 +38,7 @@ struct ShapeRayCastingResult
 class CollisionShape : public std::enable_shared_from_this<CollisionShape>
 {
 public:
+    virtual bool isCompound() const;
     virtual bool isConvex() const;
 
     virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray);
@@ -44,6 +48,7 @@ public:
 
     virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) = 0;
     virtual std::vector<ContactPoint> detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) = 0;
+    virtual std::vector<ContactPoint> detectAndComputeCompoundCollisionContactPoints(const Math::RigidTransform &myTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) = 0;
 
     Math::Scalar margin = 0.01f;
     Math::AABox localBoundingBox = Math::AABox(Math::Vector3::Zeros(), Math::Vector3::Zeros());
@@ -59,6 +64,9 @@ public:
 
     virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
     virtual std::vector<ContactPoint> detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
+    virtual std::vector<ContactPoint> detectAndComputeConvexCollisionContactPointsForShape(const Math::RigidTransform &myTransform, const Math::RigidTransform &myShapeTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis);
+
+    virtual std::vector<ContactPoint> detectAndComputeCompoundCollisionContactPoints(const Math::RigidTransform &myTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
 
 };
 
@@ -139,6 +147,32 @@ public:
     virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode() override;
     virtual void computeLocalBoundingBox() override;
     virtual Math::Vector3 localSupportInDirection(const Math::Vector3 &D) override;
+};
+
+struct CompoundCollisionShapeChild
+{
+    ConvexCollisionShapePtr shape;
+    Math::RigidTransform transform;
+};
+
+// Compound collision shape
+class CompoundCollisionShape : public CollisionShape
+{
+public:
+    virtual bool isCompound() const override;
+
+    virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode() override;
+
+    virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
+    virtual std::vector<ContactPoint> detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
+    virtual std::vector<ContactPoint> detectAndComputeCompoundCollisionContactPoints(const Math::RigidTransform &myTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
+
+    void addChild(const ConvexCollisionShapePtr &shape, const Math::RigidTransform &transform);
+    void addChildWithTranslation(const ConvexCollisionShapePtr &shape, const Math::Vector3 &translation);
+    void finishAddingChildren();
+
+    std::vector<CompoundCollisionShapeChildPtr> children;
+
 };
 
 } // End of namespace Physics

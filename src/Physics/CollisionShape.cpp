@@ -10,6 +10,11 @@ namespace Woden
 namespace Physics
 {
 // Collision shape
+bool CollisionShape::isCompound() const
+{
+    return false;
+}
+
 bool CollisionShape::isConvex() const
 {
     return false;
@@ -46,13 +51,28 @@ std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeCollisionContact
     return contactPoints;
 }
 
+std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeCompoundCollisionContactPoints(const Math::RigidTransform &myTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
+{
+    auto contactPoints = otherShape->detectAndComputeConvexCollisionContactPoints(otherShapeTransform, std::static_pointer_cast<ConvexCollisionShape> (shared_from_this()), myTransform, -initialSeparatingAxis);
+    for(auto &contact : contactPoints)
+        contact.flip();
+    return contactPoints;
+}
+
 std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
+{
+    return detectAndComputeConvexCollisionContactPointsForShape(myTransform, Math::RigidTransform(), otherShape, otherShapeTransform, initialSeparatingAxis);
+}
+
+std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeConvexCollisionContactPointsForShape(const Math::RigidTransform &myTransform, const Math::RigidTransform &myShapeTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
 {
     const Math::Scalar ShallowPenetrationThreshold = 1.0e-5f;
 
+    auto myChildTransform = myTransform.transformTransform(myShapeTransform);
+
     std::vector<ContactPoint> result;
     auto &&firstSupportFunction = [&](const Math::Vector3 &D) {
-        return myTransform.transformPosition(localSupportInDirection(myTransform.inverseTransformNormalVector(D)));
+        return myChildTransform.transformPosition(localSupportInDirection(myChildTransform.inverseTransformNormalVector(D)));
     };
     auto &&secondSupportFunction = [&](const Math::Vector3 &D) {
         return otherShapeTransform.transformPosition(otherShape->localSupportInDirection(otherShapeTransform.inverseTransformNormalVector(D)));
@@ -184,6 +204,86 @@ SceneGraph::SceneNodePtr CapsuleYCollisionShape::constructVisualizationSceneNode
 Math::Vector3 CapsuleYCollisionShape::localSupportInDirection(const Math::Vector3 &D)
 {
     return Math::Vector3(0, Math::sign(D.y)*halfHeight, 0) + (D.normalized() * Math::Vector3(radius));
+}
+
+bool CompoundCollisionShape::isCompound() const
+{
+    return true;
+}
+
+SceneGraph::SceneNodePtr CompoundCollisionShape::constructVisualizationSceneNode()
+{
+    auto sceneNode = std::make_shared<SceneGraph::SceneNode> ();
+    for(auto &child : children)
+    {
+        auto childSceneNode = child->shape->constructVisualizationSceneNode();
+        if(!childSceneNode)
+            continue;
+
+        childSceneNode->transform = child->transform.asTRSTransform3D();
+        sceneNode->addChild(childSceneNode);
+    }
+
+    return sceneNode;
+}
+
+std::vector<ContactPoint> CompoundCollisionShape::detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
+{
+    auto contactPoints = otherShape->detectAndComputeCompoundCollisionContactPoints(otherShapeTransform, std::static_pointer_cast<CompoundCollisionShape> (shared_from_this()), myTransform, -initialSeparatingAxis);
+    for(auto &contact : contactPoints)
+        contact.flip();
+    return contactPoints;
+}
+
+std::vector<ContactPoint> CompoundCollisionShape::detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
+{
+    // Compound vs Convex
+    std::vector<ContactPoint> contactPoints;
+
+    for(auto &child : children)
+    {
+        auto childContactPoints = child->shape->detectAndComputeConvexCollisionContactPointsForShape(myTransform, child->transform, otherShape, otherShapeTransform, initialSeparatingAxis);
+        contactPoints.insert(contactPoints.end(), childContactPoints.begin(), childContactPoints.end());
+    }
+
+    return contactPoints;
+}
+
+std::vector<ContactPoint> CompoundCollisionShape::detectAndComputeCompoundCollisionContactPoints(const Math::RigidTransform &myTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
+{
+    // TODO: Compound vs compound;
+    (void)myTransform;
+    (void)otherShape;
+    (void)otherShapeTransform;
+    (void)initialSeparatingAxis;
+    return std::vector<ContactPoint>();
+}
+
+void CompoundCollisionShape::addChild(const ConvexCollisionShapePtr &shape, const Math::RigidTransform &transform)
+{
+    auto child = std::make_shared<CompoundCollisionShapeChild> ();
+    child->shape = shape;
+    child->transform = transform;
+    children.push_back(child);
+}
+
+void CompoundCollisionShape::addChildWithTranslation(const ConvexCollisionShapePtr &shape, const Math::Vector3 &translation)
+{
+    Math::RigidTransform transform;
+    transform.translation = translation;
+    addChild(shape, transform);
+}
+
+void CompoundCollisionShape::finishAddingChildren()
+{
+    localBoundingBox = Math::AABox::Empty();
+    for(auto &child : children)
+    {
+        auto transformedChildBox = child->shape->localBoundingBoxWithMargin.transformedWith(child->transform);
+        localBoundingBox.insertBox(transformedChildBox);
+    }
+
+    localBoundingBoxWithMargin = localBoundingBox.expandedBy(margin);
 }
 
 } // End of namespace Physics

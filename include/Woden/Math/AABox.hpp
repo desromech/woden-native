@@ -68,7 +68,7 @@ public:
         return result;
     }
 
-    AABox expandedBy(Scalar expansion)
+    AABox expandedBy(Scalar expansion) const
     {
         return AABox(minCorner - expansion, maxCorner + expansion);
     }

@@ -67,6 +67,14 @@ struct RigidTransform
         return Matrix4x4::WithMatrix3x3AndTranslation(asInverseMatrix3x3(), inverseTranslation());
     }
 
+    RigidTransform transformTransform(const RigidTransform &o) const
+    {
+        RigidTransform result;
+        result.rotation = rotation * o.rotation;
+        result.translation = transformPosition(o.translation);
+        return result;
+    }
+
     TRSTransform3D asTRSTransform3D() const
     {
         TRSTransform3D transform;

@@ -79,6 +79,9 @@ target_link_libraries(PhysicsSample09-FallingCapsuleOnBox WodenEngine)
 add_executable(PhysicsSample10-Room SampleCommon.cpp PhysicsSample10-Room.cpp)
 target_link_libraries(PhysicsSample10-Room WodenEngine)
 
+add_executable(PhysicsSample11-CompoundRoom SampleCommon.cpp PhysicsSample11-CompoundRoom.cpp)
+target_link_libraries(PhysicsSample11-CompoundRoom WodenEngine)
+
 ## Game framework samples.
 add_executable(GameFrameworkSample01-CubeAndLightActor SampleCommon.cpp GameFrameworkSample01-CubeAndLightActor.cpp)
 target_link_libraries(GameFrameworkSample01-CubeAndLightActor WodenEngine)
