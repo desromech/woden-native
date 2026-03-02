@@ -48,5 +48,30 @@ Woden::Physics::CollisionShapePtr CapsuleYCollisionShapeComponent::asValidCollis
     return shape;
 }
 
+Woden::Physics::CollisionShapePtr CompoundCollisionShapeComponent::asValidCollisionShapeWithoutTransform()
+{
+    return asValidCollisionShapeWithTransform(Math::RigidTransform());
+}
+
+Woden::Physics::CollisionShapePtr CompoundCollisionShapeComponent::asValidCollisionShape()
+{
+    return asValidCollisionShapeWithTransform(transform);
+}
+
+Woden::Physics::CollisionShapePtr CompoundCollisionShapeComponent::asValidCollisionShapeWithTransform(const Math::RigidTransform &shapeTransform)
+{
+    auto compoundShape = std::make_shared<Woden::Physics::CompoundCollisionShape> ();
+    for (auto &child : children)
+    {
+        auto childShape = child->asValidCollisionShapeWithoutTransform();
+        if(!childShape->isConvex())
+            continue;
+
+        auto childTransform = shapeTransform.transformTransform(child->transform);
+        compoundShape->addChild(std::static_pointer_cast<Physics::ConvexCollisionShape> (childShape), childTransform);
+    }
+    return compoundShape;
+}
+
 } // End of namespace GameFramework
 } // End of namespace Woden

@@ -100,3 +100,6 @@ target_link_libraries(GameFrameworkSample05-Room WodenEngine)
 
 add_executable(GameFrameworkSample06-RoomTextured SampleCommon.cpp GameFrameworkSample06-RoomTextured.cpp)
 target_link_libraries(GameFrameworkSample06-RoomTextured WodenEngine)
+
+add_executable(GameFrameworkSample07-CompoundRoomTextured SampleCommon.cpp GameFrameworkSample07-CompoundRoomTextured.cpp)
+target_link_libraries(GameFrameworkSample07-CompoundRoomTextured WodenEngine)

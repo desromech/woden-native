@@ -3,7 +3,7 @@
 
 #include "ActorComponent.hpp"
 #include "Woden/Physics/CollisionShape.hpp"
-#include "Woden/Math/TRSTransform3D.hpp"
+#include "Woden/Math/RigidTransform.hpp"
 
 namespace Woden
 {
@@ -26,7 +26,7 @@ public:
     virtual Woden::Physics::CollisionShapePtr asValidCollisionShape();
 
     Math::Scalar margin = 0.01f;
-    Math::TRSTransform3D transform;
+    Math::RigidTransform transform;
 };
 
 /**
@@ -57,6 +57,19 @@ class CapsuleYCollisionShapeComponent : public AbstractCapsuleCollisionShapeComp
 {
 public:
     virtual Woden::Physics::CollisionShapePtr asValidCollisionShapeWithoutTransform() override;
+};
+
+/**
+ * I am a compound collision shape.
+ */
+class CompoundCollisionShapeComponent : public AbstractCollisionShapeComponent
+{
+public:
+    virtual Woden::Physics::CollisionShapePtr asValidCollisionShapeWithoutTransform() override;
+    virtual Woden::Physics::CollisionShapePtr asValidCollisionShape() override;
+    Woden::Physics::CollisionShapePtr asValidCollisionShapeWithTransform(const Math::RigidTransform &shapeTransform);
+
+    std::vector<AbstractCollisionShapeComponentPtr> children;
 };
 
 } // End of namespace GameFramework
