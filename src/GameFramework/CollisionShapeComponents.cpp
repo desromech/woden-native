@@ -70,6 +70,7 @@ Woden::Physics::CollisionShapePtr CompoundCollisionShapeComponent::asValidCollis
         auto childTransform = shapeTransform.transformTransform(child->transform);
         compoundShape->addChild(std::static_pointer_cast<Physics::ConvexCollisionShape> (childShape), childTransform);
     }
+    compoundShape->finishAddingChildren();
     return compoundShape;
 }
 

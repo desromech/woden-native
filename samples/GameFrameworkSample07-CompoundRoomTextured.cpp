@@ -74,7 +74,7 @@ int woden_main(int argc, const char **argv)
 
         auto collisionObject = std::make_shared<CollisionObjectComponent> ();
         actor->addComponent(collisionObject);
-        
+
         world->spawnActor(actor);
     }
 
