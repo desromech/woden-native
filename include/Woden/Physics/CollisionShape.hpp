@@ -2,6 +2,7 @@
 #define WODEN_PHYSICS_COLLISION_SHAPE
 
 #include "Woden/Math/AABox.hpp"
+#include "Woden/Math/BVH.hpp"
 #include "Woden/Math/Ray3D.hpp"
 #include "Woden/Math/RigidTransform.hpp"
 #include "ContactManifold.hpp"
@@ -183,6 +184,9 @@ struct CompoundCollisionShapeChild
     Math::AABox box;
 };
 
+typedef Math::BoundingVolumeHierachy<CompoundCollisionShapeChildPtr> CompoundShapeBVH;
+
+
 // Compound collision shape
 class CompoundCollisionShape : public CollisionShape
 {
@@ -198,8 +202,10 @@ public:
     void addChild(const ConvexCollisionShapePtr &shape, const Math::RigidTransform &transform);
     void addChildWithTranslation(const ConvexCollisionShapePtr &shape, const Math::Vector3 &translation);
     void finishAddingChildren();
+    void buildBVH();
 
     std::vector<CompoundCollisionShapeChildPtr> children;
+    CompoundShapeBVH bvh;
 
 };
 

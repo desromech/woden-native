@@ -287,19 +287,12 @@ std::vector<ContactPoint> CompoundCollisionShape::detectAndComputeConvexCollisio
     std::vector<ContactPoint> contactPoints;
 
     auto otherShapeBox = otherShape->localBoundingBoxWithMargin.transformedWith(otherShapeTransform).inverseTransformedWith(myTransform);
-    //size_t childCount = 0;
-    for(auto &child : children)
-    {
-        if(!child->box.hasIntersectionWithBox(otherShapeBox))
-            continue;
-
+    bvh.leavesIntersectingBoxDo(otherShapeBox, [&](const CompoundCollisionShapeChildPtr &child){
         auto childContactPoints = child->shape->detectAndComputeConvexCollisionContactPointsForShape(myTransform, child->transform, otherShape, otherShapeTransform, initialSeparatingAxis);
         contactPoints.insert(contactPoints.end(), childContactPoints.begin(), childContactPoints.end());
-        //++childCount;
-    }
-    //printf("childCount %zu\n", childCount);
+    });
 
-    return contactPoints;
+   return contactPoints;
 }
 
 std::vector<ContactPoint> CompoundCollisionShape::detectAndComputeCompoundCollisionContactPoints(const Math::RigidTransform &myTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
@@ -337,6 +330,24 @@ void CompoundCollisionShape::finishAddingChildren()
     }
 
     localBoundingBoxWithMargin = localBoundingBox.expandedBy(margin);
+    buildBVH();
+}
+
+void CompoundCollisionShape::buildBVH()
+{
+    // Bottom up construction.
+    std::vector<CompoundShapeBVH::NodePtrType> bvhLeaves;
+    bvhLeaves.reserve(children.size());
+    for(auto &child : children)
+    {
+        auto leaf = std::make_shared<CompoundShapeBVH::NodeType> ();
+        leaf->isLeaf = true;
+        leaf->volume = child->box;
+        leaf->payload = child;
+        bvhLeaves.push_back(leaf);
+    }
+
+    bvh.buildBottomUp(bvhLeaves);
 }
 
 } // End of namespace Physics
