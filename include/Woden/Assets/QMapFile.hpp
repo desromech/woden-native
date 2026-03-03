@@ -5,6 +5,7 @@
 #include "Woden/Math/Vector3.hpp"
 #include "Woden/Math/Plane.hpp"
 #include "Woden/GameFramework/World.hpp"
+#include "Woden/GameFramework/CollisionShapeComponents.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
 
@@ -77,6 +78,8 @@ public:
 class QMapBrush
 {
 public:
+    GameFramework::AbstractCollisionShapeComponentPtr computeCollisionShapeWithInverseScale(Math::Scalar inverseScale);
+    
     void computeGeometry();
     bool isPointInBrush(const Math::Vector3 &p) const;
 

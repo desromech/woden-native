@@ -41,6 +41,17 @@ public:
 };
 
 /**
+ * I am a convex hull collision shape.
+ */
+class ConvexHullCollisionShapeComponent : public AbstractCollisionShapeComponent
+{
+public:
+    std::vector<Math::Vector3> corners;
+
+    virtual Woden::Physics::CollisionShapePtr asValidCollisionShapeWithoutTransform() override;
+};
+
+/**
  * I am a capsule collision shape.
  */
 class AbstractCapsuleCollisionShapeComponent : public AbstractCollisionShapeComponent

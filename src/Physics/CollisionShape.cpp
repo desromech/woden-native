@@ -179,7 +179,53 @@ std::optional<ShapeRayCastingResult> BoxCollisionShape::rayCast(const Math::Ray3
 SceneGraph::SceneNodePtr BoxCollisionShape::constructVisualizationSceneNode()
 {
     return Woden::Rendering::MeshBuilder()
-            .addCubeWithHalfExtent(halfExtent)
+            .addCubeWithBox(localBoundingBox)
+            .generateTexcoordsWithFacePlanarTransformWithScale(Math::Vector2(1, 1))
+            .finishMesh()
+            ->asSceneNode();
+}
+
+// Convex hull collision shape
+Math::Matrix3x3 ConvexHullCollisionShape::computeInertiaTensorWithMass(Math::Scalar mass)
+{
+    // For now use the box
+    auto extent = localBoundingBox.halfExtent()* Math::Vector3(2.0);
+    auto extent2 = extent*extent;
+    return Math::Matrix3x3(
+        (extent2.y + extent2.z)/12*mass, 0, 0,
+        0, (extent2.x + extent2.z)/12*mass, 0,
+        0, 0, (extent2.x + extent2.y)/12*mass
+    );
+}
+
+Math::Vector3 ConvexHullCollisionShape::localSupportInDirection(const Math::Vector3 &D)
+{
+    auto bestDistance = -INFINITY;
+    auto bestFound = Math::Vector3();
+    for(const auto &corner : corners)
+    {
+        auto distance = corner.dot(D);
+        if(distance > bestDistance)
+        {
+            bestDistance = distance;
+            bestFound = corner;
+        }
+    }
+
+    return bestFound;
+}
+
+std::optional<ShapeRayCastingResult> ConvexHullCollisionShape::rayCast(const Math::Ray3D &ray)
+{
+    // TODO: Implement this raycasting function.
+    (void)ray;
+    return std::nullopt;
+}
+
+SceneGraph::SceneNodePtr ConvexHullCollisionShape::constructVisualizationSceneNode()
+{
+    return Woden::Rendering::MeshBuilder()
+            .addCubeWithBox(localBoundingBox)
             .generateTexcoordsWithFacePlanarTransformWithScale(Math::Vector2(1, 1))
             .finishMesh()
             ->asSceneNode();

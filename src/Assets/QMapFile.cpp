@@ -2,6 +2,8 @@
 #include "Woden/Assets/ResourceCache.hpp"
 #include "Woden/GameFramework/Actor.hpp"
 #include "Woden/GameFramework/ActorSceneComponents.hpp"
+#include "Woden/GameFramework/CollisionObjectComponents.hpp"
+#include "Woden/GameFramework/CollisionShapeComponents.hpp"
 #include "Woden/Utility/ReadWholeFile.hpp"
 #include "Woden/Rendering/LightSource.hpp"
 #include <algorithm>
@@ -511,6 +513,27 @@ void QMapEntity::addToWorldWithInverseScale(const GameFramework::WorldPtr &world
         actor->addComponent(rootSceneComponent);
     }
 
+    // Brushes
+    if(!brushes.empty())
+    {
+        auto compoundShape = std::make_shared<GameFramework::CompoundCollisionShapeComponent> ();
+        for (auto brush : brushes)
+        {
+            auto brushShape = brush->computeCollisionShapeWithInverseScale(inverseScale);
+            if(brushShape)
+                compoundShape->children.push_back(brushShape);
+        }
+
+        if(!compoundShape->children.empty())
+        {
+            actor->addComponent(compoundShape);
+
+            auto collisionObject = std::make_shared<GameFramework::CollisionObjectComponent> ();
+            actor->addComponent(collisionObject);
+
+        }
+    }
+
 
     auto origin = quakeToWodenCoordinates(getOrigin()) / inverseScale;
     actor->setPosition(origin);
@@ -519,6 +542,19 @@ void QMapEntity::addToWorldWithInverseScale(const GameFramework::WorldPtr &world
 
     world->spawnActor(actor);
 
+}
+
+GameFramework::AbstractCollisionShapeComponentPtr QMapBrush::computeCollisionShapeWithInverseScale(Math::Scalar inverseScale)
+{
+    if(vertices.empty())
+        return nullptr;
+
+    auto convexHull = std::make_shared<GameFramework::ConvexHullCollisionShapeComponent> ();
+    convexHull->corners.reserve(vertices.size());
+    for(auto &vertex : vertices)
+        convexHull->corners.push_back(quakeToWodenCoordinates(vertex) / inverseScale);
+
+    return convexHull;
 }
     
 void QMapEntity::addProperty(const std::string &key, const std::string &value)

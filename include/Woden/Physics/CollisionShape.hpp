@@ -119,6 +119,33 @@ protected:
     Math::Vector3 halfExtent = Math::Vector3(1, 1, 1);
 };
 
+// Convex hull collision shape
+class ConvexHullCollisionShape : public ConvexCollisionShape
+{
+public:
+    const std::vector<Math::Vector3> &getHalfExtent() const
+    {
+        return corners;
+    }
+
+    void setCorners(const std::vector<Math::Vector3> &newCorners)
+    {
+        corners = newCorners;
+        localBoundingBox = Math::AABox::Encompassing(newCorners);
+        localBoundingBoxWithMargin = localBoundingBox.expandedBy(margin);
+    }
+
+    virtual Math::Matrix3x3 computeInertiaTensorWithMass(Math::Scalar mass) override;
+    virtual Math::Vector3 localSupportInDirection(const Math::Vector3 &D) override;
+
+    virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray) override;
+    virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode() override;
+
+protected:
+    std::vector<Math::Vector3> corners;
+};
+
+
 // Abstract capsule shape shape
 class AbstractCapsuleCollisionShape : public ConvexCollisionShape
 {

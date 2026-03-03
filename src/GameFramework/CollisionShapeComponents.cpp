@@ -40,6 +40,14 @@ Woden::Physics::CollisionShapePtr BoxCollisionShapeComponent::asValidCollisionSh
     return shape;
 }
 
+Woden::Physics::CollisionShapePtr ConvexHullCollisionShapeComponent::asValidCollisionShapeWithoutTransform()
+{
+    auto shape = std::make_shared<Physics::ConvexHullCollisionShape> ();
+    shape->margin = margin;
+    shape->setCorners(corners);
+    return shape;
+}
+
 Woden::Physics::CollisionShapePtr CapsuleYCollisionShapeComponent::asValidCollisionShapeWithoutTransform()
 {
     auto shape = std::make_shared<Physics::CapsuleYCollisionShape> ();
