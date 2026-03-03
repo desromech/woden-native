@@ -36,6 +36,8 @@ public:
 
     void spawnActor(const ActorPtr &actor);
 
+    ActorPtr findActorWithClassName(const std::string &className);
+
     Morphic::WorldMorphPtr playInMorphic();
     Morphic::SystemWindowPtr playInSystemWindow();
 

@@ -1,5 +1,7 @@
 #include "Woden/Assets/QMapFile.hpp"
 #include "Woden/Assets/ResourceCache.hpp"
+#include "Woden/GameFramework/Actor.hpp"
+#include "Woden/GameFramework/ActorSceneComponents.hpp"
 #include "Woden/Utility/ReadWholeFile.hpp"
 #include "Woden/Rendering/LightSource.hpp"
 #include <algorithm>
@@ -388,6 +390,12 @@ void QMapFile::addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Mat
         entity->addToSceneWithInverseScale(scene, inverseScale);
 }
 
+void QMapFile::addToWorldWithInverseScale(const GameFramework::WorldPtr &world, Math::Scalar inverseScale)
+{
+    for(auto &entity : entities)
+        entity->addToWorldWithInverseScale(world, inverseScale);
+}
+
 void QMapEntity::computeGeometry()
 {
     for(auto &brush : brushes)
@@ -462,6 +470,57 @@ void QMapEntity::addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, M
     scene->normalLayer->addChild(sceneNode);
 }
 
+void QMapEntity::addToWorldWithInverseScale(const GameFramework::WorldPtr &world, Math::Scalar inverseScale)
+{
+    auto actor = GameFramework::MakeActor<GameFramework::Actor> ();
+
+    if(!groupedFaces.empty())
+    {
+        Woden::Rendering::MeshBuilder meshBuilder;
+
+        for(auto faceGroup : groupedFaces)
+        {
+            auto &materialName = faceGroup.first;
+            auto &faces = faceGroup.second;
+            auto material = Woden::Assets::ResourceCache::Get()->getOrLoadMaterial(materialName);
+
+            meshBuilder.setMaterial(material);
+            for (auto &face : faces)
+                face->addToMeshWithInverseScale(meshBuilder, inverseScale);
+        }
+
+        meshBuilder.generateTangentSpaceFrame();
+
+        auto meshComponent = std::make_shared<GameFramework::ActorMeshSceneComponent> ();
+        meshComponent->mesh = meshBuilder.finishMesh();
+        actor->addComponent(meshComponent);
+    }
+    else if(isLightEntity())
+    {
+        auto lightSource = parseLightSource();
+        if(lightSource)
+        {
+            auto lightComponent = std::make_shared<GameFramework::ActorLightSourceComponent> ();
+            lightComponent->light = lightSource;
+            actor->addComponent(lightComponent);
+        }
+    }
+    if(!actor->rootSceneComponent)
+    {
+        auto rootSceneComponent = std::make_shared<GameFramework::ActorSceneComponent> ();
+        actor->addComponent(rootSceneComponent);
+    }
+
+
+    auto origin = quakeToWodenCoordinates(getOrigin()) / inverseScale;
+    actor->setPosition(origin);
+    actor->setOrientation(getOrientation());
+    actor->className = className;
+
+    world->spawnActor(actor);
+
+}
+    
 void QMapEntity::addProperty(const std::string &key, const std::string &value)
 {
     properties[key] = value;

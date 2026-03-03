@@ -47,6 +47,18 @@ void World::spawnActor(const ActorPtr &actor)
         actor->beginPlay();
 }
 
+
+ActorPtr World::findActorWithClassName(const std::string &className)
+{
+    for(auto &actor : actors)
+    {
+        if(actor->className == className)
+            return actor;
+    }
+
+    return nullptr;
+}
+
 Morphic::WorldMorphPtr World::playInMorphic()
 {
     beginPlay();

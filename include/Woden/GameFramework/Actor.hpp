@@ -63,6 +63,7 @@ public:
     ActorSceneComponentPtr rootSceneComponent;
     CollisionObjectComponentPtr collisionObjectComponent;
     AbstractCollisionShapeComponentPtr collisionShapeComponent;
+    std::string className;
 
 protected:
     void subscribeForTicking();

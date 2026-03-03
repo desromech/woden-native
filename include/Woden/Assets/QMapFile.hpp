@@ -4,6 +4,7 @@
 #include "Woden/Math/Vector2.hpp"
 #include "Woden/Math/Vector3.hpp"
 #include "Woden/Math/Plane.hpp"
+#include "Woden/GameFramework/World.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 #include "Woden/Rendering/MeshBuilder.hpp"
 
@@ -36,6 +37,7 @@ public:
     void computeGeometry();
 
     void addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale);
+    void addToWorldWithInverseScale(const GameFramework::WorldPtr &world, Math::Scalar inverseScale);
 
     std::vector<QMapEntityPtr> entities;
 };
@@ -58,6 +60,8 @@ public:
     void computeGroupedTexcoords();
 
     void addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, Math::Scalar inverseScale);
+    void addToWorldWithInverseScale(const GameFramework::WorldPtr &world, Math::Scalar inverseScale);
+
     Rendering::LightSourcePtr parseLightSource();
     Rendering::LightSourcePtr parseDirectionalLightSource();
     Rendering::LightSourcePtr parsePointLightSource();

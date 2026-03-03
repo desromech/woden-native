@@ -1,21 +1,26 @@
 #include "Woden/Assets/ResourceCache.hpp"
 #include "Woden/Assets/QMapFile.hpp"
+#include "Woden/GameFramework/Actor.hpp"
+#include "Woden/GameFramework/ActorSceneComponents.hpp"
+#include "Woden/GameFramework/PlayerActor.hpp"
+#include "Woden/GameFramework/World.hpp"
+
 #include "Woden/Rendering/Context.hpp"
-#include "Woden/Rendering/LightSource.hpp"
 #include "Woden/Morphic/Morph.hpp"
 #include "Woden/SceneGraph/Scene.hpp"
 
+using namespace Woden::GameFramework;
 using namespace Woden::Morphic;
 using namespace Woden::SceneGraph;
 
 void printHelp()
 {
-    printf("MapViewer <mapfile.map>\n");
+    printf("MapPlayer <mapfile.map>\n");
 }
 
 void printVersion()
 {
-    printf("MapViewer Version 0.1\n");
+    printf("MapPlayer Version 0.1\n");
 }
 
 int main(int argc, const char *argv[])
@@ -50,15 +55,24 @@ int main(int argc, const char *argv[])
         }
     }
 
-    auto scene = MakeScene();
+    auto world = std::make_shared<World> ();
+
     if(mapFile)
     {
         mapFile->computeGeometry();
-        mapFile->addToSceneWithInverseScale(scene, 32);
+        mapFile->addToWorldWithInverseScale(world, 32);
     }
 
-    scene->openInSystemWindow();
+    auto infoPlayerStart = world->findActorWithClassName("info_player_start");
+    if(infoPlayerStart)
+    {
+        auto playerActor = MakeActor<PlayerActor> ();
+        playerActor->setPosition(infoPlayerStart->getPosition());
+        world->spawnActor(playerActor);
+    }
 
+    world->playInSystemWindow();
+    
     int exitCode = Morph::runMainLoop();
     Woden::Assets::ResourceCache::releaseSingleton();
     Woden::Rendering::RenderingContext::releaseMainContext();
