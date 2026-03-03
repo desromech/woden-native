@@ -286,11 +286,18 @@ std::vector<ContactPoint> CompoundCollisionShape::detectAndComputeConvexCollisio
     // Compound vs Convex
     std::vector<ContactPoint> contactPoints;
 
+    auto otherShapeBox = otherShape->localBoundingBoxWithMargin.transformedWith(otherShapeTransform).inverseTransformedWith(myTransform);
+    //size_t childCount = 0;
     for(auto &child : children)
     {
+        if(!child->box.hasIntersectionWithBox(otherShapeBox))
+            continue;
+
         auto childContactPoints = child->shape->detectAndComputeConvexCollisionContactPointsForShape(myTransform, child->transform, otherShape, otherShapeTransform, initialSeparatingAxis);
         contactPoints.insert(contactPoints.end(), childContactPoints.begin(), childContactPoints.end());
+        //++childCount;
     }
+    //printf("childCount %zu\n", childCount);
 
     return contactPoints;
 }
@@ -325,8 +332,8 @@ void CompoundCollisionShape::finishAddingChildren()
     localBoundingBox = Math::AABox::Empty();
     for(auto &child : children)
     {
-        auto transformedChildBox = child->shape->localBoundingBoxWithMargin.transformedWith(child->transform);
-        localBoundingBox.insertBox(transformedChildBox);
+        child->box = child->shape->localBoundingBoxWithMargin.transformedWith(child->transform);
+        localBoundingBox.insertBox(child->box);
     }
 
     localBoundingBoxWithMargin = localBoundingBox.expandedBy(margin);

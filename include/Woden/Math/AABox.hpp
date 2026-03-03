@@ -68,6 +68,17 @@ public:
         return result;
     }
 
+    template<typename T>
+    AABox inverseTransformedWith(T&& transform)
+    {
+        auto result = AABox::Empty();
+        cornersDo([&](const Vector3 &corner){
+            result.insertPoint(transform.inverseTransformPosition(corner));
+        });
+
+        return result;
+    }
+
     AABox expandedBy(Scalar expansion) const
     {
         return AABox(minCorner - expansion, maxCorner + expansion);

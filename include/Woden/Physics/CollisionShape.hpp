@@ -180,6 +180,7 @@ struct CompoundCollisionShapeChild
 {
     ConvexCollisionShapePtr shape;
     Math::RigidTransform transform;
+    Math::AABox box;
 };
 
 // Compound collision shape
