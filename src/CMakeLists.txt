@@ -12,6 +12,7 @@ set(WodenEngine_Sources
 
     GameFramework/Actor.cpp
     GameFramework/ActorComponent.cpp
+    GameFramework/ActorFactory.cpp
     GameFramework/ActorSceneComponents.cpp
     GameFramework/ActorTickSubsystem.cpp
     GameFramework/CharacterActor.cpp

@@ -1,6 +1,7 @@
 #include "Woden/Assets/QMapFile.hpp"
 #include "Woden/Assets/ResourceCache.hpp"
 #include "Woden/GameFramework/Actor.hpp"
+#include "Woden/GameFramework/ActorFactory.hpp"
 #include "Woden/GameFramework/ActorSceneComponents.hpp"
 #include "Woden/GameFramework/CollisionObjectComponents.hpp"
 #include "Woden/GameFramework/CollisionShapeComponents.hpp"
@@ -474,7 +475,7 @@ void QMapEntity::addToSceneWithInverseScale(const SceneGraph::ScenePtr &scene, M
 
 void QMapEntity::addToWorldWithInverseScale(const GameFramework::WorldPtr &world, Math::Scalar inverseScale)
 {
-    auto actor = GameFramework::MakeActor<GameFramework::Actor> ();
+    auto actor = GameFramework::ActorFactoryRegistry::Get()->createWithClassNameOrFallbackToActor(className);
 
     if(!groupedFaces.empty())
     {
