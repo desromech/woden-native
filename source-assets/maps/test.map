@@ -167,29 +167,29 @@
 {
 "classname" "light_spot"
 "origin" "-40 8 120"
-"intensity" "10"
+"intensity" "50"
 "castShadows" "0"
 "color" "0.8 0.8 0.6"
 "influenceRadius" "10.000000"
-"angles" "0 0 -90"
+"angles" "-90 0 0"
 }
 // entity 3
 {
 "classname" "light_spot"
 "origin" "136 8 120"
-"intensity" "10"
+"intensity" "50"
 "castShadows" "0"
 "color" "0.8 0.8 0.6"
 "influenceRadius" "10.000000"
-"angles" "0 0 -90"
+"angles" "-90 0 0"
 }
 // entity 4
 {
 "classname" "light_spot"
 "origin" "232 168 120"
-"intensity" "10"
+"intensity" "50"
 "castShadows" "0"
 "color" "0.8 0.8 0.6"
 "influenceRadius" "10.000000"
-"angles" "0 0 -90"
+"angles" "-90 0 0"
 }

@@ -615,7 +615,7 @@ Math::Vector3 QMapEntity::getAngles()
 Math::Quaternion QMapEntity::getOrientation()
 {
     auto angles = getAngles();
-    return Math::Quaternion::ZYXRotationDegrees(angles);
+    return Math::Quaternion::YRotationDegrees(angles.y) * Math::Quaternion::XRotationDegrees(angles.x) * Math::Quaternion::ZRotationDegrees(angles.z);
 }
 
 bool QMapEntity::isLightEntity() const
