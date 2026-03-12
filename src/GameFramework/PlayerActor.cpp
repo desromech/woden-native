@@ -12,6 +12,10 @@ void PlayerActor::setupComponents()
 
     cameraComponent = std::make_shared<ActorCameraComponent> ();
     cameraComponent->isActive = true;
+
+    auto cameraTransform = Math::TRSTransform3D();
+    cameraTransform.translation = Math::Vector3(0, getDefaultHeight()*0.5, 0);
+    cameraComponent->setTransform(cameraTransform);
     addComponent(cameraComponent);
     addComponent(std::make_shared<InputListenerComponent> ());
 }
