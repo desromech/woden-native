@@ -48,6 +48,9 @@ void PlayerActor::handleKeyboardDownEvent(const KeyboardDownEventPtr &event)
     case SDLK_d:
         walkingDirection.x = 1;
         break;
+    case SDLK_SPACE:
+        jump();
+        break;
     }
 
     //printf("walkingDirection: %f %f %f\n", walkingDirection.x, walkingDirection.y, walkingDirection.z);

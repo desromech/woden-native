@@ -108,7 +108,8 @@ public:
     void loadStateFromModel();
     void saveStateIntoModel();
  
-    virtual void setInternalLinearAcceleration(Math::Vector3 &acceleration);
+    virtual void setInternalLinearAcceleration(const Math::Vector3 &acceleration);
+    virtual void jump(const Math::Vector3 &jumpVelocity);
 
     virtual void resetSleepingState();
     virtual void wakeUp();

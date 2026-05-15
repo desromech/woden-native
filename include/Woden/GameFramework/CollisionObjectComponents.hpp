@@ -77,8 +77,9 @@ class CharacterBodyObjectComponent : public RigidBodyComponent
 public:
     virtual Physics::CollisionObjectPtr makeCollisionObjectInstance() override;
     virtual void loadCollisionStateInto(const Physics::CollisionObjectPtr &collisionObject) override;
+    void jump();
 
-    Math::Vector3 jumpVelocity = Math::Vector3(0, 1, 0);
+    Math::Vector3 jumpVelocity = Math::Vector3(0, 10, 0);
     Math::Vector3 walkingVelocity = Math::Vector3::Zeros();
     Math::Scalar walkAccelerationTime = 0.05;
 };

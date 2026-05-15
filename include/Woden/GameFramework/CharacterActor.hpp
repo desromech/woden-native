@@ -31,12 +31,13 @@ public:
 
     virtual Math::Vector3 getDefaultJumpVelocity() const
     {
-        return Math::Vector3(0, 2, 0);
+        return Math::Vector3(0, 5, 0);
     }
 
     virtual void setupComponents() override;
 
     virtual void tick(Math::Scalar delta) override;
+    void jump();
 
     Math::Vector3 walkingDirection = Math::Vector3::Zeros();
     Math::Scalar walkingSpeed = 3.0f;

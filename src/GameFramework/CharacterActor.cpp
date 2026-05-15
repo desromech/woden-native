@@ -25,6 +25,13 @@ void CharacterActor::tick(Math::Scalar deltaTime)
     bodyComponent->walkingVelocity = walkingVelocity;
 }
 
+void CharacterActor::jump()
+{
+    auto bodyComponent = std::static_pointer_cast<CharacterBodyObjectComponent> (collisionObjectComponent);
+    bodyComponent->jump();
+
+}
+
 void CharacterActor::setupComponents()
 {
     Actor::setupComponents();

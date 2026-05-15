@@ -114,5 +114,10 @@ void CharacterBodyObjectComponent::loadCollisionStateInto(const Physics::Collisi
 	collisionObject->setInternalLinearAcceleration(walkingAcceleration);
 }
 
+void CharacterBodyObjectComponent::jump()
+{
+    collisionObject->jump(jumpVelocity);
+}
+
 } // End of namespace GameFramework
 } // End of namespace Woden

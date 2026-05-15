@@ -126,11 +126,18 @@ void CollisionObject::resetSleepingState()
 {
 }
 
-void CollisionObject::setInternalLinearAcceleration(Math::Vector3 &acceleration)
+void CollisionObject::setInternalLinearAcceleration(const Math::Vector3 &acceleration)
 {
     internalLinearAcceleration = acceleration;
     if(internalLinearAcceleration.length2() > 0)
         wakeUp();
+}
+
+void CollisionObject::jump(const Math::Vector3 &jumpVelocity)
+{
+    printf("jump velocity: %f %f %f\n", jumpVelocity.x, jumpVelocity.y, jumpVelocity.z);
+    linearVelocity += jumpVelocity;
+    wakeUp();
 }
 
 void CollisionObject::wakeUp()
