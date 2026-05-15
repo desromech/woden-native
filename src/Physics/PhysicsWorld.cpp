@@ -291,6 +291,8 @@ std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> DiscreteDynamicsP
 void DiscreteDynamicsPhysicsWorld::computeNarrowPhase(const std::vector<std::pair<CollisionObjectPtr, CollisionObjectPtr>> &broadphaseCandidates)
 {
     contactManifoldCache.beginEpoch();
+    for (auto &collisionObject : collisionObjects)
+        collisionObject->clearContactManifolds();
     for(auto &pair : broadphaseCandidates)
         detectNarrowPhaseCollisionOf(pair.first, pair.second);
     contactManifoldCache.endEpoch();

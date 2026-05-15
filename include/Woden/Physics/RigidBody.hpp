@@ -3,6 +3,7 @@
 
 #include "CollisionObject.hpp"
 #include "Woden/Math/Matrix3x3.hpp"
+
 namespace Woden
 {
 namespace Physics
@@ -53,7 +54,7 @@ public:
     virtual void transformChanged() override;
 
     void resetNetForces() override;
-    void integrateMovement(Math::Scalar deltaTime) override;
+    virtual void integrateMovement(Math::Scalar deltaTime) override;
     
     bool needsCollisionDetection() override;
 

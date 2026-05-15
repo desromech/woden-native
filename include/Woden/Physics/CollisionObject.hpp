@@ -19,6 +19,8 @@ typedef std::shared_ptr<class CollisionShape> CollisionShapePtr;
 typedef std::shared_ptr<class CollisionObject> CollisionObjectPtr;
 typedef std::weak_ptr<class PhysicsWorld> PhysicsWorldWeakPtr;
 
+typedef std::shared_ptr<struct ContactManifold> ContactManifoldPtr;
+
 /**
  * Collision object model interface.
  */
@@ -111,6 +113,9 @@ public:
     virtual void resetSleepingState();
     virtual void wakeUp();
 
+    void clearContactManifolds();
+    void addContactManifold(const ContactManifoldPtr &manifold);
+
     PhysicsWorldWeakPtr owner;
     uint32_t id = 0;
     CollisionShapePtr shape;
@@ -131,9 +136,10 @@ public:
 
     CollisionMasks collisionGroup = CollisionMasks::DefaultCollisionGroup;
     CollisionMasks collisionResponseGroupMask = CollisionMasks::DefaultCollisionResponseGroup;
-
+    
 protected:
     Math::RigidTransform transform;
+    std::vector<ContactManifoldPtr> contactManifolds;
 
 };
 

@@ -137,6 +137,15 @@ void CollisionObject::wakeUp()
 {
 }
 
+void CollisionObject::clearContactManifolds()
+{
+    contactManifolds.clear();
+}
+
+void CollisionObject::addContactManifold(const ContactManifoldPtr &manifold)
+{
+    contactManifolds.push_back(manifold);
+}
 
 } // End of namespace Physics
 } // End of namespace Woden

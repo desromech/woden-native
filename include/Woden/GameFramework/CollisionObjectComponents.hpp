@@ -75,6 +75,7 @@ protected:
 class CharacterBodyObjectComponent : public RigidBodyComponent
 {
 public:
+    virtual Physics::CollisionObjectPtr makeCollisionObjectInstance() override;
     virtual void loadCollisionStateInto(const Physics::CollisionObjectPtr &collisionObject) override;
 
     Math::Vector3 jumpVelocity = Math::Vector3(0, 1, 0);

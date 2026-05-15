@@ -95,6 +95,8 @@ void ContactManifoldCache::addContactPoints(const std::vector<ContactPoint> &con
         manifold->addContactPoint(contact);
     }
 
+    first->addContactManifold(manifold);
+    second->addContactManifold(manifold);
     //printf("Manifold contacts %zu\n", manifold->contacts.size());
 }
 

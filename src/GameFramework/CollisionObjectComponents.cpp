@@ -3,6 +3,7 @@
 #include "Woden/GameFramework/CollisionShapeComponents.hpp"
 #include "Woden/GameFramework/PhysicsSubsystem.hpp"
 #include "Woden/GameFramework/World.hpp"
+#include "Woden/Physics/CharacterRigidBody.hpp"
 #include "Woden/Physics/RigidBody.hpp"
 #include <stdlib.h>
 
@@ -74,6 +75,18 @@ void CollisionObjectComponent::saveCollisionStateFrom(const Physics::CollisionOb
 Physics::CollisionObjectPtr RigidBodyComponent::makeCollisionObjectInstance()
 {
     auto body = std::make_shared<Physics::RigidBody> ();
+    setupCollisionObject(body);
+    body->setMass(mass);
+    if(noTorque)
+        body->setInertiaTensor(Math::Matrix3x3::Zeros());
+    else
+        body->computeMassDistribution();
+    return body;
+}
+
+Physics::CollisionObjectPtr CharacterBodyObjectComponent::makeCollisionObjectInstance()
+{
+    auto body = std::make_shared<Physics::CharacterRigidBody> ();
     setupCollisionObject(body);
     body->setMass(mass);
     if(noTorque)
