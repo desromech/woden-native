@@ -133,9 +133,42 @@ void CollisionObject::setInternalLinearAcceleration(const Math::Vector3 &acceler
         wakeUp();
 }
 
+bool CollisionObject::isOnFloor()
+{
+    if(isSleeping())
+        return true;
+
+    if(contactManifolds.empty())
+        return false;
+
+    // Find a contact point that is below me.
+    for (auto &manifold : contactManifolds)
+    {
+        //printf("Manifold\n");
+        for (auto &contactPoint : manifold->contacts)
+        {
+            Math::Vector3 normal = contactPoint.normal;
+            if(contactPoint.secondObject.get() == this)
+                normal = -contactPoint.normal;
+            
+            Math::Vector3 up = Math::Vector3(0, 1, 0);
+            auto NdotUp = normal.dot(up);
+            //printf("N %f %f %f NdotUp: %f\n", normal.x, normal.y, normal.z, NdotUp);
+            if(NdotUp >= 0.25)
+                return true;
+        }
+    }
+
+    return false;
+}
+
 void CollisionObject::jump(const Math::Vector3 &jumpVelocity)
 {
-    printf("jump velocity: %f %f %f\n", jumpVelocity.x, jumpVelocity.y, jumpVelocity.z);
+    printf("manifolds: %zu jump velocity: %f %f %f\n", contactManifolds.size(), jumpVelocity.x, jumpVelocity.y, jumpVelocity.z);
+
+    if(!isOnFloor())
+        return;
+    
     linearVelocity += jumpVelocity;
     wakeUp();
 }

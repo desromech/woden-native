@@ -109,7 +109,12 @@ public:
     void saveStateIntoModel();
  
     virtual void setInternalLinearAcceleration(const Math::Vector3 &acceleration);
+    bool isOnFloor();
     virtual void jump(const Math::Vector3 &jumpVelocity);
+    virtual bool isSleeping() const
+    {
+        return false;
+    }
 
     virtual void resetSleepingState();
     virtual void wakeUp();

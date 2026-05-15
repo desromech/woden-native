@@ -73,7 +73,7 @@ public:
 
     void checkTimeToSleep(Math::Scalar weight);
 
-    bool isSleeping()
+    virtual bool isSleeping() const override
     {
         return !isAwake;
     }
