@@ -174,11 +174,11 @@ std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTest(const Math::Ri
 std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTestWithConvexShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
 {
     auto mySupportFunction =[&](const Math::Vector3 &D){
-        return this->localSupportInDirection(D);
+        return this->localSupportInDirectionWithMargin(D);
     };
 
     auto otherSupportFunction =[&](const Math::Vector3 &D){
-        return otherShape->localSupportInDirection(D);
+        return otherShape->localSupportInDirectionWithMargin(D);
     };
 
     auto sweepTestResult = Math::computeGJKSweepCasting(mySupportFunction, myStartTransform, myEndTransform, otherSupportFunction, otherStartTransform, otherEndTransform);

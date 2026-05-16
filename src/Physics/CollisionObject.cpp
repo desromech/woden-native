@@ -210,6 +210,9 @@ void CollisionObject::clearContactManifolds()
 
 void CollisionObject::addContactManifold(const ContactManifoldPtr &manifold)
 {
+    if(!keepContactManifolds)
+        return;
+
     contactManifolds.push_back(manifold);
 }
 

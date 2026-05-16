@@ -110,7 +110,7 @@ public:
     void saveStateIntoModel();
  
     virtual void setInternalLinearAcceleration(const Math::Vector3 &acceleration);
-    bool isOnFloor();
+    virtual bool isOnFloor();
     virtual void jump(const Math::Vector3 &jumpVelocity);
     virtual bool isSleeping() const
     {
@@ -130,6 +130,7 @@ public:
     uint32_t id = 0;
     CollisionShapePtr shape;
     CollisionObjectModel *model = nullptr;
+    bool keepContactManifolds = false;
     
     Math::Vector3 linearVelocity = Math::Vector3(0);
     Math::Vector3 angularVelocity = Math::Vector3(0);

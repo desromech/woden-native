@@ -14,6 +14,8 @@ void CharacterRigidBody::stepUpMovement()
 
     auto endTransform = startTransform;
     endTransform.translation += stepUpVector*stepHeight;
+    //auto deltaTranslation = endTransform.translation - startTransform.translation;
+    //printf("stepUp delta %f %f %f\n", deltaTranslation.x, deltaTranslation.y, deltaTranslation.z);
 
     auto world = owner.lock();
     Physics::CollisionObjectExclusionSet exclusionSet;
@@ -21,10 +23,19 @@ void CharacterRigidBody::stepUpMovement()
 
     auto sweepTestOptionalResult = world->sweepTest(shape, startTransform, endTransform, exclusionSet);
     if(!sweepTestOptionalResult.has_value())
+    {
+        //printf("stepUpMovement endTransform %f %f %f\n", endTransform.translation.x, endTransform.translation.y, endTransform.translation.z);
+        setTransform(endTransform);
         return;
+    }
 
     auto sweepTestResult = sweepTestOptionalResult.value();
-    printf("stepUpMovement sweepTestResult lambda %f\n", sweepTestResult.distance);
+    auto lambda = sweepTestResult.distance;
+    
+    auto sweepTransform = startTransform.interpolateTo(endTransform, lambda);
+    //printf("stepUpMovement lambda %f transform %f %f %f\n", lambda, sweepTransform.translation.x, sweepTransform.translation.y, sweepTransform.translation.z);
+
+    setTransform(sweepTransform);
 }
 
 void CharacterRigidBody::stepDownMovement()
@@ -32,7 +43,9 @@ void CharacterRigidBody::stepDownMovement()
     auto startTransform = transform;
 
     auto endTransform = startTransform;
-    endTransform.translation = startTransform.translation - stepUpVector*stepHeight;
+    endTransform.translation = startTransform.translation - stepUpVector*(stepHeight + stepUpOffset);
+    //auto deltaTranslation = endTransform.translation - startTransform.translation;
+    //printf("stepDown delta %f %f %f\n", deltaTranslation.x, deltaTranslation.y, deltaTranslation.z);
 
     auto world = owner.lock();
     Physics::CollisionObjectExclusionSet exclusionSet;
@@ -40,17 +53,34 @@ void CharacterRigidBody::stepDownMovement()
 
     auto sweepTestOptionalResult = world->sweepTest(shape, startTransform, endTransform, exclusionSet);
     if(!sweepTestOptionalResult.has_value())
+    {
+        //printf("stepDownMovement endTransform %f %f %f\n", endTransform.translation.x, endTransform.translation.y, endTransform.translation.z);
+        isCurrentlyOnFloor = false;
+        setTransform(endTransform);
         return;
+    }
 
     auto sweepTestResult = sweepTestOptionalResult.value();
-    printf("stepDownMovement sweepTestResult lambda %f\n", sweepTestResult.distance);
+    auto lambda = sweepTestResult.distance;
+
+    auto sweepTransform = startTransform.interpolateTo(endTransform, lambda);
+    auto NdotUp = sweepTestResult.normal.dot(stepUpVector);
+
+    //printf("NdotUp %f N %f %f %f\n", NdotUp, sweepTestResult.normal.x, sweepTestResult.normal.y, sweepTestResult.normal.z);
+    linearVelocity = linearVelocity - (sweepTestResult.normal * linearVelocity.dot(sweepTestResult.normal));
+
+    //printf("stepDownMovement lambda %f transform %f %f %f\n", lambda, sweepTransform.translation.x, sweepTransform.translation.y, sweepTransform.translation.z);
+    isCurrentlyOnFloor = NdotUp >= 0.6;
+    setTransform(sweepTransform);
 }
 
 void CharacterRigidBody::integrateMovement(Math::Scalar deltaTime)
 {
-    stepUpMovement();    
+    stepUpMovement();
     RigidBody::integrateMovement(deltaTime);
     stepDownMovement();
+    //printf("Linear velocity %f %f %f\n", linearVelocity.x, linearVelocity.y, linearVelocity.z);
+    //printf("On floor %d\n", isCurrentlyOnFloor);
 }
 
 } // End of namespace Physics

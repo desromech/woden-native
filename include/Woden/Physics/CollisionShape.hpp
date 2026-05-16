@@ -68,6 +68,10 @@ class ConvexCollisionShape : public CollisionShape
 public:
     virtual bool isConvex() const override;
     virtual Math::Vector3 localSupportInDirection(const Math::Vector3 &D) = 0;
+    Math::Vector3 localSupportInDirectionWithMargin(const Math::Vector3 &D)
+    {
+        return localSupportInDirection(D) + D.normalized()*margin;
+    }
 
     virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
     virtual std::vector<ContactPoint> detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
