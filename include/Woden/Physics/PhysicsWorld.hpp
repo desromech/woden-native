@@ -23,6 +23,21 @@ typedef std::shared_ptr<class RigidBody> RigidBodyPtr;
 typedef std::shared_ptr<class ForceGenerator> ForceGeneratorPtr;
 typedef std::shared_ptr<class PhysicsWorld> PhysicsWorldPtr;
 
+struct CollisionObjectExclusionSet
+{
+    bool containsObject(const CollisionObjectPtr &object) const
+    {
+        for(auto &obj : excludedObjects)
+        {
+            if (obj == object)
+                return true;
+        }
+
+        return false;
+    }
+    std::vector<CollisionObjectPtr> excludedObjects;
+};
+
 /**
  * I am an object that participates in colliosions.
  */
@@ -39,8 +54,8 @@ public:
     virtual void update(Math::Scalar delta, Math::Scalar fixedTimeStep = 1.0f/120.0f);
     virtual void updateSingleTimeStep(Math::Scalar delta);
 
-    virtual std::optional<ShapeCastingResult> rayCast(const Math::Ray3D &ray);
-    virtual std::optional<ShapeCastingResult> sweepTest(const CollisionShapePtr &sweepVolume, const Math::RigidTransform &startTransform, const Math::RigidTransform &endTransform);
+    virtual std::optional<ShapeCastingResult> rayCast(const Math::Ray3D &ray, const CollisionObjectExclusionSet &exclusionSet = CollisionObjectExclusionSet());
+    virtual std::optional<ShapeCastingResult> sweepTest(const CollisionShapePtr &sweepVolume, const Math::RigidTransform &startTransform, const Math::RigidTransform &endTransform, const CollisionObjectExclusionSet &exclusionSet = CollisionObjectExclusionSet());
 
     SceneGraph::ScenePtr buildInteractiveScene();
 

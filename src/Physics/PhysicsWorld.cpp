@@ -67,13 +67,16 @@ void PhysicsWorld::updateSingleTimeStep(Math::Scalar delta)
     (void)delta;
 }
 
-std::optional<ShapeCastingResult> PhysicsWorld::rayCast(const Math::Ray3D &ray)
+std::optional<ShapeCastingResult> PhysicsWorld::rayCast(const Math::Ray3D &ray, const CollisionObjectExclusionSet &exclusionSet)
 {
     // TODO: Use an acceleration data structure here.
     ShapeCastingResult bestFound;
     bool hasBestFound = false;
     for (auto &collisionObject : collisionObjects)
     {
+        if(exclusionSet.containsObject(collisionObject))
+            continue;
+
         auto collisionObjectResult = collisionObject->rayCast(ray);
         if(!collisionObjectResult.has_value())
             continue;
@@ -91,13 +94,16 @@ std::optional<ShapeCastingResult> PhysicsWorld::rayCast(const Math::Ray3D &ray)
     return bestFound;
 }
 
-std::optional<ShapeCastingResult> PhysicsWorld::sweepTest(const CollisionShapePtr &sweepVolume, const Math::RigidTransform &startTransform, const Math::RigidTransform &endTransform)
+std::optional<ShapeCastingResult> PhysicsWorld::sweepTest(const CollisionShapePtr &sweepVolume, const Math::RigidTransform &startTransform, const Math::RigidTransform &endTransform, const CollisionObjectExclusionSet &exclusionSet)
 {
     // TODO: Use an acceleration data structure here.
     ShapeCastingResult bestFound;
     bool hasBestFound = false;
     for (auto &collisionObject : collisionObjects)
     {
+        if(exclusionSet.containsObject(collisionObject))
+            continue;
+
         auto collisionObjectResult = collisionObject->sweepTest(sweepVolume, startTransform, endTransform);
         if(!collisionObjectResult.has_value())
             continue;
