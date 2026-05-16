@@ -32,7 +32,7 @@ public:
 
         if(!hasComputedClosest)
             computeClosestToOrigin();
-        return closestPointToOrigin == Vector3::Zeros();
+        return closeTo(closestPointToOrigin, Vector3::Zeros());
     }
 
     bool containsPoint(const Math::Vector3 &point)
@@ -182,8 +182,8 @@ std::optional<std::pair<Scalar, Vector3>> computeGJKRayCasting(const Ray3D &ray,
     // Algorithm from 'Ray Casting against General Convex Objectswith Application to Continuous CollisionDetection' by G. Van Den Bergen."
 
     const auto MaxNumberOfIterations = 32;
-	const auto Epsilon = 0.00001;
-	const auto Epsilon2 = Epsilon*Epsilon;
+	const float Epsilon = 0.00001;
+	const float Epsilon2 = Epsilon*Epsilon;
 
     auto lambda = ray.tmin;
     auto lambdaMax = ray.tmax;
@@ -194,7 +194,7 @@ std::optional<std::pair<Scalar, Vector3>> computeGJKRayCasting(const Ray3D &ray,
 	auto n = Vector3::Zeros();
 
     Math::Vector3 v = x - supportFunction(-r);
-	GJKVoronoiSimplexSolver simplex;;
+	GJKVoronoiSimplexSolver simplex;
 	auto remainingIterations = MaxNumberOfIterations;
 
     while (remainingIterations > 0 && v.length2() > Epsilon2)
@@ -205,7 +205,7 @@ std::optional<std::pair<Scalar, Vector3>> computeGJKRayCasting(const Ray3D &ray,
         auto p = supportFunction(v);
 		Math::Vector3 w = x - p;
 		auto VdotW = v.dot(w);
-        if( VdotW > 0 )
+        if(VdotW > 0)
         {
 			auto VdotR = v.dot(r);
 			if(VdotR >= -Epsilon2)
