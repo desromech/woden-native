@@ -164,8 +164,6 @@ bool CollisionObject::isOnFloor()
 
 void CollisionObject::jump(const Math::Vector3 &jumpVelocity)
 {
-    printf("manifolds: %zu jump velocity: %f %f %f\n", contactManifolds.size(), jumpVelocity.x, jumpVelocity.y, jumpVelocity.z);
-
     if(!isOnFloor())
         return;
     
