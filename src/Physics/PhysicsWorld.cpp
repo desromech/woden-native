@@ -76,7 +76,31 @@ std::optional<ShapeCastingResult> PhysicsWorld::rayCast(const Math::Ray3D &ray)
     {
         auto collisionObjectResult = collisionObject->rayCast(ray);
         if(!collisionObjectResult.has_value())
-            continue;;
+            continue;
+
+        auto foundResult = collisionObjectResult.value();
+        if(!hasBestFound || foundResult.distance < bestFound.distance)
+        {
+            bestFound = foundResult;
+            hasBestFound = true;
+        }
+    }
+
+    if(!hasBestFound)
+        return std::nullopt;
+    return bestFound;
+}
+
+std::optional<ShapeCastingResult> PhysicsWorld::sweepTest(const CollisionShapePtr &sweepVolume, const Math::RigidTransform &startTransform, const Math::RigidTransform &endTransform)
+{
+    // TODO: Use an acceleration data structure here.
+    ShapeCastingResult bestFound;
+    bool hasBestFound = false;
+    for (auto &collisionObject : collisionObjects)
+    {
+        auto collisionObjectResult = collisionObject->sweepTest(sweepVolume, startTransform, endTransform);
+        if(!collisionObjectResult.has_value())
+            continue;
 
         auto foundResult = collisionObjectResult.value();
         if(!hasBestFound || foundResult.distance < bestFound.distance)

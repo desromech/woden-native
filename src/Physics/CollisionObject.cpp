@@ -191,6 +191,18 @@ std::optional<ShapeCastingResult> CollisionObject::rayCast(const Math::Ray3D &ra
     return castingResult;
 }
 
+std::optional<ShapeCastingResult> CollisionObject::sweepTest(const CollisionShapePtr &sweepVolume, const Math::RigidTransform &startTransform, const Math::RigidTransform &endTransform)
+{
+    auto result = shape->sweepTest(transform, transform, sweepVolume, startTransform, endTransform);
+    if(!result.has_value())
+        return std::nullopt;
+
+    auto castingResult = result.value();
+    castingResult.collisionObject = shared_from_this();
+    castingResult.shape = shape;
+    return castingResult;
+}
+
 void CollisionObject::clearContactManifolds()
 {
     contactManifolds.clear();

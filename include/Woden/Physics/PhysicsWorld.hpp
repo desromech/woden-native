@@ -40,6 +40,7 @@ public:
     virtual void updateSingleTimeStep(Math::Scalar delta);
 
     virtual std::optional<ShapeCastingResult> rayCast(const Math::Ray3D &ray);
+    virtual std::optional<ShapeCastingResult> sweepTest(const CollisionShapePtr &sweepVolume, const Math::RigidTransform &startTransform, const Math::RigidTransform &endTransform);
 
     SceneGraph::ScenePtr buildInteractiveScene();
 

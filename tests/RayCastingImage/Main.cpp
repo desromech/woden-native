@@ -174,6 +174,44 @@ void renderPhysicsWorld(const std::string &name, const Woden::Physics::PhysicsWo
     image->saveToTGA(name);
 }
 
+void renderPhysicsWorldSweepTest(const std::string &name, const Woden::Physics::PhysicsWorldPtr &physicsWorld, const Woden::Physics::CollisionShapePtr &sweptVolume)
+{
+    auto image = std::make_shared<Woden::Assets::Image> ();
+    image->width = 500;
+    image->height = 500;
+    image->pitch = image->width*4;
+    image->format = Woden::Assets::PixelFormat::B8G8R8A8_UNorm;
+    image->pixels.resize(image->pitch*image->height);
+    image->renderPixels32([&](uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+
+        auto vx = Scalar(x) / Scalar(width) * 2 - 1;
+        auto vy = Scalar(y) / Scalar(height) * 2 - 1;
+        auto rayDirection = Vector3(vx, vy, -1.0).normalized();
+        auto rayOrigin = Vector3(0, 2, 5);
+        auto ray = Ray3D(rayOrigin, rayDirection, 0, 1000);
+
+        auto sweptVolumeStartTransform = RigidTransform::WithTranslation(ray.getStartPoint());
+        auto sweptVolumeEndTransform = RigidTransform::WithTranslation(ray.getEndPoint());
+
+        std::optional<Woden::Physics::ShapeCastingResult> sweepTestResult = physicsWorld->sweepTest(sweptVolume, sweptVolumeStartTransform, sweptVolumeEndTransform);
+
+        if(!sweepTestResult.has_value())
+            return 0xff0000ff;
+
+        auto rayCastResultValue = sweepTestResult.value();
+
+        auto N = rayCastResultValue.normal;
+        auto V = -rayDirection;
+        auto NdotV = N.dot(V);
+        auto gray = 0;
+        if(NdotV >= 0)
+            gray = uint8_t(NdotV*255);
+        return gray | (gray << 8) | (gray << 16) | 0xff000000;
+    });
+
+    image->saveToTGA(name);
+}
+
 int main()
 {
     renderRGTestImage();
@@ -248,6 +286,10 @@ int main()
         }
 
         renderPhysicsWorld("physics-world.tga", physicsWorld);
+
+        auto sweptShape = std::make_shared<Woden::Physics::SphereCollisionShape> ();
+        sweptShape->setRadius(0.5);
+        renderPhysicsWorldSweepTest("physics-sweep-test.tga", physicsWorld, sweptShape);
     }
 
     return 0;

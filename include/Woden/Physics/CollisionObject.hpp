@@ -121,6 +121,7 @@ public:
     virtual void wakeUp();
 
     std::optional<ShapeCastingResult> rayCast(const Math::Ray3D &ray);
+    virtual std::optional<ShapeCastingResult> sweepTest(const CollisionShapePtr &sweepVolume, const Math::RigidTransform &startTransform, const Math::RigidTransform &endTransform);
 
     void clearContactManifolds();
     void addContactManifold(const ContactManifoldPtr &manifold);
