@@ -304,5 +304,29 @@ int main()
         renderPhysicsWorldSweepTest("physics-sweep-test.tga", physicsWorld, sweptShape);
     }
 
+    // Physics world compound shape
+    {
+        auto physicsWorld = std::make_shared<Woden::Physics::PhysicsWorld> ();
+
+        auto boxShape = std::make_shared<Woden::Physics::BoxCollisionShape> ();
+        boxShape->setHalfExtent(Woden::Math::Vector3(1, 1, 1));
+
+        auto compoundShape = std::make_shared<Woden::Physics::CompoundCollisionShape> ();
+        compoundShape->addChildWithTranslation(boxShape, Woden::Math::Vector3(-3, 0, 0));
+        compoundShape->addChildWithTranslation(boxShape, Woden::Math::Vector3(0, 0, 0));
+        compoundShape->addChildWithTranslation(boxShape, Woden::Math::Vector3(3, 0, 0));
+        compoundShape->finishAddingChildren();
+
+        auto rigidBody = std::make_shared<Woden::Physics::RigidBody> ();
+        rigidBody->shape = compoundShape;
+        physicsWorld->addCollisionObject(rigidBody);
+
+        renderPhysicsWorld("compound-physics-world.tga", physicsWorld);
+
+        auto sweptShape = std::make_shared<Woden::Physics::SphereCollisionShape> ();
+        sweptShape->setRadius(0.5);
+        renderPhysicsWorldSweepTest("compound-physics-sweep-test.tga", physicsWorld, sweptShape);
+    }
+
     return 0;
 }

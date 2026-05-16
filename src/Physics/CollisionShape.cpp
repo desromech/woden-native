@@ -45,6 +45,15 @@ std::optional<ShapeCastingResult> CollisionShape::sweepTestWithConvexShape(const
     return std::nullopt;
 }
 
+std::optional<ShapeCastingResult> CollisionShape::sweepTestWithCompoundShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
+{
+    (void)myStartTransform;
+    (void)myEndTransform;
+    (void)otherShape;
+    (void)otherStartTransform;
+    (void)otherEndTransform;
+    return std::nullopt;
+}
 
 Math::Matrix3x3 CollisionShape::computeInertiaTensorWithMass(Math::Scalar mass)
 {
@@ -160,7 +169,6 @@ std::optional<ShapeCastingResult> ConvexCollisionShape::rayCast(const Math::Ray3
 std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTest(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
 {
     return otherShape->sweepTestWithConvexShape(otherStartTransform, otherEndTransform, std::static_pointer_cast<ConvexCollisionShape> (shared_from_this()), myStartTransform, myEndTransform);
-
 }
 
 std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTestWithConvexShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
@@ -185,6 +193,11 @@ std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTestWithConvexShape
     shapeResult.point = Math::mix(myStartTransform.translation, myEndTransform.translation, lambda);
     shapeResult.normal = result.second.normalized();
     return shapeResult;
+}
+
+std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTestWithCompoundShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
+{
+    return otherShape->sweepTestWithConvexShape(otherStartTransform, otherEndTransform, std::static_pointer_cast<ConvexCollisionShape> (shared_from_this()), myStartTransform, myEndTransform);
 }
 
 // Sphere collision shape
@@ -336,7 +349,7 @@ SceneGraph::SceneNodePtr CompoundCollisionShape::constructVisualizationSceneNode
 
 std::optional<ShapeCastingResult> CompoundCollisionShape::rayCast(const Math::Ray3D &ray)
 {
-    bool hasBest = false;
+    bool hasBestFound = false;
     ShapeCastingResult bestFound;
 
     bvh.leavesIntersectingRayDo(ray, [&](const CompoundCollisionShapeChildPtr &child) {
@@ -349,16 +362,58 @@ std::optional<ShapeCastingResult> CompoundCollisionShape::rayCast(const Math::Ra
             return;
 
         auto childResultValue = childResult.value();
-        if(!hasBest || childResultValue.distance < hasBest)
+        if(!hasBestFound || childResultValue.distance < bestFound.distance)
         {
-            hasBest = true;
+            hasBestFound = true;
             bestFound = childResultValue;
         }
     });
 
-    if(!hasBest)
+    if(!hasBestFound)
         return std::nullopt;
     return bestFound;
+}
+
+std::optional<ShapeCastingResult> CompoundCollisionShape::sweepTest(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
+{
+    return otherShape->sweepTestWithCompoundShape(otherStartTransform, otherEndTransform, std::static_pointer_cast<CompoundCollisionShape> (shared_from_this()), myStartTransform, myEndTransform);
+}
+
+std::optional<ShapeCastingResult> CompoundCollisionShape::sweepTestWithConvexShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
+{
+    bool hasBestFound = false;
+    ShapeCastingResult bestFound;
+
+    for(auto &child : children)
+    {
+        auto childStartTransform = myStartTransform.transformTransform(child->transform);
+        auto childEndTransform = myEndTransform.transformTransform(child->transform);
+        auto childResult = child->shape->sweepTestWithConvexShape(childStartTransform, childEndTransform, otherShape, otherStartTransform, otherEndTransform);
+        if(!childResult.has_value())
+            continue;
+
+        auto childResultValue = childResult.value();
+        if(!hasBestFound || childResultValue.distance < bestFound.distance)
+        {
+            bestFound = childResultValue;
+            bestFound.normal = -bestFound.normal;
+            hasBestFound = true;
+        }
+    }
+
+    if(!hasBestFound)
+        return std::nullopt;
+    return bestFound;
+}
+
+std::optional<ShapeCastingResult> CompoundCollisionShape::sweepTestWithCompoundShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
+{
+    (void)myStartTransform;
+    (void)myEndTransform;
+    (void)otherShape;
+    (void)otherStartTransform;
+    (void)otherEndTransform;
+    return std::nullopt;
 }
 
 std::vector<ContactPoint> CompoundCollisionShape::detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)

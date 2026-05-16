@@ -48,6 +48,7 @@ public:
     virtual std::optional<ShapeCastingResult> rayCast(const Math::Ray3D &ray);
     virtual std::optional<ShapeCastingResult> sweepTest(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform);
     virtual std::optional<ShapeCastingResult> sweepTestWithConvexShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform);
+    virtual std::optional<ShapeCastingResult> sweepTestWithCompoundShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform);
  
     virtual Math::Matrix3x3 computeInertiaTensorWithMass(Math::Scalar mass);
     virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode();
@@ -77,6 +78,7 @@ public:
     virtual std::optional<ShapeCastingResult> rayCast(const Math::Ray3D &ray) override;
     virtual std::optional<ShapeCastingResult> sweepTest(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform);
     virtual std::optional<ShapeCastingResult> sweepTestWithConvexShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform);
+    virtual std::optional<ShapeCastingResult> sweepTestWithCompoundShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform);
 
 };
 
@@ -204,6 +206,10 @@ public:
     virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode() override;
 
     virtual std::optional<ShapeCastingResult> rayCast(const Math::Ray3D &ray) override;
+
+    virtual std::optional<ShapeCastingResult> sweepTest(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform);
+    virtual std::optional<ShapeCastingResult> sweepTestWithConvexShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform);
+    virtual std::optional<ShapeCastingResult> sweepTestWithCompoundShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform);
 
     virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
     virtual std::vector<ContactPoint> detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
