@@ -111,8 +111,8 @@ void renderSweepTestWithCollisionShape(const std::string &name,
         auto rayOrigin = Vector3(0, 2, 5);
         auto ray = Ray3D(rayOrigin, rayDirection, 0, 1000);
         
-        auto shapeTransform = RigidTransform::Identity();
-        //auto shapeTransform = RigidTransform::WithRotation(Quaternion::YRotationDegrees(45));
+        //auto shapeTransform = RigidTransform::Identity();
+        auto shapeTransform = RigidTransform::WithRotation(Quaternion::YRotationDegrees(20)*Quaternion::XRotationDegrees(20));
 
         auto sweptVolumeStartTransform = RigidTransform::WithTranslation(ray.getStartPoint());
         auto sweptVolumeEndTransform = RigidTransform::WithTranslation(ray.getEndPoint());

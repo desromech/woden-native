@@ -266,8 +266,8 @@ std::optional<std::pair<Scalar, Vector3>> computeGJKSweepCasting(
     RigidTransform secondDelta = secondStartTransform.inverseTransformTransform(secondEndTransform);
     Vector3 r = firstDelta.translation - secondDelta.translation;
 
-    auto firstSupport = firstStartTransform.transformPosition(firstSupportFunction(r));
-    auto secondSupport = secondStartTransform.transformPosition(secondSupportFunction(-r));
+    auto firstSupport = firstStartTransform.transformPosition(firstSupportFunction(firstStartTransform.inverseTransformNormalVector(r)));
+    auto secondSupport = secondStartTransform.transformPosition(secondSupportFunction(secondStartTransform.inverseTransformNormalVector(-r)));
 	Vector3 v = firstSupport - secondSupport;
 
     auto interpolatedFirstTransform = firstStartTransform;
@@ -281,8 +281,8 @@ std::optional<std::pair<Scalar, Vector3>> computeGJKSweepCasting(
         if(lambda > 1)
             return std::nullopt;
 
-        firstSupport = interpolatedFirstTransform.transformPosition(firstSupportFunction(-v));
-        secondSupport = interpolatedSecondTransform.transformPosition(secondSupportFunction(v));
+        firstSupport = interpolatedFirstTransform.transformPosition(firstSupportFunction(interpolatedFirstTransform.inverseTransformNormalVector(-v)));
+        secondSupport = interpolatedSecondTransform.transformPosition(secondSupportFunction(interpolatedSecondTransform.inverseTransformNormalVector(v)));
         auto w = firstSupport - secondSupport;
 
 		auto VdotW = v.dot(w);
@@ -304,8 +304,8 @@ std::optional<std::pair<Scalar, Vector3>> computeGJKSweepCasting(
             auto newOffset = interpolatedSecondTransform.inverseTransformTransform(interpolatedFirstTransform);
             auto deltaOffset = oldOffset.inverseTransformTransform(newOffset);
 
-            firstSupport = interpolatedFirstTransform.transformPosition(firstSupportFunction(-v));
-            secondSupport = interpolatedSecondTransform.transformPosition(secondSupportFunction(v));
+            firstSupport = interpolatedFirstTransform.transformPosition(firstSupportFunction(interpolatedFirstTransform.inverseTransformNormalVector(-v)));
+            secondSupport = interpolatedSecondTransform.transformPosition(secondSupportFunction(interpolatedSecondTransform.inverseTransformNormalVector(v)));
 
             w = firstSupport - secondSupport;
             
