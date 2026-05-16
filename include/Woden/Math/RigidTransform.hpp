@@ -22,6 +22,20 @@ struct RigidTransform
         return RigidTransform();
     }
 
+    static RigidTransform WithRotation(const Quaternion &rotation)
+    {
+        RigidTransform result;
+        result.rotation = rotation;
+        return result;
+    }
+
+    static RigidTransform WithTranslation(const Vector3 &translation)
+    {
+        RigidTransform result;
+        result.translation = translation;
+        return result;
+    }
+
     Vector3 transformPosition(const Vector3 &position) const
     {
         return rotation.rotateVector(position) + translation;
@@ -75,6 +89,14 @@ struct RigidTransform
         return result;
     }
 
+    RigidTransform inverseTransformTransform(const RigidTransform &o) const
+    {
+        RigidTransform result;
+        result.rotation = rotation.conjugated() * o.rotation;
+        result.translation = inverseTransformPosition(o.translation);
+        return result;
+    }
+
     TRSTransform3D asTRSTransform3D() const
     {
         TRSTransform3D transform;
@@ -86,6 +108,14 @@ struct RigidTransform
     bool operator==(const RigidTransform &o) const
     {
         return rotation == o.rotation && translation == o.translation;
+    }
+
+    RigidTransform interpolateTo(const RigidTransform &targetTransform, Scalar lambda) const
+    {
+        RigidTransform result;
+        result.rotation = mix(rotation, targetTransform.rotation, lambda).normalized();
+        result.translation = mix(translation, targetTransform.translation, lambda);
+        return result;
     }
 
     Quaternion rotation = Quaternion::Identity();

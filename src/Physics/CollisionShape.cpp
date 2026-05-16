@@ -26,23 +26,22 @@ std::optional<ShapeCastingResult> CollisionShape::rayCast(const Math::Ray3D &ray
     return std::nullopt;
 }
 
-std::optional<ShapeCastingResult> CollisionShape::sweepTest(const Math::Vector3 &myStartPoint, const Math::Vector3 &myEndPoint, const CollisionShapePtr &otherShape, const Math::Vector3 &otherStartPoint, const Math::Vector3 &otherEndPoint)
+std::optional<ShapeCastingResult> CollisionShape::sweepTest(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
 {
-    (void)myStartPoint;
-    (void)myEndPoint;
+    (void)myStartTransform;
+    (void)myEndTransform;
     (void)otherShape;
-    (void)otherStartPoint;
-    (void)otherEndPoint;
+    (void)otherStartTransform;
+    (void)otherEndTransform;
     return std::nullopt;
 }
-
-std::optional<ShapeCastingResult> CollisionShape::sweepTestWithConvexShape(const Math::Vector3 &myStartPoint, const Math::Vector3 &myEndPoint, const ConvexCollisionShapePtr &otherShape, const Math::Vector3 &otherStartPoint, const Math::Vector3 &otherEndPoint)
+std::optional<ShapeCastingResult> CollisionShape::sweepTestWithConvexShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
 {
-    (void)myStartPoint;
-    (void)myEndPoint;
+    (void)myStartTransform;
+    (void)myEndTransform;
     (void)otherShape;
-    (void)otherStartPoint;
-    (void)otherEndPoint;
+    (void)otherStartTransform;
+    (void)otherEndTransform;
     return std::nullopt;
 }
 
@@ -158,25 +157,34 @@ std::optional<ShapeCastingResult> ConvexCollisionShape::rayCast(const Math::Ray3
     return shapeResult;
 }
 
-std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTest(const Math::Vector3 &myStartPoint, const Math::Vector3 &myEndPoint, const CollisionShapePtr &otherShape, const Math::Vector3 &otherStartPoint, const Math::Vector3 &otherEndPoint)
+std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTest(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
 {
-    (void)myStartPoint;
-    (void)myEndPoint;
-    (void)otherShape;
-    (void)otherStartPoint;
-    (void)otherEndPoint;
-    return otherShape->sweepTestWithConvexShape(otherStartPoint, otherEndPoint, std::static_pointer_cast<ConvexCollisionShape> (shared_from_this()), myStartPoint, myEndPoint);
+    return otherShape->sweepTestWithConvexShape(otherStartTransform, otherEndTransform, std::static_pointer_cast<ConvexCollisionShape> (shared_from_this()), myStartTransform, myEndTransform);
+
 }
 
-std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTestWithConvexShape(const Math::Vector3 &myStartPoint, const Math::Vector3 &myEndPoint, const ConvexCollisionShapePtr &otherShape, const Math::Vector3 &otherStartPoint, const Math::Vector3 &otherEndPoint)
+std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTestWithConvexShape(const Math::RigidTransform &myStartTransform, const Math::RigidTransform &myEndTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherStartTransform, const Math::RigidTransform &otherEndTransform)
 {
-    (void)myStartPoint;
-    (void)myEndPoint;
-    (void)otherShape;
-    (void)otherStartPoint;
-    (void)otherEndPoint;
-    printf("TODO: Convex-convex sweep test\n");
-    return std::nullopt;
+    auto mySupportFunction =[&](const Math::Vector3 &D){
+        return this->localSupportInDirection(D);
+    };
+
+    auto otherSupportFunction =[&](const Math::Vector3 &D){
+        return otherShape->localSupportInDirection(D);
+    };
+
+    auto sweepTestResult = Math::computeGJKSweepCasting(mySupportFunction, myStartTransform, myEndTransform, otherSupportFunction, otherStartTransform, otherEndTransform);
+    if(!sweepTestResult.has_value())
+        return std::nullopt;
+    
+    auto result = sweepTestResult.value();
+    auto lambda = result.first;
+
+    ShapeCastingResult shapeResult;
+    shapeResult.distance = result.first;
+    shapeResult.point = Math::mix(myStartTransform.translation, myEndTransform.translation, lambda);
+    shapeResult.normal = result.second.normalized();
+    return shapeResult;
 }
 
 // Sphere collision shape

@@ -3,6 +3,7 @@
 
 #include "Vector3.hpp"
 #include "Ray3D.hpp"
+#include "RigidTransform.hpp"
 #include <stddef.h>
 #include <array>
 #include <optional>
@@ -249,12 +250,89 @@ std::optional<std::pair<Scalar, Vector3>> computeGJKRayCasting(const Ray3D &ray,
     return std::make_pair(lambda, n);
 }
 
-template<typename SF>
+template<typename FS, typename SS>
 std::optional<std::pair<Scalar, Vector3>> computeGJKSweepCasting(
-    SF&& firstSupportFunction, const Vector3 &firstStartPosition, const Vector3 &firstEndPosition,
-    SF&& secondSupportFunction, const Vector3 &secondStartPosition, const Vector3 &secondEndPosition)
+    FS&& firstSupportFunction, const RigidTransform &firstStartTransform, const RigidTransform &firstEndTransform,
+    SS&& secondSupportFunction, const RigidTransform &secondStartTransform, const RigidTransform &secondEndTransform)
 {
-    return std::nullopt;   
+    const auto MaxNumberOfIterations = 32;
+	const float Epsilon = 0.00001;
+	const float Epsilon2 = Epsilon*Epsilon;
+
+    auto lambda = 0.0;
+    auto n = Vector3::Zeros();
+    
+    RigidTransform firstDelta = firstStartTransform.inverseTransformTransform(firstEndTransform);
+    RigidTransform secondDelta = secondStartTransform.inverseTransformTransform(secondEndTransform);
+    Vector3 r = firstDelta.translation - secondDelta.translation;
+
+    auto firstSupport = firstStartTransform.transformPosition(firstSupportFunction(r));
+    auto secondSupport = secondStartTransform.transformPosition(secondSupportFunction(-r));
+	Vector3 v = firstSupport - secondSupport;
+
+    auto interpolatedFirstTransform = firstStartTransform;
+    auto interpolatedSecondTransform = secondStartTransform;
+
+    auto remainingIterations = MaxNumberOfIterations;
+    GJKVoronoiSimplexSolver simplex;
+
+    while (remainingIterations > 0 && v.length2() > Epsilon2)
+    {
+        if(lambda > 1)
+            return std::nullopt;
+
+        firstSupport = interpolatedFirstTransform.transformPosition(firstSupportFunction(-v));
+        secondSupport = interpolatedSecondTransform.transformPosition(secondSupportFunction(v));
+        auto w = firstSupport - secondSupport;
+
+		auto VdotW = v.dot(w);
+        if(VdotW > 0)
+        {
+            auto VdotR = v.dot(r);
+            if (VdotR >= -Epsilon2)
+                return std::nullopt;
+
+            lambda = lambda - (VdotW / VdotR);
+			if(lambda > 1)
+                return std::nullopt;
+			n = v;
+
+            auto oldOffset = interpolatedSecondTransform.inverseTransformTransform(interpolatedFirstTransform);
+            interpolatedFirstTransform = firstStartTransform.interpolateTo(firstEndTransform, lambda);
+            interpolatedSecondTransform = secondStartTransform.interpolateTo(secondEndTransform, lambda);
+
+            auto newOffset = interpolatedSecondTransform.inverseTransformTransform(interpolatedFirstTransform);
+            auto deltaOffset = oldOffset.inverseTransformTransform(newOffset);
+
+            firstSupport = interpolatedFirstTransform.transformPosition(firstSupportFunction(-v));
+            secondSupport = interpolatedSecondTransform.transformPosition(secondSupportFunction(v));
+
+            w = firstSupport - secondSupport;
+            
+            simplex.transformPointsWith([&](const Math::Vector3 &P){
+                return deltaOffset.transformPosition(P);
+            });
+            if(simplex.containsOrigin())
+                return std::make_pair(lambda, n);
+            simplex.reduce();
+        }
+
+        if(!simplex.containsPoint(w))
+            simplex.insertPointWithFirstAndSecond(w, firstSupport, secondSupport);
+
+        if (simplex.containsOrigin())
+        {
+            remainingIterations = 0;
+        }
+        else
+        {
+            v = simplex.getClosestPointToOrigin();
+            simplex.reduce();
+            --remainingIterations;
+        }
+    }
+
+    return std::make_pair(lambda, n);
 }
 
 

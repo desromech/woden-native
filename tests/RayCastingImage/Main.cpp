@@ -110,13 +110,17 @@ void renderSweepTestWithCollisionShape(const std::string &name,
         auto rayDirection = Vector3(vx, vy, -1.0).normalized();
         auto rayOrigin = Vector3(0, 2, 5);
         auto ray = Ray3D(rayOrigin, rayDirection, 0, 1000);
-        auto sweptVolumeStartPoint = ray.getStartPoint();
-        auto sweptVolumeEndPoint = ray.getEndPoint();
+        
+        auto shapeTransform = RigidTransform::Identity();
+        //auto shapeTransform = RigidTransform::WithRotation(Quaternion::YRotationDegrees(45));
+
+        auto sweptVolumeStartTransform = RigidTransform::WithTranslation(ray.getStartPoint());
+        auto sweptVolumeEndTransform = RigidTransform::WithTranslation(ray.getEndPoint());
 
         //auto start
         std::optional<Woden::Physics::ShapeCastingResult> sweepTestResult =
-            shape->sweepTest(Woden::Math::Vector3::Zeros(), Woden::Math::Vector3::Zeros(),
-                sweptVolume, sweptVolumeStartPoint, sweptVolumeEndPoint);
+            shape->sweepTest(shapeTransform, shapeTransform,
+                sweptVolume, sweptVolumeStartTransform, sweptVolumeEndTransform);
 
         if(!sweepTestResult.has_value())
             return 0xff0000ff;
