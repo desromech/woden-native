@@ -2,6 +2,7 @@
 #define WODEN_PHYSICS_COLLISION_OBJECT_HPP
 
 #include "CollisionMasks.hpp"
+#include "CollisionShape.hpp"
 #include "Woden/Math/AABox.hpp"
 #include "Woden/Math/RigidTransform.hpp"
 #include <memory>
@@ -118,6 +119,8 @@ public:
 
     virtual void resetSleepingState();
     virtual void wakeUp();
+
+    std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray);
 
     void clearContactManifolds();
     void addContactManifold(const ContactManifoldPtr &manifold);

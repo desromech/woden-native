@@ -67,6 +67,30 @@ void PhysicsWorld::updateSingleTimeStep(Math::Scalar delta)
     (void)delta;
 }
 
+std::optional<ShapeRayCastingResult> PhysicsWorld::rayCast(const Math::Ray3D &ray)
+{
+    // TODO: Use an acceleration data structure here.
+    ShapeRayCastingResult bestFound;
+    bool hasBestFound = false;
+    for (auto &collisionObject : collisionObjects)
+    {
+        auto collisionObjectResult = collisionObject->rayCast(ray);
+        if(!collisionObjectResult.has_value())
+            continue;;
+
+        auto foundResult = collisionObjectResult.value();
+        if(!hasBestFound || foundResult.distance < bestFound.distance)
+        {
+            bestFound = foundResult;
+            hasBestFound = true;
+        }
+    }
+
+    if(!hasBestFound)
+        return std::nullopt;
+    return bestFound;
+}
+
 SceneGraph::ScenePtr PhysicsWorld::buildInteractiveScene()
 {
     auto scene = SceneGraph::MakeScene();

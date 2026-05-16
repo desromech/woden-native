@@ -2,9 +2,11 @@
 #define WODEN_PHYSICS_PHYSICS_WORLD_HPP
 
 #include "ContactManifold.hpp"
+#include "CollisionShape.hpp"
 #include "Woden/Math/Vector3.hpp"
 #include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 
 namespace Woden
@@ -36,6 +38,8 @@ public:
 
     virtual void update(Math::Scalar delta, Math::Scalar fixedTimeStep = 1.0f/120.0f);
     virtual void updateSingleTimeStep(Math::Scalar delta);
+
+    virtual std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray);
 
     SceneGraph::ScenePtr buildInteractiveScene();
 

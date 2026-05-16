@@ -175,6 +175,22 @@ void CollisionObject::wakeUp()
 {
 }
 
+std::optional<ShapeRayCastingResult> CollisionObject::rayCast(const Math::Ray3D &ray)
+{
+    auto localStartPoint = transform.inverseTransformPosition(ray.getStartPoint());
+    auto localEndPoint = transform.inverseTransformPosition(ray.getEndPoint());
+    auto localRay = Math::Ray3D::FromTo(localStartPoint, localEndPoint);
+    
+    auto result = shape->rayCast(localRay);
+    if(!result.has_value())
+        return std::nullopt;
+
+    auto castingResult = result.value();
+    castingResult.collisionObject = shared_from_this();
+    castingResult.shape = shape;
+    return castingResult;
+}
+
 void CollisionObject::clearContactManifolds()
 {
     contactManifolds.clear();

@@ -39,6 +39,16 @@ public:
         return origin + (direction*distance);
     }
 
+    Vector3 getStartPoint() const
+    {
+        return origin + direction*tmin;
+    }
+
+    Vector3 getEndPoint() const
+    {
+        return origin + direction*tmax;
+    }
+
     Vector3 origin, direction;
     Vector3 inverseDirection;
     Scalar tmin, tmax;

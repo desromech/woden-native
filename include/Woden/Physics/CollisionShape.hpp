@@ -20,6 +20,7 @@ namespace Physics
 {
 
 typedef std::shared_ptr<class CollisionShape> CollisionShapePtr;
+typedef std::shared_ptr<class CollisionObject> CollisionObjectPtr;
 typedef std::shared_ptr<class ConvexCollisionShape> ConvexCollisionShapePtr;
 typedef std::shared_ptr<class BoxCollisionShape> BoxCollisionShapePtr;
 typedef std::shared_ptr<class SphereCollisionShape> SphereCollisionShapePtr;
@@ -29,7 +30,9 @@ typedef std::shared_ptr<class CompoundCollisionShapeChild> CompoundCollisionShap
 
 struct ShapeRayCastingResult
 {
+    CollisionObjectPtr collisionObject;
     CollisionShapePtr shape;
+    
     float distance = 0;
     Math::Vector3 point;
     Math::Vector3 normal;
