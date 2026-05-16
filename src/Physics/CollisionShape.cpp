@@ -217,9 +217,20 @@ Math::Vector3 ConvexHullCollisionShape::localSupportInDirection(const Math::Vect
 
 std::optional<ShapeRayCastingResult> ConvexHullCollisionShape::rayCast(const Math::Ray3D &ray)
 {
-    // TODO: Implement this raycasting function.
-    (void)ray;
-    return std::nullopt;
+    auto gjkResult = Math::computeGJKRayCasting(ray, [&](const Math::Vector3 &D){
+        return this->localSupportInDirection(D);
+    });
+
+    if (!gjkResult.has_value())
+        return std::nullopt;
+
+    auto result = gjkResult.value();
+
+    ShapeRayCastingResult shapeResult;
+    shapeResult.distance = result.first;
+    shapeResult.point = ray.pointAtDistance(result.first);
+    shapeResult.normal = result.second.normalized();
+    return shapeResult;
 }
 
 SceneGraph::SceneNodePtr ConvexHullCollisionShape::constructVisualizationSceneNode()

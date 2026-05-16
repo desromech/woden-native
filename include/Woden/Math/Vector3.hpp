@@ -168,6 +168,11 @@ public:
     Scalar x, y, z;
 };
 
+inline bool closeTo(const Vector3 &a, const Vector3 &b)
+{
+    return closeTo(a.x, b.x) && closeTo(a.y, b.y) && closeTo(a.z, b.z);
+}
+
 inline Vector3 min(Vector3 a, Vector3 b)
 {
     return Vector3(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z));

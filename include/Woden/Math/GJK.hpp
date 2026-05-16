@@ -2,6 +2,7 @@
 #define WODEN_MATH_GJK_HPP
 
 #include "Vector3.hpp"
+#include "Ray3D.hpp"
 #include <stddef.h>
 #include <array>
 #include <optional>
@@ -26,9 +27,25 @@ public:
 
     bool containsOrigin()
     {
+        if(empty())
+            return false;
+
         if(!hasComputedClosest)
             computeClosestToOrigin();
         return closestPointToOrigin == Vector3::Zeros();
+    }
+
+    bool containsPoint(const Math::Vector3 &point)
+    {
+        if (empty())
+            return false;
+        for (size_t i = 0 ; i < size; ++i)
+        {
+            if(closeTo(point, points[i]))
+                return true;
+        }
+
+        return false;
     }
 
     Vector3 getClosestPointToOrigin()
@@ -72,6 +89,19 @@ public:
     void insertPoint(const Vector3 &point);
     void insertPointWithFirstAndSecond(const Vector3 &point, const Vector3 &firstPoint, const Vector3 &secondPoint);
     void reduce();
+
+    template<typename FT>
+    void transformPointsWith(FT &&transform)
+    {
+        for(size_t i = 0; i < size; ++i)
+        {
+            points[i] = transform(points[i]);
+            firstPoints[i] = transform(firstPoints[i]);
+            secondPoints[i] = transform(secondPoints[i]);
+        }
+        
+        invalidateCache();
+    }
 
     size_t size = 0;
     std::array<Vector3, Capacity> points;
@@ -145,6 +175,80 @@ Scalar computeGJKDistance(FS&& firstSupportFunction, SS&& secondSupportFunction)
 {
     return computeGJKSimplex(firstSupportFunction, secondSupportFunction).getClosestPointToOrigin().length();
 }
+
+template<typename SF>
+std::optional<std::pair<Scalar, Vector3>> computeGJKRayCasting(const Ray3D &ray, SF&& supportFunction)
+{
+    // Algorithm from 'Ray Casting against General Convex Objectswith Application to Continuous CollisionDetection' by G. Van Den Bergen."
+
+    const auto MaxNumberOfIterations = 32;
+	const auto Epsilon = 0.00001;
+	const auto Epsilon2 = Epsilon*Epsilon;
+
+    auto lambda = ray.tmin;
+    auto lambdaMax = ray.tmax;
+
+	auto s = ray.origin;
+	auto r = ray.direction;
+	auto x = s + (r * lambda);
+	auto n = Vector3::Zeros();
+
+    Math::Vector3 v = x - supportFunction(-r);
+	GJKVoronoiSimplexSolver simplex;;
+	auto remainingIterations = MaxNumberOfIterations;
+
+    while (remainingIterations > 0 && v.length2() > Epsilon2)
+    {
+		if(lambda > lambdaMax)
+            return std::nullopt;
+
+        auto p = supportFunction(v);
+		Math::Vector3 w = x - p;
+		auto VdotW = v.dot(w);
+        if( VdotW > 0 )
+        {
+			auto VdotR = v.dot(r);
+			if(VdotR >= -Epsilon2)
+                return std::nullopt;
+                
+            lambda = lambda - (VdotW / VdotR);
+			if(lambda > lambdaMax)
+                return std::nullopt;
+
+            auto oldX = x;
+			x = s + (r * lambda);
+			n = v;
+			w = x - p;
+			auto deltaX = x - oldX;
+
+            simplex.transformPointsWith([&](const Math::Vector3 &sp){
+                return sp + deltaX;
+            });
+
+            if (simplex.containsOrigin())
+                return std::make_pair(lambda, n);
+            simplex.reduce();
+        }
+
+
+        if (!simplex.containsPoint(w))
+            simplex.insertPoint(w);
+
+        if (simplex.containsOrigin())
+        {
+            remainingIterations = 0;
+        }
+        else
+        {
+            v = simplex.getClosestPointToOrigin();
+            simplex.reduce();
+            --remainingIterations;
+        }
+    }
+
+    return std::make_pair(lambda, n);
+}
+
 
 extern Vector3 PenetrationDistanceSampleVector[26];
 

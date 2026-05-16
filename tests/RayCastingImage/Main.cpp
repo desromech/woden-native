@@ -112,5 +112,18 @@ int main()
         renderRayCollisionShape("col-aabox.tga", shape);
     }
 
+    // Collision convex hull
+    {
+        auto box = Woden::Math::AABox::WithHalfExtent(Woden::Math::Vector3(1, 1, 1));
+        std::vector<Woden::Math::Vector3> corners;
+        box.cornersDo([&](const Woden::Math::Vector3 &corner) {
+            corners.push_back(corner);
+        });
+
+        auto shape = std::make_shared<Woden::Physics::ConvexHullCollisionShape> ();
+        shape->setCorners(corners);
+        renderRayCollisionShape("col-hull-box.tga", shape);
+    }
+
     return 0;
 }
