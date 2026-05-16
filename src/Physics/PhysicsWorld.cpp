@@ -67,10 +67,10 @@ void PhysicsWorld::updateSingleTimeStep(Math::Scalar delta)
     (void)delta;
 }
 
-std::optional<ShapeRayCastingResult> PhysicsWorld::rayCast(const Math::Ray3D &ray)
+std::optional<ShapeCastingResult> PhysicsWorld::rayCast(const Math::Ray3D &ray)
 {
     // TODO: Use an acceleration data structure here.
-    ShapeRayCastingResult bestFound;
+    ShapeCastingResult bestFound;
     bool hasBestFound = false;
     for (auto &collisionObject : collisionObjects)
     {

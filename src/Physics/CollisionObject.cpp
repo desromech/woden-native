@@ -175,7 +175,7 @@ void CollisionObject::wakeUp()
 {
 }
 
-std::optional<ShapeRayCastingResult> CollisionObject::rayCast(const Math::Ray3D &ray)
+std::optional<ShapeCastingResult> CollisionObject::rayCast(const Math::Ray3D &ray)
 {
     auto localStartPoint = transform.inverseTransformPosition(ray.getStartPoint());
     auto localEndPoint = transform.inverseTransformPosition(ray.getEndPoint());

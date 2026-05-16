@@ -20,11 +20,32 @@ bool CollisionShape::isConvex() const
     return false;
 }
 
-std::optional<ShapeRayCastingResult> CollisionShape::rayCast(const Math::Ray3D &ray)
+std::optional<ShapeCastingResult> CollisionShape::rayCast(const Math::Ray3D &ray)
 {
     (void)ray;
     return std::nullopt;
 }
+
+std::optional<ShapeCastingResult> CollisionShape::sweepTest(const Math::Vector3 &myStartPoint, const Math::Vector3 &myEndPoint, const CollisionShapePtr &otherShape, const Math::Vector3 &otherStartPoint, const Math::Vector3 &otherEndPoint)
+{
+    (void)myStartPoint;
+    (void)myEndPoint;
+    (void)otherShape;
+    (void)otherStartPoint;
+    (void)otherEndPoint;
+    return std::nullopt;
+}
+
+std::optional<ShapeCastingResult> CollisionShape::sweepTestWithConvexShape(const Math::Vector3 &myStartPoint, const Math::Vector3 &myEndPoint, const ConvexCollisionShapePtr &otherShape, const Math::Vector3 &otherStartPoint, const Math::Vector3 &otherEndPoint)
+{
+    (void)myStartPoint;
+    (void)myEndPoint;
+    (void)otherShape;
+    (void)otherStartPoint;
+    (void)otherEndPoint;
+    return std::nullopt;
+}
+
 
 Math::Matrix3x3 CollisionShape::computeInertiaTensorWithMass(Math::Scalar mass)
 {
@@ -119,6 +140,45 @@ std::vector<ContactPoint> ConvexCollisionShape::detectAndComputeConvexCollisionC
     return result;
 }
 
+std::optional<ShapeCastingResult> ConvexCollisionShape::rayCast(const Math::Ray3D &ray)
+{
+    auto gjkResult = Math::computeGJKRayCasting(ray, [&](const Math::Vector3 &D){
+        return this->localSupportInDirection(D);
+    });
+
+    if (!gjkResult.has_value())
+        return std::nullopt;
+
+    auto result = gjkResult.value();
+
+    ShapeCastingResult shapeResult;
+    shapeResult.distance = result.first;
+    shapeResult.point = ray.pointAtDistance(result.first);
+    shapeResult.normal = result.second.normalized();
+    return shapeResult;
+}
+
+std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTest(const Math::Vector3 &myStartPoint, const Math::Vector3 &myEndPoint, const CollisionShapePtr &otherShape, const Math::Vector3 &otherStartPoint, const Math::Vector3 &otherEndPoint)
+{
+    (void)myStartPoint;
+    (void)myEndPoint;
+    (void)otherShape;
+    (void)otherStartPoint;
+    (void)otherEndPoint;
+    return otherShape->sweepTestWithConvexShape(otherStartPoint, otherEndPoint, std::static_pointer_cast<ConvexCollisionShape> (shared_from_this()), myStartPoint, myEndPoint);
+}
+
+std::optional<ShapeCastingResult> ConvexCollisionShape::sweepTestWithConvexShape(const Math::Vector3 &myStartPoint, const Math::Vector3 &myEndPoint, const ConvexCollisionShapePtr &otherShape, const Math::Vector3 &otherStartPoint, const Math::Vector3 &otherEndPoint)
+{
+    (void)myStartPoint;
+    (void)myEndPoint;
+    (void)otherShape;
+    (void)otherStartPoint;
+    (void)otherEndPoint;
+    printf("TODO: Convex-convex sweep test\n");
+    return std::nullopt;
+}
+
 // Sphere collision shape
 Math::Matrix3x3 SphereCollisionShape::computeInertiaTensorWithMass(Math::Scalar mass)
 {
@@ -130,14 +190,14 @@ Math::Vector3 SphereCollisionShape::localSupportInDirection(const Math::Vector3 
     return D.normalized()*Math::Vector3(radius);
 }
 
-std::optional<ShapeRayCastingResult> SphereCollisionShape::rayCast(const Math::Ray3D &ray)
+std::optional<ShapeCastingResult> SphereCollisionShape::rayCast(const Math::Ray3D &ray)
 {
     auto sphere = Math::Sphere(Math::Vector3(0), radius);
     auto result = sphere.intersectionsWithRay(ray);
     if(result.isEmpty())
         return std::nullopt;
 
-    ShapeRayCastingResult shapeResult;
+    ShapeCastingResult shapeResult;
     shapeResult.distance = result.intersectionPoints[0];
     shapeResult.point = ray.pointAtDistance(shapeResult.distance);
     shapeResult.normal = sphere.computeNormalForPoint(shapeResult.point);
@@ -161,7 +221,7 @@ Math::Vector3 BoxCollisionShape::localSupportInDirection(const Math::Vector3 &D)
     return localBoundingBox.support(D);
 }
 
-std::optional<ShapeRayCastingResult> BoxCollisionShape::rayCast(const Math::Ray3D &ray)
+std::optional<ShapeCastingResult> BoxCollisionShape::rayCast(const Math::Ray3D &ray)
 {
     auto box = Math::AABox::WithHalfExtent(halfExtent);
 
@@ -169,7 +229,7 @@ std::optional<ShapeRayCastingResult> BoxCollisionShape::rayCast(const Math::Ray3
     if(result.isEmpty())
         return std::nullopt;
 
-    ShapeRayCastingResult shapeResult;
+    ShapeCastingResult shapeResult;
     shapeResult.distance = result.intersectionPoints[0];
     shapeResult.point = ray.pointAtDistance(shapeResult.distance);
     shapeResult.normal = box.computeNormalForPoint(shapeResult.point);
@@ -213,24 +273,6 @@ Math::Vector3 ConvexHullCollisionShape::localSupportInDirection(const Math::Vect
     }
 
     return bestFound;
-}
-
-std::optional<ShapeRayCastingResult> ConvexHullCollisionShape::rayCast(const Math::Ray3D &ray)
-{
-    auto gjkResult = Math::computeGJKRayCasting(ray, [&](const Math::Vector3 &D){
-        return this->localSupportInDirection(D);
-    });
-
-    if (!gjkResult.has_value())
-        return std::nullopt;
-
-    auto result = gjkResult.value();
-
-    ShapeRayCastingResult shapeResult;
-    shapeResult.distance = result.first;
-    shapeResult.point = ray.pointAtDistance(result.first);
-    shapeResult.normal = result.second.normalized();
-    return shapeResult;
 }
 
 SceneGraph::SceneNodePtr ConvexHullCollisionShape::constructVisualizationSceneNode()

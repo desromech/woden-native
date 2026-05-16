@@ -249,6 +249,14 @@ std::optional<std::pair<Scalar, Vector3>> computeGJKRayCasting(const Ray3D &ray,
     return std::make_pair(lambda, n);
 }
 
+template<typename SF>
+std::optional<std::pair<Scalar, Vector3>> computeGJKSweepCasting(
+    SF&& firstSupportFunction, const Vector3 &firstStartPosition, const Vector3 &firstEndPosition,
+    SF&& secondSupportFunction, const Vector3 &secondStartPosition, const Vector3 &secondEndPosition)
+{
+    return std::nullopt;   
+}
+
 
 extern Vector3 PenetrationDistanceSampleVector[26];
 

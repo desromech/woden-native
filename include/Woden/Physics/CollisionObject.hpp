@@ -120,7 +120,7 @@ public:
     virtual void resetSleepingState();
     virtual void wakeUp();
 
-    std::optional<ShapeRayCastingResult> rayCast(const Math::Ray3D &ray);
+    std::optional<ShapeCastingResult> rayCast(const Math::Ray3D &ray);
 
     void clearContactManifolds();
     void addContactManifold(const ContactManifoldPtr &manifold);
