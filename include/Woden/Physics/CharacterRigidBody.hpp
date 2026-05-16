@@ -10,8 +10,13 @@ namespace Physics
 class CharacterRigidBody : public RigidBody
 {
     virtual void integrateMovement(Math::Scalar deltaTime) override;
+    void stepUpMovement();
+    void stepDownMovement();
 
+    Math::Vector3 stepUpVector = Math::Vector3(0, 1, 0);
     Math::Scalar stepHeight = 0.3f;
+    Math::Scalar stepUpOffset = 0.01f;
+    
 };
 
 } // End of namespace Physics

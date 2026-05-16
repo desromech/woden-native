@@ -174,6 +174,22 @@ public:
         return result;
     }
 
+    bool hasIntersectionWithRay(const Ray3D &ray) const
+    {
+        // Slab testing algorithm from: A Ray-Box Intersection Algorithm andEfficient Dynamic Voxel Rendering. By Majercik et al
+        auto t0 = (minCorner - ray.origin)*ray.inverseDirection;
+        auto t1 = (maxCorner - ray.origin)*ray.inverseDirection;
+
+        auto tmin = min(t0, t1);
+        auto tmax = max(t0, t1);
+
+        auto maxTMin = max(max(max(tmin.x, tmin.y), tmin.z), ray.tmin);
+        auto minTMax = min(min(min(tmax.x, tmax.y), tmax.z), ray.tmax);
+
+        auto hasIntersection = maxTMin <= minTMax;
+        return hasIntersection;
+    }
+
     Vector3 positiveVertex(const Vector3 &D) const
     {
         auto vertex = minCorner;

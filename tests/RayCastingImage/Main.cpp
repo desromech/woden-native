@@ -245,6 +245,18 @@ int main()
         renderRayCollisionShape("col-hull-box.tga", shape);
     }
 
+    // Compound shape
+    {
+        auto compoundShape = std::make_shared<Woden::Physics::CompoundCollisionShape> ();
+        auto boxShape = std::make_shared<Woden::Physics::BoxCollisionShape> ();
+        boxShape->setHalfExtent(Woden::Math::Vector3(1, 1, 1));
+        compoundShape->addChildWithTranslation(boxShape, Woden::Math::Vector3(-3, 0, 0));
+        compoundShape->addChildWithTranslation(boxShape, Woden::Math::Vector3(0, 0, 0));
+        compoundShape->addChildWithTranslation(boxShape, Woden::Math::Vector3(3, 0, 0));
+        compoundShape->finishAddingChildren();
+        renderRayCollisionShape("col-compound.tga", compoundShape);
+    }
+
     // Sweep collision
     {
         auto shape = std::make_shared<Woden::Physics::BoxCollisionShape> ();

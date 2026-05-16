@@ -62,6 +62,22 @@ struct BoundingVolumeHierarchyNode
         }
     }
 
+    template<typename FT>
+    void leavesIntersectingRayDo(const Ray3D &ray, FT &&aBlock)
+    {
+        if(!volume.hasIntersectionWithRay(ray))
+            return;
+        
+        if(isLeaf)
+        {
+            return aBlock(payload);
+        }
+        else
+        {
+            leftChild->leavesIntersectingRayDo(ray, aBlock);
+            rightChild->leavesIntersectingRayDo(ray, aBlock);
+        }
+    }
 };
 
 template<typename PT>
@@ -81,6 +97,15 @@ public:
             return;
 
         rootNode->leavesIntersectingBoxDo(box, aBlock);
+    }
+
+    template<typename FT>
+    void leavesIntersectingRayDo(const Ray3D &ray, FT &&aBlock)
+    {
+        if(!rootNode)
+            return;
+
+        rootNode->leavesIntersectingRayDo(ray, aBlock);
     }
 
     void buildBottomUp(std::vector<NodePtrType> bvhLeaves)

@@ -334,6 +334,33 @@ SceneGraph::SceneNodePtr CompoundCollisionShape::constructVisualizationSceneNode
     return sceneNode;
 }
 
+std::optional<ShapeCastingResult> CompoundCollisionShape::rayCast(const Math::Ray3D &ray)
+{
+    bool hasBest = false;
+    ShapeCastingResult bestFound;
+
+    bvh.leavesIntersectingRayDo(ray, [&](const CompoundCollisionShapeChildPtr &child) {
+        auto localStartPoint = child->transform.inverseTransformPosition(ray.getStartPoint());
+        auto localEndPoint = child->transform.inverseTransformPosition(ray.getEndPoint());
+        auto localRay = Math::Ray3D::FromTo(localStartPoint, localEndPoint);
+
+        auto childResult = child->shape->rayCast(localRay);
+        if(!childResult.has_value())
+            return;
+
+        auto childResultValue = childResult.value();
+        if(!hasBest || childResultValue.distance < hasBest)
+        {
+            hasBest = true;
+            bestFound = childResultValue;
+        }
+    });
+
+    if(!hasBest)
+        return std::nullopt;
+    return bestFound;
+}
+
 std::vector<ContactPoint> CompoundCollisionShape::detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis)
 {
     auto contactPoints = otherShape->detectAndComputeCompoundCollisionContactPoints(otherShapeTransform, std::static_pointer_cast<CompoundCollisionShape> (shared_from_this()), myTransform, -initialSeparatingAxis);

@@ -203,6 +203,8 @@ public:
 
     virtual SceneGraph::SceneNodePtr constructVisualizationSceneNode() override;
 
+    virtual std::optional<ShapeCastingResult> rayCast(const Math::Ray3D &ray) override;
+
     virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
     virtual std::vector<ContactPoint> detectAndComputeConvexCollisionContactPoints(const Math::RigidTransform &myTransform, const ConvexCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
     virtual std::vector<ContactPoint> detectAndComputeCompoundCollisionContactPoints(const Math::RigidTransform &myTransform, const CompoundCollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
