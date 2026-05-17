@@ -116,6 +116,10 @@ public:
     {
         return false;
     }
+    virtual bool isKinematicObject() const
+    {
+        return false;
+    }
 
     virtual void resetSleepingState();
     virtual void wakeUp();

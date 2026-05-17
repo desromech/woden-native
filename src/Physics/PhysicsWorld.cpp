@@ -29,6 +29,8 @@ void PhysicsWorld::addCollisionObject(const CollisionObjectPtr &collisionObject)
     collisionObject->id = collisionObjectIdCount++;
     collisionObject->resetSleepingState();
     collisionObject->wakeUp();
+    if(collisionObject->isKinematicObject())
+        addKinematicBody(collisionObject);
 }
 
 void PhysicsWorld::addForceGenerator(const ForceGeneratorPtr &forceGenerator)
@@ -42,6 +44,11 @@ void PhysicsWorld::addForceGenerator(const ForceGeneratorPtr &forceGenerator)
 void PhysicsWorld::addAwakeRigidBody(const RigidBodyPtr &rigidBody)
 {
     awakeRigidBodies.push_back(rigidBody);
+}
+
+void PhysicsWorld::addKinematicBody(const CollisionObjectPtr &kinematicBody)
+{
+    kinematicBodies.push_back(kinematicBody);
 }
 
 void PhysicsWorld::loadCollisionStateFromModels()
@@ -272,6 +279,9 @@ void DiscreteDynamicsPhysicsWorld::integrateMovement(Math::Scalar delta)
 {
     for(auto &object : awakeRigidBodies)
         object->integrateMovement(delta);
+
+    for(auto &kinematic : kinematicBodies)
+        kinematic->integrateMovement(delta);
 }
 
 void DiscreteDynamicsPhysicsWorld::detectAndResolveCollisions()

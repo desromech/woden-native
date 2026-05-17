@@ -44,6 +44,7 @@ set(WodenEngine_Sources
     Morphic/TextInputMorph.cpp
     Morphic/WorldMorph.cpp
 
+    Physics/CharacterKinematicBody.cpp
     Physics/CharacterRigidBody.cpp
     Physics/CollisionObject.cpp
     Physics/CollisionShape.cpp

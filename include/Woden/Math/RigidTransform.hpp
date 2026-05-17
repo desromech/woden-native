@@ -36,6 +36,14 @@ struct RigidTransform
         return result;
     }
 
+    static RigidTransform WithRotationAndTranslation(const Quaternion &rotation, const Vector3 &translation)
+    {
+        RigidTransform result;
+        result.rotation = rotation;
+        result.translation = translation;
+        return result;
+    }
+
     Vector3 transformPosition(const Vector3 &position) const
     {
         return rotation.rotateVector(position) + translation;

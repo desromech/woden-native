@@ -47,6 +47,7 @@ public:
     void addCollisionObject(const CollisionObjectPtr &collisionObject);
     void addForceGenerator(const ForceGeneratorPtr &forceGenerator);
     void addAwakeRigidBody(const RigidBodyPtr &rigidBody);
+    void addKinematicBody(const CollisionObjectPtr &kinematicBody);
 
     void loadCollisionStateFromModels();
     void saveCollisionStateIntoModels();
@@ -80,6 +81,7 @@ protected:
     std::vector<CollisionObjectPtr> collisionObjects;
     std::vector<ForceGeneratorPtr> forceGenerators;
     std::vector<RigidBodyPtr> awakeRigidBodies;
+    std::vector<CollisionObjectPtr> kinematicBodies;
     ContactManifoldCache contactManifoldCache;
 };
 
