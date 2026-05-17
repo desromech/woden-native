@@ -10,10 +10,10 @@ namespace Physics
 void CharacterRigidBody::stepUpMovement()
 {
     auto startTransform = transform;
-    startTransform.translation += stepUpVector*stepUpOffset;
+    startTransform.translation += stepUpVector*Math::Vector3(stepUpOffset);
 
     auto endTransform = startTransform;
-    endTransform.translation += stepUpVector*stepHeight;
+    endTransform.translation += stepUpVector*Math::Vector3(stepHeight);
     //auto deltaTranslation = endTransform.translation - startTransform.translation;
     //printf("stepUp delta %f %f %f\n", deltaTranslation.x, deltaTranslation.y, deltaTranslation.z);
 
@@ -43,7 +43,7 @@ void CharacterRigidBody::stepDownMovement()
     auto startTransform = transform;
 
     auto endTransform = startTransform;
-    endTransform.translation = startTransform.translation - stepUpVector*(stepHeight + stepUpOffset);
+    endTransform.translation = startTransform.translation - stepUpVector*Math::Vector3(stepHeight + stepUpOffset);
     //auto deltaTranslation = endTransform.translation - startTransform.translation;
     //printf("stepDown delta %f %f %f\n", deltaTranslation.x, deltaTranslation.y, deltaTranslation.z);
 
@@ -67,7 +67,7 @@ void CharacterRigidBody::stepDownMovement()
     auto NdotUp = sweepTestResult.normal.dot(stepUpVector);
 
     //printf("NdotUp %f N %f %f %f\n", NdotUp, sweepTestResult.normal.x, sweepTestResult.normal.y, sweepTestResult.normal.z);
-    linearVelocity = linearVelocity - (sweepTestResult.normal * linearVelocity.dot(sweepTestResult.normal));
+    linearVelocity = linearVelocity - (sweepTestResult.normal * Math::Vector3(linearVelocity.dot(sweepTestResult.normal)));
 
     //printf("stepDownMovement lambda %f transform %f %f %f\n", lambda, sweepTransform.translation.x, sweepTransform.translation.y, sweepTransform.translation.z);
     isCurrentlyOnFloor = NdotUp >= 0.6;

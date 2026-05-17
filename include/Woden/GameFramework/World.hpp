@@ -4,6 +4,7 @@
 #include "Woden/Math/Scalar.hpp"
 #include <memory>
 #include <vector>
+#include <string>
 
 namespace Woden
 {

@@ -70,7 +70,7 @@ public:
     virtual Math::Vector3 localSupportInDirection(const Math::Vector3 &D) = 0;
     Math::Vector3 localSupportInDirectionWithMargin(const Math::Vector3 &D)
     {
-        return localSupportInDirection(D) + D.normalized()*margin;
+        return localSupportInDirection(D) + D.normalized()*Math::Vector3(margin);
     }
 
     virtual std::vector<ContactPoint> detectAndComputeCollisionContactPoints(const Math::RigidTransform &myTransform, const CollisionShapePtr &otherShape, const Math::RigidTransform &otherShapeTransform, const Math::Vector3 &initialSeparatingAxis) override;
